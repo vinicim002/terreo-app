@@ -44,6 +44,12 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
+Spec em andamento: `specs/001-base-do-app/` (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
+estática, next-intl sem idioma na URL, preferências aplicadas antes da pintura via atributos `data-*`, Serwist sobre
+`web/out/`, serviços tipados sobre IndexedDB, painel `/dev` só em `next dev` via `pageExtensions` `.dev.tsx`,
+`NEXT_PUBLIC_APP_MODE` = dev|demo|real, demonstração no Cloudflare Pages, portas web 3100 / api 8100 / db 5440 /
+redis 6390).
+
 Fluxo: `/speckit-specify` → (`/speckit-clarify`) → `/speckit-plan` → `/speckit-tasks` → (`/speckit-analyze`) →
 `/speckit-implement`. Cada mudança relevante vira `specs/NNN-nome/` (numeração sequencial). `spec.md` = o quê e por quê,
 sem tecnologia; `plan.md` = como, com "Verificação da constituição". Scripts e modelos ficam em `.specify/`; as skills

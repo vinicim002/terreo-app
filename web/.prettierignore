@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+.lighthouseci/
+package-lock.json
+src/components/ui/
+next-env.d.ts
+out-next/
+out-current
+.serwist/

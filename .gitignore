@@ -40,3 +40,13 @@ Thumbs.db
 *:Zone.Identifier
 .idea/
 .vscode/
+
+# Builds e relatórios da interface e da API
+web/out/
+web/.next/
+web/.lighthouseci/
+web/playwright-report/
+web/test-results/
+api/.venv/
+.pytest_cache/
+.ruff_cache/

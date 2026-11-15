@@ -1,0 +1,143 @@
+/*
+ * Tokens do Térreo (research R3). Quatro aparências:
+ *   claro · escuro · claro com alto contraste · escuro com alto contraste.
+ * Aplicadas pelos atributos data-theme e data-contrast no <html>.
+ * Cores da marca: azul #1B4FD8 e branco #FFFFFF. Preenchimentos usam sempre o azul com texto branco;
+ * no escuro, texto sobre o fundo é branco. Só o alto contraste escurece o azul, para chegar a AAA.
+ * Componentes usam só estas variáveis, nunca cores soltas (RF-015).
+ * Contraste conferido por tests/unit/contrast.test.ts (RF-018).
+ */
+
+:root,
+:root[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --primary: #1b4fd8;
+  --primary-foreground: #ffffff;
+  --secondary: #eef2ff;
+  --secondary-foreground: #1e3a8a;
+  --muted: #f1f5f9;
+  --muted-foreground: #475569;
+  --accent: #e0e7ff;
+  --accent-foreground: #1e3a8a;
+  --destructive: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --warning: #92400e;
+  --warning-background: #fef3c7;
+  --border: #e2e8f0;
+  --input: #94a3b8;
+  --ring: #1b4fd8;
+  --nav-background: #ffffff;
+  --nav-foreground: #475569;
+  --nav-active: #1b4fd8;
+  --radius: 0.75rem;
+  color-scheme: light;
+  --link: #1b4fd8;
+  --nav-pill: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  --background: #0b1533;
+  --foreground: #ffffff;
+  --card: #13224d;
+  --card-foreground: #ffffff;
+  --popover: #13224d;
+  --popover-foreground: #ffffff;
+  --primary: #1b4fd8;
+  --primary-foreground: #ffffff;
+  --secondary: #1a2d63;
+  --secondary-foreground: #ffffff;
+  --muted: #1a2d63;
+  --muted-foreground: #c9d4f2;
+  --accent: #1a2d63;
+  --accent-foreground: #ffffff;
+  --destructive: #f87171;
+  --destructive-foreground: #0b1220;
+  --warning: #fcd34d;
+  --warning-background: #3a2a05;
+  --border: #2a3f7a;
+  --input: #8ea2d8;
+  --ring: #ffffff;
+  --nav-background: #0e1a3d;
+  --nav-foreground: #c9d4f2;
+  --nav-active: #ffffff;
+  color-scheme: dark;
+  --nav-pill: #1b4fd8;
+  --link: #ffffff;
+}
+
+:root[data-contrast="high"] {
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #0f2f99;
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: #000000;
+  --muted: #f1f5f9;
+  --muted-foreground: #1f2937;
+  --accent: #dbe4ff;
+  --accent-foreground: #000000;
+  --destructive: #8b0000;
+  --destructive-foreground: #ffffff;
+  --warning: #5a2600;
+  --warning-background: #fff4cc;
+  --border: #000000;
+  --input: #000000;
+  --ring: #000000;
+  --nav-background: #ffffff;
+  --nav-foreground: #000000;
+  --nav-active: #0f2f99;
+  --link: #0f2f99;
+  --nav-pill: #ffffff;
+}
+
+:root[data-theme="dark"][data-contrast="high"] {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #000000;
+  --card-foreground: #ffffff;
+  --popover: #000000;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #000000;
+  --secondary-foreground: #ffffff;
+  --muted: #111111;
+  --muted-foreground: #e5e7eb;
+  --accent: #1a1f33;
+  --accent-foreground: #ffffff;
+  --destructive: #ffb3b3;
+  --destructive-foreground: #000000;
+  --warning: #ffe08a;
+  --warning-background: #1a1400;
+  --border: #ffffff;
+  --input: #ffffff;
+  --ring: #ffffff;
+  --nav-background: #000000;
+  --nav-foreground: #ffffff;
+  --nav-active: #000000;
+  --link: #ffffff;
+  --nav-pill: #ffffff;
+}
+
+/* Tamanho de letra (RF-016): todo o layout usa rem. */
+:root[data-font="0"] {
+  font-size: 100%;
+}
+:root[data-font="1"] {
+  font-size: 112.5%;
+}
+:root[data-font="2"] {
+  font-size: 125%;
+}
+:root[data-font="3"] {
+  font-size: 150%;
+}

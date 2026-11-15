@@ -1,0 +1,11 @@
+FROM node:26-bookworm-slim
+# git é usado pelo painel /dev para ler o histórico (research R9).
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends git ca-certificates \
+  && apt-get clean \
+  && git config --global --add safe.directory /repo
+WORKDIR /repo/web
+COPY package.json package-lock.json ./
+RUN npm ci
+EXPOSE 3100
+CMD ["npm", "run", "dev", "--", "-H", "0.0.0.0"]

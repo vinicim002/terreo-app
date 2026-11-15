@@ -1,0 +1,14 @@
+import type { ReactNode } from "react"
+import { BottomNav } from "@/components/layout/BottomNav"
+import { ProfileGuard } from "@/navigation/ProfileGuard"
+import type { Profile } from "@/preferences/types"
+
+/** Moldura de todas as telas de um perfil: guarda, conteúdo e barra de baixo. */
+export function ProfileShell({ profile, children }: { profile: Profile; children: ReactNode }) {
+  return (
+    <ProfileGuard profile={profile}>
+      <div className="pb-[calc(5rem+env(safe-area-inset-bottom))]">{children}</div>
+      <BottomNav profile={profile} />
+    </ProfileGuard>
+  )
+}

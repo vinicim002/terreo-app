@@ -1,0 +1,75 @@
+# Ambiente local do Térreo (research R9). Portas escolhidas para não colidir
+# com os outros projetos: web 3100, api 8100, PostgreSQL 5440, Redis 6390.
+name: terreo
+
+services:
+  db:
+    image: postgres:18-alpine
+    env_file: .env
+    ports: ["5440:5432"]
+    volumes: [db-data:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    ports: ["6390:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  api:
+    build: ./api
+    env_file: .env
+    command: uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload
+    ports: ["8100:8100"]
+    volumes: [./api/app:/app/app, ./api/alembic:/app/alembic, ./api/tests:/app/tests]
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+
+  worker:
+    build: ./api
+    env_file: .env
+    command: uv run --no-sync arq app.worker.WorkerSettings
+    volumes: [./api/app:/app/app]
+    depends_on:
+      redis: { condition: service_healthy }
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    env_file: .env
+    environment:
+      WATCHPACK_POLLING: "true"
+    ports: ["3100:3100"]
+    working_dir: /repo/web
+    volumes:
+      # Repositório inteiro só para leitura: o painel /dev lê docs/, specs/ e o git (T080).
+      - .:/repo:ro
+      - ./web:/repo/web
+      # node_modules e .next da imagem (volumes anônimos, recriados com --renew-anon-volumes).
+      - /repo/web/node_modules
+      - /repo/web/.next
+    depends_on: [api]
+
+  # Testes de ponta a ponta (Playwright com Chromium e WebKit). Só sobe com `make e2e`.
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.65.1-noble
+    profiles: [e2e]
+    working_dir: /repo/web
+    environment:
+      E2E_BASE_URL: ${E2E_BASE_URL:-http://web:3100}
+      CI: "1"
+    volumes:
+      # Usa o node_modules do próprio repositório (Linux): rode `npm ci` em web/ antes.
+      - .:/repo
+    ipc: host
+    depends_on: [web]
+
+volumes:
+  db-data:

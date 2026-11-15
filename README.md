@@ -1,9 +1,9 @@
-# Terreo
+# Térreo
 
 App do condomínio: um lugar único onde **moradores**, **síndico** e **portaria** encontram tudo o que acontece no
 prédio.
 
-O Terreo funciona direto no celular, sem baixar nada da loja: basta abrir um link e adicionar o ícone à tela inicial
+O Térreo funciona direto no celular, sem baixar nada da loja: basta abrir um link e adicionar o ícone à tela inicial
 (PWA). Ele não substitui o WhatsApp do prédio, trabalha junto com ele: tudo o que é importante também chega pelo
 WhatsApp do condomínio, para que ninguém fique de fora.
 
@@ -44,6 +44,16 @@ Os princípios completos estão na constituição do projeto: [`.specify/memory/
 ## Status
 
 Em fase de especificação. A stack técnica ainda está sendo definida.
+
+## Documentação
+
+A documentação completa (visão geral, funcionalidades, arquitetura, desenvolvimento, backlog e histórico de
+alterações) fica em [`docs/`](docs/) e é publicada em PDF em
+[`docs/pdf/terreo-documentacao.pdf`](docs/pdf/terreo-documentacao.pdf). Para gerar o PDF de novo:
+
+```
+uv run scripts/gerar_pdf.py
+```
 
 ## Como o projeto é desenvolvido
 

@@ -15,12 +15,22 @@ leia antes de especificar, planejar ou implementar.
 - Nunca versionar `.env`, senhas, chaves, credenciais ou dados reais de moradores. Conferir `git status` antes do
   commit. A pasta `arquivos-gerais-terreo/` está no `.gitignore` e não sobe.
 
+## Documentação e PDF (obrigatório)
+
+- `docs/documentacao/NN-*.md` (capítulos), `docs/backlog.md` e `docs/changelog.md` são a documentação oficial; o PDF
+  `docs/pdf/terreo-documentacao.pdf` é gerado deles com `uv run scripts/gerar_pdf.py` (também anexa o `git log`).
+- Quando o usuário for encerrar o dia (ou pedir para atualizar o PDF), use a skill `/encerrar-dia`: changelog
+  (Adicionado/Alterado/Removido), backlog, capítulos afetados, PDF, conferência de segurança e commit se autorizado.
+- Mudança de funcionalidade, stack ou estrutura de pastas atualiza o capítulo correspondente.
+- Planejado: painel de desenvolvimento dentro do app (como o `/painel` do OnPath) com andamento, backlog, changelog,
+  commits e documentos; não entra na versão publicada.
+
 ## Estado atual
 
 Ainda não há código — a stack será discutida com o usuário. Não escolha tecnologia por conta própria; quando decidida,
 registre na constituição (princípio VI) e atualize este arquivo com os comandos de build/lint/test.
 
-Nome do app: **Terreo**. Os mockups usam "Condô" e "Edifício Aurora" — ignore esses nomes; o prédio piloto é o
+Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — ignore esses nomes; o prédio piloto é o
 **Edifício Taquaretinga**.
 
 ## Spec Kit

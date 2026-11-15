@@ -1,12 +1,13 @@
 <!--
 Relatório de sincronização
-- Versão: (modelo) → 1.0.0 (primeira versão)
-- Princípios criados: I a VII; seções "Restrições do Terreo", "Fluxo de trabalho" e "Governança".
+- Versão: 1.0.0 → 1.1.0 (seção nova)
+- Princípio II: documentação do produto em `docs/` com PDF; nova seção "Documentação e encerramento do dia".
+- Nome do produto corrigido para "Térreo".
 - Em aberto: stack (princípio VI) ainda será definida; comandos de teste e lint entram quando existirem.
 - Modelos em .specify/templates/: sem mudança necessária
 -->
 
-# Constituição do Terreo
+# Constituição do Térreo
 
 ## Princípios
 
@@ -21,7 +22,8 @@ mostradas à pessoa seguem o fuso de Brasília.
 
 ### II. A documentação é a fonte oficial
 
-`specs/NNN-nome/` descreve cada mudança. O `spec.md` diz **o quê e por quê**, sem tecnologia; a tecnologia fica no
+`docs/` descreve como o produto é (documentação, backlog e histórico de alterações) e é publicada também em PDF;
+`specs/NNN-nome/` descreve cada mudança. Mudança de comportamento atualiza `docs/` junto com o código. O `spec.md` diz **o quê e por quê**, sem tecnologia; a tecnologia fica no
 `plan.md`. Decisões em aberto ficam marcadas como em aberto, não supostas. As regras de negócio do produto (o
 "minimundo") são a referência de toda spec.
 
@@ -72,7 +74,7 @@ teste e lint entram aqui quando a stack for definida.
 
 **Por quê**: o teste e o roteiro de validação são a revisão quando não há outra pessoa revisando.
 
-## Restrições do Terreo
+## Restrições do Térreo
 
 - Três perfis com interfaces distintas: morador, portaria (porteiros e funcionários) e síndico.
 - A unidade é o apartamento. O síndico cadastra o apartamento e o morador responsável; só o responsável convida ou
@@ -89,10 +91,19 @@ teste e lint entram aqui quando a stack for definida.
   quando o desenvolvedor pedir.
 - Antes de cada commit, conferir que nenhum arquivo sensível (`.env`, credenciais, dados reais) está incluído.
 
+## Documentação e encerramento do dia
+
+- A documentação completa do projeto existe também em PDF (`docs/pdf/terreo-documentacao.pdf`), gerado por
+  `uv run scripts/gerar_pdf.py` a partir de `docs/documentacao/`, `docs/backlog.md` e `docs/changelog.md`. Ela serve
+  para manutenção, para quem entra no projeto e para apresentar as funcionalidades a clientes.
+- Ao fim de cada dia de trabalho (`/encerrar-dia`): o changelog recebe o que foi adicionado, alterado e removido; o
+  backlog e os capítulos afetados são atualizados; o PDF é gerado de novo e commitado.
+- O app terá um painel de desenvolvimento (fora da versão publicada) com andamento, backlog, histórico e documentos.
+
 ## Governança
 
 Esta constituição vale acima de qualquer outro guia do projeto. Todo `plan.md` confere cada princípio na
 "Verificação da constituição"; violação só entra justificada na seção de complexidade. Versão: MAIOR remove ou
 redefine princípio; MENOR acrescenta princípio ou seção; CORREÇÃO só ajusta texto.
 
-**Versão**: 1.0.0 | **Ratificada**: 2026-11-15 | **Última alteração**: 2026-11-15
+**Versão**: 1.1.0 | **Ratificada**: 2026-11-15 | **Última alteração**: 2026-11-15

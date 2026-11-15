@@ -49,7 +49,21 @@ Next.js (PWA) com Tailwind e shadcn/ui · FastAPI · PostgreSQL · ARQ e Redis �
 
 ## Status
 
-Em fase de especificação. A stack está definida; o código ainda não começou.
+Etapa 1 (base do app) implementada: navegação dos três perfis com as telas ainda vazias, três idiomas, temas e
+acessibilidade, app instalável que funciona sem internet, dados de exemplo e painel de desenvolvimento.
+
+## Como rodar
+
+Requisitos: Docker com Docker Compose, Node.js 26 e [uv](https://docs.astral.sh/uv/).
+
+```
+cp .env.example .env
+cd web && npm ci && cd ..
+make dev          # ou: docker compose up --build -d --renew-anon-volumes
+```
+
+Abra http://localhost:3100 (app) e http://localhost:3100/dev (painel). Testes: `make test`, `make lint` e `make e2e`.
+Detalhes em [`docs/documentacao/04-desenvolvimento.md`](docs/documentacao/04-desenvolvimento.md).
 
 ## Documentação
 

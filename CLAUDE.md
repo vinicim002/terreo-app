@@ -22,16 +22,42 @@ leia antes de especificar, planejar ou implementar.
 - Quando o usuário for encerrar o dia (ou pedir para atualizar o PDF), use a skill `/encerrar-dia`: changelog
   (Adicionado/Alterado/Removido), backlog, capítulos afetados, PDF, conferência de segurança e commit se autorizado.
 - Mudança de funcionalidade, stack ou estrutura de pastas atualiza o capítulo correspondente.
-- Planejado: painel de desenvolvimento dentro do app (como o `/painel` do OnPath) com andamento, backlog, changelog,
-  commits e documentos; não entra na versão publicada.
+- O painel `/dev` (só no `next dev`) lê docs/, specs/, backlog e `git log` direto do repositório.
+
+## Comandos
+
+`make` pode não estar instalado (`sudo apt install make`); os equivalentes diretos estão em
+`docs/documentacao/04-desenvolvimento.md`.
+
+- Ambiente: `cp .env.example .env`, `cd web && npm ci`, `make dev` (= `docker compose up --build -d --renew-anon-volumes`).
+  Interface http://localhost:3100, painel `/dev`, API `/api/health`.
+- Testes: `make test` (Vitest + pytest), `make lint` (ESLint, Prettier, tsc, Ruff), `make e2e` (Playwright no contêiner
+  `mcr.microsoft.com/playwright`, contra o `make dev`), `make e2e-build` (testes `@build`: PWA, sem internet,
+  atualização, demonstração), `make perf` (Lighthouse).
+- Um teste só: `cd web && npx vitest run tests/unit/<arquivo>`;
+  `docker compose --profile e2e run --rm e2e npx playwright test tests/e2e/<arquivo> --project=pixel-7`;
+  `cd api && uv run pytest tests/<arquivo>::<teste>`.
+- Build: `cd web && npm run build:demo` (exportação estática em `web/out/` + service worker).
+- Depois de criar rotas novas, rode `cd web && npx next typegen` para atualizar os tipos `PageProps`/`LayoutProps`.
+- Os testes e2e rodam com o navegador em `pt-BR`; o app detecta o idioma do aparelho.
+
+## Next.js 16 (leia `web/AGENTS.md`)
+
+Esta versão difere do que você conhece: consulte `web/node_modules/next/dist/docs/` antes de usar APIs do Next.
+Já verificado: `output: 'export'` não aceita rewrites nem route handlers dinâmicos (nem no `next dev`), por isso só é
+ligado no build; `allowedDevOrigins` precisa incluir `web` (contêiner dos testes); `cacheComponents` fica desligado.
+Arquivos `*.dev.tsx` não podem usar os tipos gerados `PageProps`/`LayoutProps` (não existem no build).
 
 ## Estado atual e stack
 
-Ainda não há código. A stack está decidida e registrada na constituição (princípio VI) e em
-`docs/documentacao/03-arquitetura.md`: monorepo `web/` (Next.js App Router + TS, Tailwind + shadcn/ui, next-intl
-pt/en/es, Vitest + Playwright) e `api/` (FastAPI, SQLAlchemy, Alembic, PostgreSQL, pytest, ARQ + Redis), fotos no
-Cloudflare R2 (bucket privado, URL assinada), WhatsApp pela Evolution API atrás de serviço trocável com fila, Web Push
-(VAPID), Docker Compose + Caddy em VPS. Ao criar o código, acrescente aqui os comandos de build/lint/test.
+Stack na constituição (princípio VI) e em `docs/documentacao/03-arquitetura.md`: monorepo `web/` (Next.js App Router +
+TS, Tailwind + shadcn/ui, next-intl pt/en/es, Vitest + Playwright) e `api/` (FastAPI, SQLAlchemy, Alembic,
+PostgreSQL, pytest, ARQ + Redis), fotos no Cloudflare R2, WhatsApp pela Evolution API atrás de serviço trocável com
+fila, Web Push (VAPID), Docker Compose + Caddy em VPS.
+
+Identidade visual: azul `#1B4FD8` + branco `#FFFFFF`; nome e títulos em Plus Jakarta Sans peso 800. Preenchimentos
+(botões, ícones, item ativo) são sempre azul com branco, também no escuro; cores só pelos tokens de
+`web/src/theme/tokens.css` (o teste de contraste confere a marca e os níveis AA/AAA).
 
 Regras de arquitetura que atravessam o código:
 - Next.js só renderiza telas; regra de negócio fica no FastAPI, chamado pelo navegador em `/api` no mesmo domínio.
@@ -44,7 +70,7 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
-Spec em andamento: `specs/001-base-do-app/` (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
+Spec mais recente: `specs/001-base-do-app/` (implementada) (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
 estática, next-intl sem idioma na URL, preferências aplicadas antes da pintura via atributos `data-*`, Serwist sobre
 `web/out/`, serviços tipados sobre IndexedDB, painel `/dev` só em `next dev` via `pageExtensions` `.dev.tsx`,
 `NEXT_PUBLIC_APP_MODE` = dev|demo|real, demonstração no Cloudflare Pages, portas web 3100 / api 8100 / db 5440 /

@@ -13,12 +13,14 @@ O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "I
 - [x] Definir a stack técnica e registrar na constituição (1.2.0).
 - [ ] Tirar as dúvidas abertas com o síndico (reuniões, rodízio de folgas, horário dos faxineiros, outras necessidades).
 
-## Etapa 1 — Base do app (Proposta)
+## Etapa 1 — Base do app (spec 001)
 
-- [ ] Monorepo com `web/` (Next.js) e `api/` (FastAPI), Docker Compose para o ambiente local.
-- [ ] PWA instalável com os ícones do kit, tema claro, escuro e alto contraste, três idiomas, navegação por perfil.
-- [ ] Camada de serviços tipados com dados locais (trocável pela API).
-- [ ] Painel de desenvolvimento: andamento, backlog, changelog, commits e documentos.
+- [x] Monorepo com `web/` (Next.js) e `api/` (FastAPI), Docker Compose para o ambiente local.
+- [x] PWA instalável com os ícones do kit, tema claro, escuro e alto contraste, três idiomas, navegação por perfil.
+- [x] Camada de serviços tipados com dados locais (trocável pela API).
+- [x] Painel de desenvolvimento: andamento, backlog, changelog, commits e documentos.
+- [ ] Publicar a demonstração no Cloudflare Pages (passos em `04-desenvolvimento.md`; precisa da conta Cloudflare).
+- [ ] Validar em celulares reais: instalação no Android e no iPhone, VLibras, "seguir o celular" no iPhone.
 
 ## Etapa 2 — Telas com dados locais (Proposta)
 

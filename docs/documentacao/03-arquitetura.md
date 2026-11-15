@@ -32,6 +32,8 @@ Celular (PWA Next.js) ──HTTPS──> Caddy ──> /       Next.js (telas)
                                                                      └──> Web Push ──> celulares
 ```
 
+- **Telas como arquivos estáticos.** O Next.js gera, no build, um arquivo por tela (exportação estática). Não há
+  servidor de interface em produção; o Caddy (ou o Cloudflare Pages, na demonstração) só entrega os arquivos.
 - **Next.js só cuida das telas.** As regras de negócio ficam na API. O navegador chama a API no mesmo domínio
   (`/api`), e o cookie de sessão vale para os dois.
 - **Front-end primeiro.** As telas usam serviços com tipos definidos. Primeiro esses serviços usam dados locais, para
@@ -49,6 +51,17 @@ protegido (httpOnly e, em produção, Secure) com um token aleatório. O banco g
 expira após 6 meses sem uso e pode ser encerrada pelo responsável do apartamento ou pelo síndico, por exemplo quando
 alguém se muda ou troca de celular.
 
+## Identidade visual
+
+- Azul `#1B4FD8` com branco `#FFFFFF`; nome e títulos em Plus Jakarta Sans, peso 800 (kit da marca).
+- Nos dois temas, botões, ícones e o item ativo da barra usam o azul com branco. No tema escuro, o fundo é um azul
+  bem escuro e o texto sobre ele é branco. Só o alto contraste escurece o azul, para atingir o contraste AAA.
+- Cores só pelos tokens de `web/src/theme/tokens.css`; um teste automático confere as cores da marca e o contraste.
+
+## Portas locais
+
+Interface 3100, API 8100, PostgreSQL 5440, Redis 6390 (sem colidir com os outros projetos).
+
 ## Riscos conhecidos
 
 - **Evolution API não é oficial.** O número pode ser bloqueado pelo WhatsApp se enviar mensagens demais ou receber
@@ -64,8 +77,17 @@ alguém se muda ou troca de celular.
 |---|---|
 | `README.md` | Apresentação rápida do projeto. |
 | `CLAUDE.md` | Orientações para o Claude Code trabalhar no repositório. |
-| `web/` | Interface em Next.js (será criada). |
-| `api/` | API em FastAPI, migrações e tarefas do ARQ (será criada). |
+| `web/app/` | Rotas da interface: escolha de perfil, `/resident`, `/front-desk`, `/manager`, `/settings` e o painel `/dev`. |
+| `web/src/navigation/screens.ts` | Catálogo único de telas: gera rotas, barra de baixo, "Mais" e "Todos os serviços". |
+| `web/src/services/` | Serviços de dados (contratos, esquemas, IndexedDB, memória) e os dados de exemplo (`local/seed.ts`). |
+| `web/src/preferences/` | Idioma, tema, alto contraste e tamanho de letra, aplicados antes da primeira pintura. |
+| `web/src/theme/tokens.css` | Cores das quatro aparências (claro, escuro e cada um com alto contraste). |
+| `web/messages/` | Textos em português, inglês e espanhol. |
+| `web/sw.ts` · `web/scripts/` | Service worker (uso sem internet) e scripts de build. |
+| `web/tests/` | Testes unitários (Vitest) e de ponta a ponta (Playwright). |
+| `api/app/` | API em FastAPI (`/api/health`), configuração e worker do ARQ. |
+| `api/alembic/` | Migrações do banco. |
+| `docker-compose.yml` · `Makefile` · `.env.example` | Ambiente local e comandos. |
 | `docs/documentacao/` | Fonte desta documentação, em Markdown, um arquivo por capítulo. |
 | `docs/backlog.md` | Plano de desenvolvimento: etapas e o que falta fazer. |
 | `docs/changelog.md` | Histórico do que foi adicionado, alterado e removido, por data. |

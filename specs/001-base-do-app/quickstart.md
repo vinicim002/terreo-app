@@ -24,6 +24,7 @@ Esperado: interface em `http://localhost:3100`, `http://localhost:3100/api/healt
 make lint           # ESLint + Prettier (web) e Ruff (api)
 make test           # Vitest (web) e pytest (api)
 make e2e            # Playwright em Pixel 7 e iPhone 14, com auditoria axe
+make perf           # Lighthouse no build de demonstração (4G simulado): ≤ 3 s e ≤ 1 s com cache
 ```
 
 Esperado: tudo verde. Os testes cobrem: chaves de tradução iguais nos três idiomas (RF-014), contraste dos tokens
@@ -63,6 +64,7 @@ make serve-demo     # serve web/out em http://<ip-da-máquina>:3200
 | 18 | iPhone: "Adicionar à Tela de Início" | Ícone da marca sem bordas brancas | H3-2 |
 | 19 | Abrir uma vez, ligar o modo avião, abrir telas nunca visitadas | Todas abrem, aviso de sem internet | H3-4 |
 | 20 | Publicar nova versão, abrir duas vezes | Na segunda abertura, versão nova | H3-5 |
+| 21 | Em modo avião, abrir `/settings` | Botão do VLibras oculto e aviso de Libras indisponível; volta ao reconectar | RF-019 |
 
-Observação: a instalação no celular exige HTTPS; nos cenários 17 a 20 use a demonstração publicada no Cloudflare Pages
+Observação: a instalação no celular exige HTTPS; nos cenários 17 a 21 use a demonstração publicada no Cloudflare Pages
 ou um túnel HTTPS para a máquina.

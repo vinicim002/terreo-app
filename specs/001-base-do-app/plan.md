@@ -17,14 +17,15 @@ serviços tipados sobre IndexedDB com os dados de exemplo do Taquaretinga, paine
 
 **Linguagem/Versão**: TypeScript (interface), Python 3.14 (API); versões estáveis atuais na instalação
 
-**Dependências principais**: Next.js (App Router, `output: 'export'`), React, Tailwind CSS 4, shadcn/ui, lucide,
+**Dependências principais**: Next.js (App Router, `output: 'export'` só no build), React, Tailwind CSS 4, shadcn/ui, lucide,
 next-intl, TanStack Query, Zod, idb, Serwist, react-markdown + remark-gfm (painel); FastAPI, SQLAlchemy 2 (asyncpg),
 Alembic, ARQ, Pydantic Settings
 
 **Armazenamento**: IndexedDB no aparelho (dados de exemplo) e `localStorage` (preferências); PostgreSQL e Redis só
 como esqueleto da API
 
-**Testes**: Vitest + Testing Library; Playwright (Pixel 7, iPhone 14) + @axe-core/playwright; pytest + httpx
+**Testes**: Vitest + Testing Library; Playwright (Pixel 7, iPhone 14) + @axe-core/playwright; Lighthouse CI
+(desempenho); pytest + httpx
 
 **Plataforma alvo**: navegadores de celular (Chrome Android, Safari iOS 16.4+); VPS Linux com Docker no futuro;
 Cloudflare Pages para a demonstração

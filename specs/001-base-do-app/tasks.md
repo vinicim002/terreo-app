@@ -27,17 +27,17 @@ independente.
 **Objetivo**: criar o monorepo, as ferramentas e o ambiente local (RF-001, RF-003).
 
 - [ ] T001 Criar `.env.example` na raiz com variáveis de desenvolvimento sem segredos reais (`APP_ENV=development`, `DATABASE_URL`, `REDIS_URL`, `NEXT_PUBLIC_APP_MODE=dev`, `API_INTERNAL_URL=http://api:8100`) e conferir que `.env` continua no `.gitignore`
-- [ ] T002 Inicializar o Next.js (App Router, TypeScript, Tailwind CSS 4, ESLint, sem `src/app`) em `web/` com `output: 'export'`, `images.unoptimized` e `trailingSlash: true` em `web/next.config.ts`
+- [ ] T002 Inicializar o Next.js (App Router, TypeScript, Tailwind CSS 4, ESLint, sem `src/app`) em `web/`, com `output: 'export'` **apenas quando `NODE_ENV === "production"`** (no `next dev` fica desligado, para permitir *rewrites* e route handlers — research R1), `images.unoptimized` e `trailingSlash: true` em `web/next.config.ts`
 - [ ] T003 [P] Inicializar o projeto Python com `uv` em `api/pyproject.toml` (FastAPI, uvicorn, SQLAlchemy 2 com asyncpg, Alembic, ARQ, Pydantic Settings, redis; dev: pytest, pytest-asyncio, httpx, ruff) e configurar Ruff (lint + formatação)
-- [ ] T004 [P] Instalar na interface: next-intl, @tanstack/react-query, zod, idb, lucide-react, react-markdown, remark-gfm, @serwist/build e serwist; dev: vitest, @testing-library/react, @testing-library/jest-dom, jsdom, fake-indexeddb, @playwright/test, @axe-core/playwright, prettier — em `web/package.json`
+- [ ] T004 [P] Instalar na interface: next-intl, @tanstack/react-query, zod, idb, lucide-react, react-markdown, remark-gfm, @serwist/build e serwist; dev: vitest, @testing-library/react, @testing-library/jest-dom, jsdom, fake-indexeddb, @playwright/test, @axe-core/playwright, @lhci/cli, prettier — em `web/package.json`
 - [ ] T005 [P] Inicializar o shadcn/ui em `web/components.json` (estilo padrão, cores por variáveis CSS, ícones lucide) e adicionar os componentes `button`, `card`, `switch`, `radio-group`, `dialog`, `separator` em `web/src/components/ui/`
 - [ ] T006 [P] Configurar Prettier em `web/.prettierrc` e scripts `lint`, `format`, `test`, `e2e`, `build`, `build:demo` em `web/package.json`
 - [ ] T007 [P] Configurar Vitest (jsdom, `fake-indexeddb/auto`, jest-dom) em `web/vitest.config.ts` e `web/tests/setup.ts`
 - [ ] T008 [P] Configurar Playwright com projetos `Pixel 7` e `iPhone 14`, `baseURL` `http://localhost:3100` em `web/playwright.config.ts`
 - [ ] T009 Criar `docker-compose.yml` na raiz com `db` (PostgreSQL, porta 5440), `redis` (porta 6390), `api` (porta 8100), `worker` (ARQ) e `web` (`next dev` na porta 3100 com `WATCHPACK_POLLING=true`), lendo o `.env`, com volumes nomeados para o banco
-- [ ] T010 [P] Criar `api/Dockerfile` (uv, Python 3.14) e `web/Dockerfile.dev` (Node, `npm ci`, `next dev -p 3100`)
+- [ ] T010 [P] Criar `api/Dockerfile` (uv, Python 3.14) e `web/Dockerfile.dev` (Node, `git` instalado, `git config --global --add safe.directory /repo`, `npm ci`, `next dev -p 3100`)
 - [ ] T011 Criar `Makefile` na raiz com `dev`, `down`, `test` (vitest + pytest), `lint` (eslint + prettier --check + ruff), `e2e`, `build-demo`, `serve-demo` (porta 3200)
-- [ ] T012 [P] Acrescentar ao `.gitignore` da raiz: `web/out/`, `web/.next/`, `web/playwright-report/`, `web/test-results/`, `web/public/sw.js`, `api/.venv/`, `.pytest_cache/`, `.ruff_cache/`
+- [ ] T012 [P] Acrescentar ao `.gitignore` da raiz: `web/out/`, `web/.next/`, `web/.lighthouseci/`, `web/playwright-report/`, `web/test-results/`, `api/.venv/`, `.pytest_cache/`, `.ruff_cache/`
 
 **Ponto de controle**: `make dev` sobe os cinco serviços sem erro.
 
@@ -57,22 +57,22 @@ independente.
 - [ ] T016 Criar a aplicação FastAPI com prefixo `/api`, `GET /api/health` (cada verificação com tempo limite de 2 s) e `/docs`/`/openapi.json` só com `APP_ENV=development` em `api/app/main.py`
 - [ ] T017 [P] Inicializar Alembic com migração base vazia `0001_base` em `api/alembic/` e `api/alembic.ini`
 - [ ] T018 [P] Criar o worker ARQ que só registra no log que subiu em `api/app/worker.py`
-- [ ] T019 Configurar *rewrite* de `/api/:path*` para `API_INTERNAL_URL` apenas em desenvolvimento em `web/next.config.ts`
+- [ ] T019 Configurar *rewrite* de `/api/:path*` para `API_INTERNAL_URL` apenas em desenvolvimento (a função `rewrites` só é declarada quando `output: 'export'` está desligado) em `web/next.config.ts`
 
 ### Preferências, tema e idioma (base usada por todas as telas)
 
-- [ ] T020 [P] Escrever testes de preferências (padrões `theme: "system"`, `highContrast: false`, `fontScale: 0`, `profile: null`; idioma inicial `en*`→`en`, `es*`→`es`, demais→`pt`; leitura tolerante a JSON inválido e a `localStorage` indisponível) em `web/tests/unit/preferences.test.ts`
+- [ ] T020 [P] Escrever testes de preferências (padrões `theme: "system"`, `highContrast: false`, `fontScale: 0`, `profile: null`; idioma inicial `en*`→`en`, `es*`→`es`, demais→`pt`; leitura tolerante a JSON inválido e a `localStorage` indisponível) em `web/tests/unit/preferences.test.ts`, e teste do formatador de datas (um instante UTC `2026-11-15T02:30:00Z` aparece como `14/11/2026 23:30` em `pt`, no fuso de Brasília, e no formato de `en` e `es`; RF-013) em `web/tests/unit/datetime.test.ts`
 - [ ] T021 Implementar o módulo de preferências (`DevicePreferences`: `profile` `resident|front-desk|manager|null`, `locale` `pt|en|es`, `theme` `light|dark|system`, `highContrast` booleano, `fontScale` `0|1|2|3`; chave `terreo:prefs`) com leitura, gravação e hook `usePreferences` em `web/src/preferences/`
 - [ ] T022 Implementar o script inline anterior à pintura que aplica `data-theme`, `data-contrast` e `data-font` no `<html>` a partir de `terreo:prefs` e `prefers-color-scheme` em `web/src/preferences/no-flash-script.ts`
 - [ ] T023 [P] Definir os tokens de cor da marca (`#1B4FD8` + branco) para as quatro aparências e a escala de letra (100%, 112,5%, 125%, 150%) em `web/src/theme/tokens.css`, importado por `web/app/globals.css`
 - [ ] T024 [P] Criar os arquivos de mensagens com a estrutura de chaves (`common`, `nav`, `screens`, `settings`, `errors`, `profiles`) em `web/messages/pt.json`, `web/messages/en.json`, `web/messages/es.json`
-- [ ] T025 Implementar o provider de idioma (next-intl no cliente, troca sem recarregar, `timeZone: "America/Sao_Paulo"`, `getMessageFallback` devolvendo o texto em português) em `web/src/i18n/IntlProvider.tsx`
+- [ ] T025 Implementar o provider de idioma (next-intl no cliente, troca sem recarregar, `timeZone: "America/Sao_Paulo"`, `getMessageFallback` devolvendo o texto em português) em `web/src/i18n/IntlProvider.tsx` e o formatador de datas usado pelas telas em `web/src/i18n/datetime.ts`
 - [ ] T026 Implementar o modo do app (`NEXT_PUBLIC_APP_MODE` = `dev|demo|real`, padrão `real`) em `web/src/config/app-mode.ts`
 
 ### Catálogo de telas e contratos de dados
 
 - [ ] T027 Criar o catálogo único de telas por perfil (slug, perfil, grupo, ícone lucide, chave de título, se aparece na barra de baixo, em "Mais" ou em "Todos os serviços"), exatamente como em `contracts/rotas.md`, em `web/src/navigation/screens.ts`
-- [ ] T028 [P] Criar os esquemas Zod de `Condominium`, `Apartment`, `Resident`, `Staff`, `ShiftAssignment` e `SeedMeta` com as regras do `data-model.md` (ex.: `name` "obrigatório, 2–120 caracteres"; `number` "único por condomínio"; `phone` "formato E.164 (`+55...`)"; `kind` `owner|tenant|family`; `role` `doorman|cleaner`; `weekday` "0 (domingo) a 6 (sábado)"; `startTime`/`endTime` `HH:mm`) em `web/src/services/schemas.ts`
+- [ ] T028 [P] Criar os esquemas Zod de `Condominium`, `Apartment`, `Resident`, `Staff`, `ShiftAssignment` e `SeedMeta` com as regras do `data-model.md` (ex.: `name` "obrigatório, 2–120 caracteres"; `number` "único por condomínio"; `phone` "obrigatório, formato E.164 (`+` seguido de 10 a 15 dígitos)" e "único por condomínio"; `floor` "1 ≤ floor ≤ Condominium.floors"; `isResponsible` "exatamente um `true` por apartamento com moradores"; `responsibleResidentId` "→ Resident do mesmo apartamento; nulo = sem responsável"; `kind` `owner|tenant|family`; `role` `doorman|cleaner`; `weekday` "0 (domingo) a 6 (sábado)"; `startTime`/`endTime` `HH:mm`) em `web/src/services/schemas.ts`
 - [ ] T029 [P] Criar as interfaces dos serviços, `ServiceContext`, `ServiceError` (`not_found|forbidden|validation|unavailable`) e `Services` conforme `contracts/servicos-dados.md` em `web/src/services/contracts.ts`
 - [ ] T030 Montar o layout raiz com o script anti-piscar no `<head>`, providers (preferências, idioma, TanStack Query) e `lang` dinâmico em `web/app/layout.tsx`
 
@@ -89,7 +89,7 @@ tela e título certos, com a barra visível.
 
 ### Testes da História 1
 
-- [ ] T031 [P] [US1] Escrever teste unitário do catálogo (slugs únicos por perfil; quatro itens na barra de cada perfil, na ordem de `contracts/rotas.md`; toda tela com chave de título existente em `pt.json`) em `web/tests/unit/screens.test.ts`
+- [ ] T031 [P] [US1] Escrever teste unitário do catálogo (slugs únicos por perfil; quatro itens na barra de cada perfil, na ordem de `contracts/rotas.md`; toda tela com chave de título existente em `pt.json`; toda tela alcançável em no máximo 2 toques a partir do início do perfil — barra de baixo, ou "Mais"/"Todos os serviços" e a tela; todas as funcionalidades do capítulo "Funcionalidades" presentes no catálogo, CS-001 e RF-007) em `web/tests/unit/screens.test.ts`
 - [ ] T032 [P] [US1] Escrever teste e2e de navegação (cenários H1-1 a H1-7: escolha de perfil, barra, troca sem recarregar, endereço direto, tela de outro perfil, página inexistente, perfil lembrado) em `web/tests/e2e/navigation.spec.ts`
 
 ### Implementação da História 1
@@ -123,7 +123,7 @@ pisca e que as escolhas foram mantidas.
 
 - [ ] T045 [P] [US2] Escrever teste que compara as chaves de `pt.json`, `en.json` e `es.json` e falha se alguma faltar ou sobrar (RF-014) em `web/tests/unit/messages.test.ts`
 - [ ] T046 [P] [US2] Escrever teste de contraste dos pares texto/fundo dos tokens nas quatro aparências (≥ 4,5 sem alto contraste; ≥ 7 com alto contraste) em `web/tests/unit/contrast.test.ts`
-- [ ] T047 [P] [US2] Escrever teste e2e (H2-1 a H2-6: idioma inicial pelo navegador, troca na hora, tema escuro, alto contraste, seguir o celular, letra no máximo sem rolagem lateral em 320 px, sem piscar ao recarregar) em `web/tests/e2e/preferences.spec.ts`
+- [ ] T047 [P] [US2] Escrever teste e2e (H2-1 a H2-6: idioma inicial pelo navegador, troca na hora, tema escuro, alto contraste, seguir o celular, letra no máximo sem rolagem lateral em 320 px, sem piscar ao recarregar; troca de idioma, tema e letra visível em menos de 1 s, CS-003) em `web/tests/e2e/preferences.spec.ts`
 - [ ] T048 [P] [US2] Escrever auditoria axe em todas as telas de primeiro nível dos três perfis nas quatro aparências, falhando em violações `serious` ou `critical` (CS-006) em `web/tests/e2e/accessibility.spec.ts`
 
 ### Implementação da História 2
@@ -132,7 +132,7 @@ pisca e que as escolhas foram mantidas.
 - [ ] T050 [US2] Fazer o modo "seguir o celular" reagir à mudança de `prefers-color-scheme` em tempo real em `web/src/preferences/useSystemTheme.ts`
 - [ ] T051 [P] [US2] Traduzir todas as chaves para inglês em `web/messages/en.json`
 - [ ] T052 [P] [US2] Traduzir todas as chaves para espanhol em `web/messages/es.json`, conferindo que textos mais longos não cortam a barra de baixo nem os botões
-- [ ] T053 [US2] Incluir o widget VLibras (script oficial, carregado depois da interação inicial) em `web/src/components/accessibility/VLibras.tsx` e no `web/app/layout.tsx`
+- [ ] T053 [US2] Incluir o widget VLibras (script oficial, carregado depois da interação inicial e só com internet; sem conexão, botão oculto e aviso "Tradução para Libras indisponível sem internet" em `/settings`; recarrega ao voltar a conexão — research R3a) em `web/src/components/accessibility/VLibras.tsx` e no `web/app/layout.tsx`
 - [ ] T054 [US2] Revisar `Header`, `BottomNav`, `ScreenList` e `EmptyScreen` para usar só tokens de cor e `rem`, com nomes acessíveis e foco visível em `web/src/components/layout/`
 - [ ] T055 [US2] Avisar que as preferências não serão lembradas quando o `localStorage` estiver indisponível em `web/src/preferences/StorageWarning.tsx`
 
@@ -149,13 +149,13 @@ e ver a troca na abertura seguinte.
 
 ### Testes da História 3
 
-- [ ] T056 [P] [US3] Escrever teste e2e sobre o build servido (manifesto com `name: "Térreo"`, `theme_color: "#1B4FD8"`, ícones 192/512/maskable; service worker ativo; com a rede desligada, abrir telas nunca visitadas dos três perfis e ver o aviso de sem internet) em `web/tests/e2e/pwa.spec.ts`
+- [ ] T056 [P] [US3] Escrever teste e2e sobre o build servido (manifesto com `name: "Térreo"`, `theme_color: "#1B4FD8"`, ícones 192/512/maskable; service worker ativo; com a rede desligada, abrir telas nunca visitadas dos três perfis, ver o aviso de sem internet e o botão do VLibras oculto; atualização: servir um build, abrir, trocar pelo build seguinte com outro identificador de versão, abrir duas vezes e conferir que a segunda abertura usa a versão nova, RF-023a) em `web/tests/e2e/pwa.spec.ts`
 
 ### Implementação da História 3
 
 - [ ] T057 [P] [US3] Copiar do kit da marca `favicon.ico`, `icon.svg` (de `terreo-favicon.svg`) e `apple-icon.png` (de `apple-touch-icon.png`) para `web/app/`, e `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` para `web/public/`
 - [ ] T058 [P] [US3] Criar o manifesto conforme o `LEIA-ME.md` do kit (`display: "standalone"`, `background_color` e `theme_color` `#1B4FD8`) em `web/app/manifest.ts`
-- [ ] T059 [US3] Escrever o service worker (precache da lista injetada, *stale-while-revalidate* para o resto, nova versão assume na abertura seguinte) em `web/sw.ts`
+- [ ] T059 [US3] Escrever o service worker (precache da lista injetada, *stale-while-revalidate* para o resto exceto scripts de terceiros como o VLibras, nova versão assume na abertura seguinte) e expor o identificador de versão do build (`NEXT_PUBLIC_BUILD_ID`) em `web/sw.ts`
 - [ ] T060 [US3] Criar o script de pós-build que roda o Serwist `injectManifest` sobre `web/out/` e gera `web/out/sw.js`, ligado aos scripts `build` e `build:demo` em `web/scripts/build-sw.mjs`
 - [ ] T061 [US3] Registrar o service worker apenas fora do modo `dev` em `web/src/pwa/register-sw.ts`
 - [ ] T062 [US3] Criar o aviso discreto de sem internet (eventos `online`/`offline`, some ao reconectar) em `web/src/components/layout/OfflineBanner.tsx` e incluí-lo em `web/app/layout.tsx`
@@ -173,12 +173,12 @@ outro condomínio → nada.
 
 ### Testes da História 4
 
-- [ ] T063 [P] [US4] Escrever testes dos serviços locais (dados criados uma vez; contagens 1 condomínio, 48 apartamentos, 5 funcionários, 3 apartamentos sem responsável; `getByNumber` inexistente → `not_found`; id de outro condomínio → `not_found`; `onDutyAt` às 07:00, 15:00 e 23:00 de Brasília devolve o porteiro do turno; `resetSeed` recria) em `web/tests/unit/services-local.test.ts`
+- [ ] T063 [P] [US4] Escrever testes dos serviços locais (dados criados uma vez; contagens 1 condomínio, 48 apartamentos, 5 funcionários, 3 apartamentos sem responsável; `getByNumber` inexistente → `not_found`; id de outro condomínio → `not_found`; `onDutyAt` às 07:00, 15:00 e 23:00 de Brasília devolve o porteiro do turno; `resetSeed` recria; os dados de exemplo respeitam as regras do `data-model.md`: telefones únicos no condomínio e todos com DDD `00`, exatamente um responsável por apartamento com moradores, `responsibleResidentId` apontando para morador do mesmo apartamento, `floor` entre 1 e 12) em `web/tests/unit/services-local.test.ts`
 - [ ] T064 [P] [US4] Escrever teste da implementação em memória usada quando o IndexedDB falha em `web/tests/unit/services-memory.test.ts`
 
 ### Implementação da História 4
 
-- [ ] T065 [US4] Criar o módulo de dados de exemplo com versão (Edifício Taquaretinga, 12 andares, 4 por andar, apartamentos 101–1204; moradores fictícios em 45 apartamentos, de 1 a 4 por apartamento e um responsável cada; telefones `+55 21 90000-0000` a `+55 21 90000-9999`; 3 porteiros, um chefe, e 2 faxineiros; escala 06:00–14:00, 14:00–22:00, 22:00–06:00 com folgas alternadas; faxineiros 08:00–17:00 de segunda a sexta e 08:00–12:00 aos sábados) em `web/src/services/local/seed.ts`
+- [ ] T065 [US4] Criar o módulo de dados de exemplo com versão (Edifício Taquaretinga, 12 andares, 4 por andar, apartamentos 101–1204; moradores fictícios em 45 apartamentos, de 1 a 4 por apartamento e um responsável cada; telefones fictícios com DDD inexistente, `+55 00 90000-0000` a `+55 00 90000-9999`; 3 porteiros, um chefe, e 2 faxineiros; escala 06:00–14:00, 14:00–22:00, 22:00–06:00 com folgas alternadas; faxineiros 08:00–17:00 de segunda a sexta e 08:00–12:00 aos sábados) em `web/src/services/local/seed.ts`
 - [ ] T066 [US4] Implementar o banco IndexedDB (lojas por entidade, índice por `condominiumId`, `SeedMeta`) e a criação dos dados de exemplo quando a versão gravada for diferente em `web/src/services/local/db.ts`
 - [ ] T067 [US4] Implementar os serviços locais (`condominium`, `apartments`, `residents`, `staff` com `onDutyAt` no fuso de Brasília e turnos que passam da meia-noite, `schedule`, `dev`), validando retornos com Zod e filtrando por `condominiumId`, em `web/src/services/local/index.ts`
 - [ ] T068 [P] [US4] Implementar os mesmos serviços em memória a partir do `seed.ts` em `web/src/services/memory/index.ts`
@@ -219,13 +219,14 @@ responder "não existe".
 ## Fase 8: Acabamento e itens transversais
 
 - [ ] T081 [P] Escrever teste e2e sobre o build `demo` confirmando que `/dev` responde "não existe" e que a faixa "Demonstração" aparece (CS-008, RF-004a) em `web/tests/e2e/demo-build.spec.ts`
+- [ ] T081a [P] Configurar o Lighthouse CI sobre o build `demo` servido localmente (perfil móvel padrão com 4G simulado; falha se a primeira exibição de conteúdo passar de 3 s; segunda medição com o service worker ativo ≤ 1 s, CS-005), com o comando `make perf`, em `web/lighthouserc.json` e no `Makefile`
 - [ ] T082 Configurar a publicação da demonstração no Cloudflare Pages (comando `npm run build:demo`, pasta `web/out`, variável `NEXT_PUBLIC_APP_MODE=demo`) e documentar os passos em `docs/documentacao/04-desenvolvimento.md`
 - [ ] T083 [P] Atualizar `docs/documentacao/03-arquitetura.md` com as pastas reais de `web/` e `api/`, a exportação estática, a demonstração no Cloudflare Pages e as portas
 - [ ] T084 [P] Atualizar `docs/documentacao/04-desenvolvimento.md` com `make dev`, `make test`, `make lint`, `make e2e`, `make build-demo` e `make serve-demo`
 - [ ] T085 [P] Atualizar `CLAUDE.md` com os comandos reais de build, lint e testes (incluindo como rodar um único teste: `npx vitest run <arquivo>`, `npx playwright test <arquivo>`, `uv run pytest api/tests/<arquivo>::<teste>`)
 - [ ] T086 [P] Atualizar `README.md` com "Como rodar" em poucos passos
-- [ ] T087 Rodar `make lint`, `make test` e `make e2e` e corrigir o que falhar
-- [ ] T088 Executar os 20 cenários de `specs/001-base-do-app/quickstart.md` e registrar o resultado
+- [ ] T087 Rodar `make lint`, `make test`, `make e2e` e `make perf` e corrigir o que falhar
+- [ ] T088 Executar os 21 cenários de `specs/001-base-do-app/quickstart.md` e registrar o resultado
 - [ ] T089 Marcar os itens concluídos da Etapa 1 em `docs/backlog.md`, registrar no `docs/changelog.md` e gerar o PDF com `uv run scripts/gerar_pdf.py`
 
 ---

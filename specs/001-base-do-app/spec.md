@@ -197,6 +197,8 @@ repositório e o histórico do git; gerar a versão de demonstração e conferir
 - Falta de tradução de um texto em inglês ou espanhol: aparece o texto em português, nunca a chave interna do texto.
 - Repositório sem histórico do git: a seção Commits do painel informa que não há commits, sem quebrar o painel.
 - Documento em `docs/` ou `specs/` com formatação inválida: o painel mostra o texto bruto em vez de falhar.
+- Sem internet, o tradutor de Libras (serviço externo) não funciona: o botão fica oculto e o menu de acessibilidade
+  informa que a tradução para Libras está indisponível sem internet; ao voltar a conexão, ele reaparece.
 
 ## Requisitos *(obrigatório)*
 
@@ -248,7 +250,8 @@ repositório e o histórico do git; gerar a versão de demonstração e conferir
 - **RF-016**: A pessoa DEVE poder aumentar o tamanho das letras em pelo menos três níveis acima do padrão.
 - **RF-017**: Tema e tamanho de letra DEVEM ser aplicados antes da primeira exibição da tela, sem piscar.
 - **RF-018**: Os temas claro e escuro DEVEM ter contraste mínimo AA para textos; com o alto contraste ligado, AAA.
-- **RF-019**: O app DEVE carregar o tradutor de Libras (VLibras), disponível em todas as telas.
+- **RF-019**: O app DEVE carregar o tradutor de Libras (VLibras), disponível em todas as telas quando houver
+  internet; sem internet, o botão fica oculto com aviso no menu de acessibilidade.
 - **RF-020**: Todos os elementos interativos DEVEM ter nome acessível para leitores de tela e ser alcançáveis por
   teclado.
 

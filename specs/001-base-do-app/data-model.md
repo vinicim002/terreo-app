@@ -40,7 +40,7 @@ Regras gerais:
 | condominiumId | uuid | → Condominium |
 | apartmentId | uuid | → Apartment do mesmo condomínio |
 | name | texto | obrigatório, 2–120 |
-| phone | texto | obrigatório, formato E.164 (`+55...`); único por condomínio |
+| phone | texto | obrigatório, formato E.164 (`+` seguido de 10 a 15 dígitos, ex.: `+5500900000000`); único por condomínio |
 | photoUrl | texto ou nulo | opcional |
 | kind | enum | `owner` (proprietário), `tenant` (inquilino), `family` (familiar) |
 | isResponsible | booleano | exatamente um `true` por apartamento com moradores |
@@ -96,7 +96,8 @@ Guardadas no `localStorage` (chave `terreo:prefs`), lidas também pelo script an
 - 1 condomínio: "Edifício Taquaretinga", 12 andares, 4 apartamentos por andar.
 - 48 apartamentos: 101–104, 201–204, …, 1201–1204.
 - Moradores fictícios em 45 apartamentos (1 a 4 por apartamento, um responsável cada); 3 apartamentos sem responsável.
-- Telefones fictícios na faixa `+55 21 90000-0000` a `+55 21 90000-9999`.
+- Telefones fictícios com DDD inexistente `00`: `+55 00 90000-0000` a `+55 00 90000-9999`. Passam na validação E.164
+  e nunca são números reais (RF-028).
 - 5 funcionários: 3 porteiros (um chefe) e 2 faxineiros.
 - Escala dos porteiros nos turnos 06:00–14:00, 14:00–22:00 e 22:00–06:00, todos os dias, com folgas alternadas; dos
   faxineiros, 08:00–17:00 de segunda a sexta e 08:00–12:00 aos sábados (provisório).

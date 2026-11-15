@@ -6,8 +6,13 @@ instalação.
 
 ## R1. Como o Next.js é entregue
 
-- **Decisão**: exportação estática (`output: 'export'`). O resultado (`web/out/`) é um conjunto de arquivos servido pelo
-  Caddy na VPS ou por qualquer hospedagem estática. Não há servidor Node em produção.
+- **Decisão**: exportação estática (`output: 'export'`) **ligada só no build** (`NODE_ENV === 'production'`). O
+  resultado (`web/out/`) é um conjunto de arquivos servido pelo Caddy na VPS ou por qualquer hospedagem estática. Não há
+  servidor Node em produção.
+- **Por que só no build**: com `output: 'export'` o Next.js não aceita *rewrites* nem route handlers que leem a URL do
+  pedido, nem mesmo no `next dev`. No desenvolvimento o Next.js roda normal (com o repasse de `/api` e as rotas do
+  painel); no build, gera os arquivos estáticos. As telas não podem depender de nada que só exista no modo normal:
+  o teste e2e do build (`demo-build.spec.ts`) garante isso.
 - **Por quê**: a constituição diz que o Next.js só renderiza telas e as regras ficam na API. Arquivos estáticos
   simplificam o uso sem internet (todas as telas podem ser guardadas no celular), a hospedagem da demonstração e a
   segurança (sem servidor de interface para atacar).
@@ -40,6 +45,14 @@ instalação.
   tokens: ≥ 4,5 nos normais, ≥ 7 com alto contraste) e pela auditoria axe (RF-018, CS-006).
 - **Alternativas**: `next-themes` — cobre claro/escuro, mas não o contraste e a letra combinados; escrever o script é
   mais simples do que adaptar.
+
+## R3a. VLibras sem internet
+
+- **Decisão**: o widget do VLibras é um script externo do governo e não funciona sem conexão. Ele é carregado só com
+  internet; sem conexão, o botão do VLibras fica oculto e o menu de acessibilidade mostra "Tradução para Libras
+  indisponível sem internet". Ao voltar a conexão, o script é carregado.
+- **Por quê**: o service worker não deve guardar scripts de terceiros que mudam sem aviso; o resto do app continua
+  funcionando sem internet (RF-023).
 
 ## R4. Uso sem internet e atualização (PWA)
 
@@ -102,7 +115,10 @@ instalação.
 
 - **Decisão**: `docker-compose.yml` na raiz com `db` (PostgreSQL), `redis`, `api`, `worker` e `web` (Next.js em modo
   de desenvolvimento, com *polling* de arquivos por causa do WSL). `Makefile` com `make dev`, `make test`, `make lint`,
-  `make build-demo`. Em desenvolvimento, o Next.js repassa `/api/*` para a API (*rewrite*), simulando o Caddy.
+  `make build-demo`. Em desenvolvimento, o Next.js repassa `/api/*` para a API (*rewrite*), simulando o Caddy; o
+  repasse só existe porque `output: 'export'` fica desligado no `next dev` (R1).
+- **Git no contêiner**: o `web/Dockerfile.dev` instala o `git` e roda `git config --global --add safe.directory
+  /repo`, porque o repositório montado pertence a outro usuário e o `git` recusaria ler o histórico.
 - **Portas** (sem colidir com os outros projetos): web 3100, api 8100, PostgreSQL 5440, Redis 6390.
 - **Segredos**: `.env.example` versionado com valores de desenvolvimento óbvios; `.env` real fora do git (RF-003).
 
@@ -113,3 +129,6 @@ instalação.
   `@axe-core/playwright` nas quatro aparências.
 - **API**: pytest com `httpx.AsyncClient` para `/api/health`.
 - **Lint**: ESLint (configuração do Next.js) + Prettier; Ruff na API.
+- **Desempenho (CS-005)**: Lighthouse CI (`@lhci/cli`) sobre o build de demonstração servido localmente, com o perfil
+  móvel padrão (4G simulado e CPU reduzida): falha se a primeira exibição de conteúdo passar de 3 s; uma segunda
+  medição com o service worker ativo confere ≤ 1 s.

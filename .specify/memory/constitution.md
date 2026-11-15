@@ -1,9 +1,10 @@
 <!--
 Relatório de sincronização
-- Versão: 1.0.0 → 1.1.0 (seção nova)
-- Princípio II: documentação do produto em `docs/` com PDF; nova seção "Documentação e encerramento do dia".
-- Nome do produto corrigido para "Térreo".
-- Em aberto: stack (princípio VI) ainda será definida; comandos de teste e lint entram quando existirem.
+- Versão: 1.1.0 → 1.2.0 (stack definida)
+- Princípio VI: stack fixa registrada (Next.js, FastAPI, PostgreSQL, ARQ/Redis, R2, Evolution API, Docker/Caddy,
+  multi-condomínio).
+- Princípio VII: ferramentas de teste (pytest, Vitest, Playwright) e isolamento entre condomínios.
+- Restrições: ordem front-end primeiro, escopo do piloto e sessão.
 - Modelos em .specify/templates/: sem mudança necessária
 -->
 
@@ -60,17 +61,32 @@ emergência chegam sempre a todos, sem respeitar preferências de notificação.
 
 ### VI. Simples e na stack combinada
 
-A stack ainda será definida e registrada aqui quando decidida. Depois disso, dependência nova, serviço novo ou camada
-nova só entra com justificativa no `plan.md` (seção de complexidade). Funcionalidades da seção "Ideias para o futuro"
-do minimundo não entram sem spec própria.
+Stack fixa (decidida em 2026-11-15):
 
-**Por quê**: um app simples no começo é mais fácil de ajustar durante o piloto.
+- **Interface**: Next.js (App Router) + TypeScript como PWA, Tailwind CSS + shadcn/ui (ícones lucide), next-intl
+  (pt, en, es desde o início), Web Push padrão (VAPID), reconhecimento de voz do navegador (Web Speech API), VLibras.
+  O Next.js só renderiza telas: regras de negócio ficam no back-end, e o navegador chama a API no mesmo domínio.
+- **Back-end**: Python + FastAPI + SQLAlchemy + Alembic + PostgreSQL; tarefas em segundo plano e agendadas com ARQ +
+  Redis; fotos no Cloudflare R2 (bucket privado, acesso só por URL assinada de curta duração).
+- **WhatsApp**: Evolution API em contêiner próprio, sempre atrás de um serviço de envio trocável e com fila (limite de
+  ritmo para evitar bloqueio do número).
+- **Infraestrutura**: monorepo (`web/` e `api/`), Docker Compose no desenvolvimento e na VPS, Caddy como proxy reverso
+  com HTTPS.
+- **Multi-condomínio desde o início**: todo dado pertence a um condomínio e toda consulta filtra por ele.
+
+Dependência nova, serviço novo ou camada nova só entra com justificativa no `plan.md` (seção de complexidade).
+Mudança de banco sempre por migração Alembic nova; migração já aplicada não é editada. Funcionalidades da seção "Ideias
+para o futuro" do minimundo não entram sem spec própria.
+
+**Por quê**: um app simples e parecido por dentro com os outros projetos é mais fácil de manter e de ajustar durante o
+piloto.
 
 ### VII. Pronto é verificado
 
-Toda regra de negócio tem teste automatizado cobrindo o caminho feliz, a recusa por permissão e os casos-limite da
-spec. Telas são validadas pelo `quickstart.md` da spec, com os cenários escritos antes da implementação. Os comandos de
-teste e lint entram aqui quando a stack for definida.
+Toda regra de negócio tem teste automatizado no back-end (pytest) cobrindo o caminho feliz, a recusa por permissão, o
+isolamento entre condomínios e os casos-limite da spec. Na interface, Vitest para componentes e serviços e Playwright
+para os fluxos principais em tela de celular. Telas são validadas pelo `quickstart.md` da spec, com os cenários escritos
+antes da implementação. Os comandos de teste e lint entram no `CLAUDE.md` quando o código existir.
 
 **Por quê**: o teste e o roteiro de validação são a revisão quando não há outra pessoa revisando.
 
@@ -80,6 +96,11 @@ teste e lint entram aqui quando a stack for definida.
 - A unidade é o apartamento. O síndico cadastra o apartamento e o morador responsável; só o responsável convida ou
   remove as outras pessoas do apartamento. Enquetes oficiais têm um voto por apartamento.
 - Piloto: Edifício Taquaretinga.
+- Ordem de construção: front-end primeiro. As telas usam serviços tipados com dados locais; depois os mesmos serviços
+  passam a chamar a API, sem mudar as telas.
+- Escopo do piloto: todas as funcionalidades do minimundo, exceto "Ideias para o futuro".
+- A sessão fica em cookie httpOnly (Secure em produção) com token aleatório; o banco guarda só o hash. Expira após 6
+  meses sem uso e pode ser revogada.
 
 ## Fluxo de trabalho
 
@@ -106,4 +127,4 @@ Esta constituição vale acima de qualquer outro guia do projeto. Todo `plan.md`
 "Verificação da constituição"; violação só entra justificada na seção de complexidade. Versão: MAIOR remove ou
 redefine princípio; MENOR acrescenta princípio ou seção; CORREÇÃO só ajusta texto.
 
-**Versão**: 1.1.0 | **Ratificada**: 2026-11-15 | **Última alteração**: 2026-11-15
+**Versão**: 1.2.0 | **Ratificada**: 2026-11-15 | **Última alteração**: 2026-11-15

@@ -25,10 +25,19 @@ leia antes de especificar, planejar ou implementar.
 - Planejado: painel de desenvolvimento dentro do app (como o `/painel` do OnPath) com andamento, backlog, changelog,
   commits e documentos; não entra na versão publicada.
 
-## Estado atual
+## Estado atual e stack
 
-Ainda não há código — a stack será discutida com o usuário. Não escolha tecnologia por conta própria; quando decidida,
-registre na constituição (princípio VI) e atualize este arquivo com os comandos de build/lint/test.
+Ainda não há código. A stack está decidida e registrada na constituição (princípio VI) e em
+`docs/documentacao/03-arquitetura.md`: monorepo `web/` (Next.js App Router + TS, Tailwind + shadcn/ui, next-intl
+pt/en/es, Vitest + Playwright) e `api/` (FastAPI, SQLAlchemy, Alembic, PostgreSQL, pytest, ARQ + Redis), fotos no
+Cloudflare R2 (bucket privado, URL assinada), WhatsApp pela Evolution API atrás de serviço trocável com fila, Web Push
+(VAPID), Docker Compose + Caddy em VPS. Ao criar o código, acrescente aqui os comandos de build/lint/test.
+
+Regras de arquitetura que atravessam o código:
+- Next.js só renderiza telas; regra de negócio fica no FastAPI, chamado pelo navegador em `/api` no mesmo domínio.
+- Front-end primeiro: telas consomem serviços tipados com dados locais, trocados depois pela API sem mudar as telas.
+- Multi-condomínio: todo dado tem condomínio e toda consulta filtra por ele (testar o isolamento).
+- Envios (WhatsApp, push) sempre pela fila ARQ, nunca direto da rota.
 
 Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — ignore esses nomes; o prédio piloto é o
 **Edifício Taquaretinga**.
@@ -47,7 +56,7 @@ em `.claude/skills/speckit-*`.
 - `arquivos-gerais-terreo/terreo_telas/` — mockups: `pranchas_{1_morador,2_portaria,3_sindico}.png` e telas
   individuais `telas/NN_nome.png` (01–29 morador, 30–35 portaria, 36–42 síndico).
 - `arquivos-gerais-terreo/terreo-kit/terreo-kit/` — kit da marca (cor `#1B4FD8` + branco, fonte Plus Jakarta Sans) e
-  `LEIA-ME.md` com instruções de ícones/manifest de PWA para Next.js (Next.js ainda não é decisão tomada).
+  `LEIA-ME.md` com instruções de ícones/manifest de PWA para Next.js.
 - Arquivos `*:Zone.Identifier` são lixo do WSL; ignore.
 
 ## Conceitos de domínio que atravessam o sistema

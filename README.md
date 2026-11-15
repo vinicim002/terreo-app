@@ -41,9 +41,15 @@ O primeiro prédio a usar o app, como projeto piloto, é o **Edifício Taquareti
 
 Os princípios completos estão na constituição do projeto: [`.specify/memory/constitution.md`](.specify/memory/constitution.md).
 
+## Stack
+
+Next.js (PWA) com Tailwind e shadcn/ui · FastAPI · PostgreSQL · ARQ e Redis · Cloudflare R2 · Evolution API
+(WhatsApp) · Web Push · Docker Compose e Caddy. Detalhes em
+[`docs/documentacao/03-arquitetura.md`](docs/documentacao/03-arquitetura.md).
+
 ## Status
 
-Em fase de especificação. A stack técnica ainda está sendo definida.
+Em fase de especificação. A stack está definida; o código ainda não começou.
 
 ## Documentação
 

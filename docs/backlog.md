@@ -2,28 +2,44 @@
 
 Legenda: [x] feito · [ ] a fazer. Itens marcados **Proposta** ainda não foram debatidos e podem mudar.
 
+O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "Ideias para o futuro". A construção é
+**front-end primeiro**: as telas nascem com dados locais e depois passam a usar a API.
+
 ## Etapa 0 — Fundação
 
 - [x] Repositório no GitHub, `.gitignore` e README.
-- [x] Spec Kit instalado e constituição 1.1.0.
+- [x] Spec Kit instalado e constituição.
 - [x] Documentação em `docs/` com geração de PDF e rotina de encerramento do dia.
-- [ ] Definir a stack técnica e registrar na constituição.
+- [x] Definir a stack técnica e registrar na constituição (1.2.0).
 - [ ] Tirar as dúvidas abertas com o síndico (reuniões, rodízio de folgas, horário dos faxineiros, outras necessidades).
 
 ## Etapa 1 — Base do app (Proposta)
 
-- [ ] Estrutura do PWA, tema (claro e escuro), textos separados do código, navegação por perfil.
+- [ ] Monorepo com `web/` (Next.js) e `api/` (FastAPI), Docker Compose para o ambiente local.
+- [ ] PWA instalável com os ícones do kit, tema claro, escuro e alto contraste, três idiomas, navegação por perfil.
+- [ ] Camada de serviços tipados com dados locais (trocável pela API).
 - [ ] Painel de desenvolvimento: andamento, backlog, changelog, commits e documentos.
 
-## Etapa 2 — Funcionalidades essenciais do piloto (Proposta)
+## Etapa 2 — Telas com dados locais (Proposta)
 
-- [ ] Cadastro de apartamentos e moradores, login pelo WhatsApp.
-- [ ] Avisos do prédio com envio ao WhatsApp.
-- [ ] Entregas e códigos, correspondência.
-- [ ] Botão de emergência e alerta geral.
-- [ ] Funcionários de plantão.
+Ordem sugerida, uma spec por grupo:
 
-## Etapa 3 — Demais funcionalidades (Proposta)
+- [ ] Acesso e cadastro: login, apartamentos, moradores, perfil, boas-vindas e regras.
+- [ ] Comunicação: avisos, calendário, reuniões, enquetes, notificações.
+- [ ] Portaria: entregas e códigos, correspondência, visitantes, modo viagem, plantão, voz, achados e perdidos.
+- [ ] Segurança: botão de emergência, alerta geral, contatos.
+- [ ] Participação: sugestões, melhorias, avisar problema, barulho, prestadores, comércio, pesquisa de satisfação.
+- [ ] Administração: mudanças e obras, controle ou chave, advertências, prestação de contas, resumo do mês, lembretes,
+  perguntas frequentes, apartamento disponível.
+- [ ] Acessibilidade: tamanho de letra, contraste, leitura em voz alta, legendas, VLibras.
 
-- [ ] Visitantes, sugestões e melhorias, enquetes, calendário e reuniões.
-- [ ] Demais funcionalidades do capítulo "Funcionalidades", por ordem de prioridade a combinar com o síndico.
+## Etapa 3 — API e integrações (Proposta)
+
+- [ ] Modelo de dados multi-condomínio, sessão e permissões por perfil.
+- [ ] API de cada grupo da Etapa 2, trocando os dados locais.
+- [ ] Fila ARQ, WhatsApp (Evolution API), Web Push e fotos no R2.
+
+## Etapa 4 — Piloto (Proposta)
+
+- [ ] VPS com Docker Compose e Caddy, backups.
+- [ ] Cadastro do Edifício Taquaretinga, vídeo curto de instalação e lançamento.

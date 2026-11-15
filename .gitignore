@@ -1,0 +1,42 @@
+# Material interno (requisitos, telas e kit da marca) — não versionar por enquanto
+arquivos-gerais-terreo/
+
+# Segredos e variáveis de ambiente
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials*.json
+service-account*.json
+secrets/
+
+# Configuração local do Claude Code
+.claude/settings.local.json
+
+# Dependências e builds
+node_modules/
+.next/
+dist/
+build/
+out/
+coverage/
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Logs e bancos locais
+*.log
+*.sqlite
+*.sqlite3
+*.db
+
+# Sistema / editor
+.DS_Store
+Thumbs.db
+*:Zone.Identifier
+.idea/
+.vscode/

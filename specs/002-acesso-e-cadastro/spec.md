@@ -28,6 +28,12 @@ morador novo), mockups 01_login, 02_codigo, 03_boas_vindas, 25_regras, 26_perfil
   entregas" e "Pode votar em enquetes" (só um voto por apartamento). O responsável sempre tem as duas.
 - P: A mesma pessoa pode ter mais de um papel? → R: Sim. Um celular pode ter vários papéis (ex.: morador do 804 e
   síndico); depois de entrar, a pessoa escolhe o papel e pode trocar pelos Ajustes.
+- P: O que a portaria pode ver dos moradores? → R: De cada apartamento, nome, foto, tipo e carros (placa, modelo e
+  cor). Celulares, animais e contato de emergência ficam fora.
+- P: O app aceita celular de fora do Brasil? → R: Sim. O campo começa em +55 e permite escolher outro país; o número é
+  validado pelo formato daquele país.
+- P: O síndico pode editar e remover qualquer pessoa? → R: Sim, em qualquer apartamento (inclusive trocar o celular).
+  Convidar familiares continua sendo só do responsável.
 
 ## Cenários de uso e testes *(obrigatório)*
 
@@ -184,10 +190,12 @@ apartamento passa a "Ativo".
    data do envio.
 5. **Dado** um convite pendente, **quando** o síndico toca em "Reenviar convite", **então** um novo convite é enviado
    e a data é atualizada.
-6. **Dado** um apartamento ativo, **quando** o síndico troca o responsável por outra pessoa do apartamento ou por
+6. **Dado** um apartamento, **quando** o síndico abre o detalhe, **então** vê as pessoas, carros e animais e pode
+   editar ou remover qualquer pessoa, com confirmação; não aparece a opção de convidar familiares.
+7. **Dado** um apartamento ativo, **quando** o síndico troca o responsável por outra pessoa do apartamento ou por
    alguém novo, **então** o novo responsável passa a ter as permissões de responsável e o anterior, se sair do
    apartamento, perde o acesso.
-7. **Dado** o síndico, **quando** tenta cadastrar um apartamento que já existe ou um celular já usado no condomínio,
+8. **Dado** o síndico, **quando** tenta cadastrar um apartamento que já existe ou um celular já usado no condomínio,
    **então** o app informa o problema e não salva.
 
 ---
@@ -196,6 +204,8 @@ apartamento passa a "Ativo".
 
 - Número digitado com ou sem DDD, parênteses, espaços ou traço: o app aceita e entende como o mesmo celular. Sem DDD,
   o app pede o número completo.
+- Número de outro país: a pessoa escolhe o país antes de digitar; o mesmo número com e sem o código do país é tratado
+  como o mesmo celular, e um número inválido para o país escolhido é recusado antes de enviar o código.
 - Código pedido várias vezes seguidas: só o último vale; no máximo 5 pedidos por hora para o mesmo número, depois o
   app pede para esperar.
 - Pessoa com mais de um papel (ex.: o síndico que também mora no 804): depois do código, o app pergunta com qual
@@ -216,6 +226,9 @@ apartamento passa a "Ativo".
 
 - **RF-001**: O app DEVE permitir entrar só com o número do celular e um código de 6 dígitos enviado ao WhatsApp
   desse número; não existe senha.
+- **RF-001a**: Todo campo de celular (entrada, convite, cadastro pelo síndico, contato de emergência) DEVE começar no
+  Brasil (+55) e permitir escolher outro país; o número DEVE ser validado pelo formato do país escolhido e guardado
+  sempre no formato internacional, para que o mesmo celular nunca seja cadastrado duas vezes.
 - **RF-002**: Só pessoas cadastradas no condomínio (moradores, funcionários da portaria e síndico) DEVEM receber
   código; para números não cadastrados o app NÃO DEVE enviar código.
 - **RF-003**: O código DEVE valer por 10 minutos, aceitar no máximo 5 tentativas erradas e deixar de valer quando um
@@ -244,8 +257,9 @@ apartamento passa a "Ativo".
 
 **Pessoas do apartamento**
 
-- **RF-014**: Cada apartamento DEVE ter no máximo um responsável; só o responsável DEVE poder convidar, editar e
-  remover as outras pessoas do apartamento.
+- **RF-014**: Cada apartamento DEVE ter no máximo um responsável. Só o responsável DEVE poder convidar pessoas para o
+  apartamento; editar e remover as outras pessoas do apartamento é permitido ao responsável e ao síndico. Nenhum outro
+  morador pode convidar, editar ou remover.
 - **RF-015**: O convite DEVE pedir nome, celular e tipo (familiar, inquilino ou proprietário), as permissões "Pode
   cadastrar entregas" (ligada por padrão) e "Pode votar em enquetes" (desligada por padrão, com a explicação "Só um voto
   por apartamento"), e ser enviado pelo WhatsApp. O responsável pode mudar as permissões depois.
@@ -260,8 +274,8 @@ apartamento passa a "Ativo".
 
 - **RF-020**: Cada pessoa DEVE poder editar o próprio nome e a própria foto (opcional); o tipo só é editado pelo
   responsável (para as pessoas do apartamento) ou pelo síndico (para o responsável).
-- **RF-021**: O celular de uma pessoa NÃO DEVE ser editado por ela mesma; a troca é feita pelo responsável ou pelo
-  síndico e encerra o acesso no celular antigo.
+- **RF-021**: O celular de uma pessoa NÃO DEVE ser editado por ela mesma; a troca é feita pelo responsável (para as
+  pessoas do apartamento) ou pelo síndico (para qualquer pessoa) e encerra o acesso no celular antigo.
 - **RF-022**: O responsável DEVE poder cadastrar, editar e remover carros (placa, modelo, cor), animais (nome e tipo:
   cachorro, gato, pássaro, outro) e um contato de emergência (nome, parentesco, telefone) do apartamento.
 - **RF-023**: Todos os moradores do apartamento DEVEM ver as pessoas, carros, animais e o contato de emergência do seu
@@ -277,7 +291,12 @@ apartamento passa a "Ativo".
   por número do apartamento ou nome.
 - **RF-028**: O síndico DEVE poder cadastrar o responsável de um apartamento (nome, celular, tipo proprietário ou
   inquilino), reenviar convites e trocar o responsável.
-- **RF-029**: Só o síndico DEVE acessar a lista de todos os apartamentos e os dados de contato dos responsáveis.
+- **RF-028a**: O síndico DEVE ver as pessoas de cada apartamento e poder editar (nome, tipo, celular) e remover
+  qualquer uma delas, com confirmação; ele não convida familiares, que é papel do responsável.
+- **RF-029**: Só o síndico DEVE acessar a lista de todos os apartamentos com os celulares e demais dados de contato.
+- **RF-029a**: A portaria DEVE poder consultar, de qualquer apartamento, só o nome, a foto e o tipo de cada pessoa e os
+  carros (placa, modelo e cor), para reconhecer moradores e veículos. Celulares, animais, contato de emergência,
+  permissões e situação dos convites NÃO DEVEM aparecer para a portaria.
 
 **Dados e permissões**
 
@@ -316,6 +335,7 @@ apartamento passa a "Ativo".
 - **CS-005**: O síndico cadastra o responsável de um apartamento em menos de 1 minuto e encontra qualquer apartamento
   pela busca em menos de 10 segundos.
 - **CS-006**: Nenhuma tela de cadastro tem campo de CPF, data de nascimento ou documento (100% das telas conferidas).
+- **CS-007a**: 100% das consultas da portaria devolvem só nome, foto, tipo e carros, conferido por teste automático.
 - **CS-007**: 100% das tentativas de convidar, editar ou remover feitas por quem não é responsável são recusadas
   pelos serviços, conferido por teste automático.
 - **CS-008**: Uma pessoa removida perde o acesso em todos os aparelhos na próxima vez que o app conferir a sessão.

@@ -70,7 +70,9 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
-Spec mais recente: `specs/001-base-do-app/` (implementada) (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
+Spec em andamento: `specs/002-acesso-e-cadastro/` (plano pronto: pessoa separada dos papéis, `ServiceContext.actor` com
+matriz de permissões em `contracts/permissoes.md` conferida nos serviços, código e sessão simulados no aparelho,
+`libphonenumber-js`, `SEED_VERSION` 2). Anterior: `specs/001-base-do-app/` (implementada) (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
 estática, next-intl sem idioma na URL, preferências aplicadas antes da pintura via atributos `data-*`, Serwist sobre
 `web/out/`, serviços tipados sobre IndexedDB, painel `/dev` só em `next dev` via `pageExtensions` `.dev.tsx`,
 `NEXT_PUBLIC_APP_MODE` = dev|demo|real, demonstração no Cloudflare Pages, portas web 3100 / api 8100 / db 5440 /

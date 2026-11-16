@@ -1,17 +1,17 @@
 # Funcionalidades
 
-Situação de cada funcionalidade: **Planejada** (descrita, ainda não construída), **Em construção** ou **Pronta**.
-Hoje todas estão planejadas.
+Situação de cada funcionalidade: **Planejada** (descrita, ainda não construída), **Em construção** (telas prontas
+com dados no aparelho, ainda sem servidor) ou **Pronta** (com servidor e WhatsApp de verdade).
 
 ## Acesso e cadastro
 
 | Funcionalidade | Descrição | Situação |
 |---|---|---|
-| Login sem senha | O morador digita o celular e recebe um código no WhatsApp do condomínio. O código só é pedido no primeiro acesso, ao trocar de celular ou após cerca de seis meses sem uso. | Planejada |
-| Cadastro de apartamentos | O síndico cadastra cada apartamento e o morador responsável (nome e celular). | Planejada |
-| Convite de moradores | O responsável convida as outras pessoas do apartamento; só ele adiciona ou remove pessoas. | Planejada |
-| Perfil | Nome, celular, foto opcional, tipo (proprietário, inquilino ou familiar), carros, animais e contato de emergência opcional. | Planejada |
-| Boas-vindas e regras | Guia rápido no primeiro acesso, vídeos curtos e confirmação de leitura das regras do prédio. | Planejada |
+| Login sem senha | O morador digita o celular e recebe um código no WhatsApp do condomínio. O código só é pedido no primeiro acesso, ao trocar de celular ou após cerca de seis meses sem uso. | Em construção |
+| Cadastro de apartamentos | O síndico cadastra cada apartamento e o morador responsável (nome e celular). | Em construção |
+| Convite de moradores | O responsável convida as outras pessoas do apartamento; só ele adiciona ou remove pessoas. | Em construção |
+| Perfil | Nome, celular, foto opcional, tipo (proprietário, inquilino ou familiar), carros, animais e contato de emergência opcional. | Em construção |
+| Boas-vindas e regras | Guia rápido no primeiro acesso, vídeos curtos e confirmação de leitura das regras do prédio. | Em construção |
 
 ## Comunicação
 

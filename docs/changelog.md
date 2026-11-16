@@ -2,6 +2,49 @@
 
 Registro diário do que foi adicionado, alterado e removido no projeto. A entrada mais recente fica no topo.
 
+## 2026-11-16
+
+### Adicionado
+
+- Acesso e cadastro (spec 002), com dados no aparelho:
+  - Entrada com celular e código de 6 dígitos "enviado" pelo WhatsApp (simulado, com o código visível no
+    desenvolvimento e na demonstração), com as regras reais: 10 minutos, 5 tentativas, reenvio após 1 minuto e até 5
+    pedidos por hora; continua conectado; "Sair"; sessão encerrada ao remover a pessoa ou trocar o celular.
+  - Celular de qualquer país, começando pelo Brasil (+55).
+  - Pessoas com mais de um papel (a síndica que mora no 1201) escolhem com qual entrar e trocam nos Ajustes.
+  - Primeiro acesso do morador: boas-vindas em 3 passos e Regras com "Li e concordo" obrigatório; Regras com busca
+    para todos os perfis.
+  - Perfil com foto (reduzida no aparelho), "Moram no apto", carros (placa antiga ou Mercosul), animais e contato de
+    emergência.
+  - O responsável convida (com as permissões de cadastrar entregas e votar em enquetes), edita e remove pessoas do
+    apartamento.
+  - O síndico vê os 48 apartamentos com filtros, busca e situação dos convites, cadastra o responsável, reenvia
+    convites, troca o responsável e edita ou remove qualquer pessoa.
+  - A portaria consulta, por apartamento, só nome, foto, tipo e carros.
+  - Matriz de permissões conferida em todos os serviços; sem ninguém conectado, nada funciona além da entrada.
+  - Painel `/dev` mostra as mensagens de WhatsApp simuladas.
+  - Testes: 292 unitários, 187 de ponta a ponta no desenvolvimento, 10 sobre os builds de demonstração e real, e
+    auditoria de acessibilidade das telas novas nas quatro aparências.
+
+### Alterado
+
+- Nova marca (`terreo-kit/`): laranja `#E8590C`, branco, marrom `#7A4E35` e creme `#F4EEE2`, com o mascote
+  sabiá-laranjeira. Ícone do app, favicon, ícones do PWA, quadrados dos ícones e o mascote nas boas-vindas usam o
+  laranja exato; botões e textos usam o mesmo laranja mais escuro (`#C2410C`), porque o laranja exato com texto branco
+  fica abaixo do mínimo de leitura. Modo escuro em marrom-escuro e creme. O PDF da documentação também foi atualizado.
+- A escolha de perfil da spec 001 foi substituída pela entrada; nos modos de desenvolvimento e demonstração, a tela de
+  entrada oferece "Contas de exemplo".
+- Dados de exemplo na versão 2: pessoas separadas dos papéis, síndica, porteiros com celular, convite pendente (902),
+  carros, animais, contato de emergência e 12 regras.
+- Campos e botões da entrada só ficam ativos depois de a página carregar, para nada do que for digitado se perder.
+
+### Corrigido
+
+- O tema e o alto contraste podiam se perder quando o React renderizava a página de novo no navegador.
+- Identificadores e o hash do código passaram a funcionar também fora de HTTPS (rede local e testes).
+- Erro de hidratação no seletor de país do celular (nomes dos países diferentes no servidor e no navegador), que
+  fazia a página ser refeita no navegador; um teste novo falha se aparecer erro de hidratação.
+
 ## 2026-11-15
 
 ### Adicionado

@@ -40,6 +40,11 @@ leia antes de especificar, planejar ou implementar.
 - Build: `cd web && npm run build:demo` (exportação estática em `web/out/` + service worker).
 - Depois de criar rotas novas, rode `cd web && npx next typegen` para atualizar os tipos `PageProps`/`LayoutProps`.
 - Os testes e2e rodam com o navegador em `pt-BR`; o app detecta o idioma do aparelho.
+- E2e entram com `signInAs(page, "responsible" | "family" | "pending" | "front-desk" | "manager")` de
+  `web/tests/e2e/helpers.ts` (usa `window.__terreoDev`, só em dev/demo). Espere a página carregar dados antes de digitar
+  (ex.: `toBeEditable()` ou um contador visível): o que é digitado antes da hidratação se perde.
+- Build da versão real: `cd web && npm run build:real` (`out-real/`) + `make e2e-build-real` (testes `@build-real`).
+- Testes unitários dos serviços: `tests/unit/auth-helpers.ts` (`setup()` com relógio controlado, `signIn()`).
 
 ## Next.js 16 (leia `web/AGENTS.md`)
 
@@ -55,11 +60,14 @@ TS, Tailwind + shadcn/ui, next-intl pt/en/es, Vitest + Playwright) e `api/` (Fas
 PostgreSQL, pytest, ARQ + Redis), fotos no Cloudflare R2, WhatsApp pela Evolution API atrás de serviço trocável com
 fila, Web Push (VAPID), Docker Compose + Caddy em VPS.
 
-Identidade visual: azul `#1B4FD8` + branco `#FFFFFF`; nome e títulos em Plus Jakarta Sans peso 800. Preenchimentos
-(botões, ícones, item ativo) são sempre azul com branco, também no escuro; cores só pelos tokens de
-`web/src/theme/tokens.css` (o teste de contraste confere a marca e os níveis AA/AAA).
+Identidade visual (kit em `terreo-kit/`, local): laranja `#E8590C`, branco, marrom `#7A4E35`, creme `#F4EEE2`;
+mascote sabiá-laranjeira; nome e títulos em Plus Jakarta Sans peso 800. Token `--brand` = `#E8590C` só para ícones,
+mascote e áreas grandes (branco sobre ele dá 3,58, não serve para texto); `--primary` = `#C2410C` para botões e texto
+(5,18, AA). Cores só pelos tokens de `web/src/theme/tokens.css` (o teste de contraste confere a marca e AA/AAA).
 
 Regras de arquitetura que atravessam o código:
+- Serviços sempre com `ServiceContext.actor`; permissões só em `web/src/services/permissions.ts` (matriz da spec 002).
+- `crypto.randomUUID`/`crypto.subtle` não existem fora de HTTPS: use `web/src/lib/crypto.ts`.
 - Next.js só renderiza telas; regra de negócio fica no FastAPI, chamado pelo navegador em `/api` no mesmo domínio.
 - Front-end primeiro: telas consomem serviços tipados com dados locais, trocados depois pela API sem mudar as telas.
 - Multi-condomínio: todo dado tem condomínio e toda consulta filtra por ele (testar o isolamento).
@@ -70,7 +78,7 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
-Spec em andamento: `specs/002-acesso-e-cadastro/` (plano pronto: pessoa separada dos papéis, `ServiceContext.actor` com
+Spec mais recente: `specs/002-acesso-e-cadastro/` (implementada: pessoa separada dos papéis, `ServiceContext.actor` com
 matriz de permissões em `contracts/permissoes.md` conferida nos serviços, código e sessão simulados no aparelho,
 `libphonenumber-js`, `SEED_VERSION` 2). Anterior: `specs/001-base-do-app/` (implementada) (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
 estática, next-intl sem idioma na URL, preferências aplicadas antes da pintura via atributos `data-*`, Serwist sobre
@@ -89,8 +97,8 @@ em `.claude/skills/speckit-*`.
   `/speckit-specify`.
 - `arquivos-gerais-terreo/terreo_telas/` — mockups: `pranchas_{1_morador,2_portaria,3_sindico}.png` e telas
   individuais `telas/NN_nome.png` (01–29 morador, 30–35 portaria, 36–42 síndico).
-- `arquivos-gerais-terreo/terreo-kit/terreo-kit/` — kit da marca (cor `#1B4FD8` + branco, fonte Plus Jakarta Sans) e
-  `LEIA-ME.md` com instruções de ícones/manifest de PWA para Next.js.
+- `terreo-kit/` — kit da marca atual (laranja, mascote sabiá; `LEIA-ME.md` com ícones e manifest do PWA). O kit azul
+  antigo em `arquivos-gerais-terreo/terreo-kit/` não vale mais.
 - Arquivos `*:Zone.Identifier` são lixo do WSL; ignore.
 
 ## Conceitos de domínio que atravessam o sistema

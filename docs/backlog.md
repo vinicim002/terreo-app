@@ -26,7 +26,8 @@ O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "I
 
 Ordem sugerida, uma spec por grupo:
 
-- [ ] Acesso e cadastro: login, apartamentos, moradores, perfil, boas-vindas e regras.
+- [x] Acesso e cadastro (spec 002): login com código simulado, papéis, boas-vindas e regras, perfil, convites,
+  carros, animais, contato de emergência, apartamentos do síndico e consulta da portaria.
 - [ ] Comunicação: avisos, calendário, reuniões, enquetes, notificações.
 - [ ] Portaria: entregas e códigos, correspondência, visitantes, modo viagem, plantão, voz, achados e perdidos.
 - [ ] Segurança: botão de emergência, alerta geral, contatos.

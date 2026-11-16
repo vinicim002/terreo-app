@@ -40,6 +40,7 @@ interface SessionView {
   activeRole: Role | null             // null quando há mais de um papel e nenhum escolhido
   needsWelcome: boolean               // morador ativo sem welcomeSeenAt
   needsRulesAcceptance: boolean       // morador sem rulesAcceptedAt
+  apartmentNumbers: Record<string, string> // apartmentId → número, para "Morador do 1201" na escolha de papel
 }
 
 interface OnboardingService {

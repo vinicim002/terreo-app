@@ -44,18 +44,37 @@ Celular (PWA Next.js) ──HTTPS──> Caddy ──> /       Next.js (telas)
 - **Vários condomínios.** Todo dado pertence a um condomínio, e toda consulta filtra por ele. O piloto tem só o
   Edifício Taquaretinga cadastrado.
 
+## Pessoas e papéis (spec 002)
+
+- Uma **pessoa** é quem entra com o celular (nome, celular, foto). Ela pode ter mais de um **papel**: morador de um
+  apartamento, porteiro ou síndico. A síndica que mora no 1201 é uma pessoa com dois papéis e escolhe com qual entrar.
+- Toda operação dos serviços sabe quem está agindo e confere uma **matriz de permissões** única
+  (`specs/002-acesso-e-cadastro/contracts/permissoes.md`): só o responsável convida; o síndico edita qualquer pessoa;
+  a portaria só consulta nome, foto, tipo e carros. Sem ninguém conectado, nada funciona além da entrada.
+
 ## Login e sessão
 
-O morador digita o celular e recebe um código pelo WhatsApp. Depois de confirmado, a sessão fica em um cookie
+**Hoje (Etapa 2, provisório):** o código e a sessão são simulados no próprio aparelho, com as mesmas regras que o
+servidor terá — 6 dígitos guardados só como hash, 10 minutos de validade, 5 tentativas, reenvio após 1 minuto, até 5
+pedidos por hora, sessão encerrada ao sair, ao ser removido, ao trocar o celular ou após 180 dias sem uso. A mensagem
+"enviada" pelo WhatsApp fica numa caixa de saída simulada, mostrada na tela só no desenvolvimento e na demonstração.
+Na versão real, a entrada mostra "Entrada em breve" até a Etapa 3.
+
+**Na Etapa 3:** o morador digita o celular e recebe um código pelo WhatsApp. Depois de confirmado, a sessão fica em um cookie
 protegido (httpOnly e, em produção, Secure) com um token aleatório. O banco guarda só o hash desse token. A sessão
 expira após 6 meses sem uso e pode ser encerrada pelo responsável do apartamento ou pelo síndico, por exemplo quando
 alguém se muda ou troca de celular.
 
 ## Identidade visual
 
-- Azul `#1B4FD8` com branco `#FFFFFF`; nome e títulos em Plus Jakarta Sans, peso 800 (kit da marca).
-- Nos dois temas, botões, ícones e o item ativo da barra usam o azul com branco. No tema escuro, o fundo é um azul
-  bem escuro e o texto sobre ele é branco. Só o alto contraste escurece o azul, para atingir o contraste AAA.
+- Kit da marca: laranja `#E8590C`, branco `#FFFFFF`, marrom `#7A4E35` e creme `#F4EEE2`; mascote sabiá-laranjeira;
+  nome e títulos em Plus Jakarta Sans, peso 800.
+- O laranja exato (`#E8590C`) vai no ícone do app, nos quadrados dos ícones, no mascote e em faixas grandes. Com
+  texto branco ele tem contraste 3,58, abaixo do mínimo de leitura (4,5); por isso botões e textos usam o mesmo laranja
+  mais escuro, `#C2410C` (5,18). Fundos secundários são creme com texto marrom.
+- No tema escuro, o fundo é um marrom bem escuro e os textos são creme; o alto contraste escurece o laranja
+  (`#9A3412`) para chegar a AAA.
+- O mascote colorido aparece só em telas grandes (boas-vindas), como pede o kit.
 - Cores só pelos tokens de `web/src/theme/tokens.css`; um teste automático confere as cores da marca e o contraste.
 
 ## Portas locais
@@ -79,7 +98,10 @@ Interface 3100, API 8100, PostgreSQL 5440, Redis 6390 (sem colidir com os outros
 | `CLAUDE.md` | Orientações para o Claude Code trabalhar no repositório. |
 | `web/app/` | Rotas da interface: escolha de perfil, `/resident`, `/front-desk`, `/manager`, `/settings` e o painel `/dev`. |
 | `web/src/navigation/screens.ts` | Catálogo único de telas: gera rotas, barra de baixo, "Mais" e "Todos os serviços". |
-| `web/src/services/` | Serviços de dados (contratos, esquemas, IndexedDB, memória) e os dados de exemplo (`local/seed.ts`). |
+| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`). |
+| `web/src/auth/` | Sessão do aparelho, guarda de acesso e o atalho de testes (só em desenvolvimento e demonstração). |
+| `web/src/phone/` · `web/src/photo/` · `web/src/lib/crypto.ts` | Celular por país, redução da foto e criptografia que funciona também fora de HTTPS. |
+| `web/app/login/` · `welcome/` · `rules-accept/` · `choose-role/` | Entrada, primeiro acesso e escolha de papel. |
 | `web/src/preferences/` | Idioma, tema, alto contraste e tamanho de letra, aplicados antes da primeira pintura. |
 | `web/src/theme/tokens.css` | Cores das quatro aparências (claro, escuro e cada um com alto contraste). |
 | `web/messages/` | Textos em português, inglês e espanhol. |

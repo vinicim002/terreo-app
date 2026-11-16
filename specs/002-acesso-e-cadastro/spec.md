@@ -301,14 +301,15 @@ apartamento passa a "Ativo".
 **Dados e permissões**
 
 - **RF-030**: Todas as regras de permissão desta spec (quem convida, edita, remove, vê) DEVEM ser conferidas pelos
-  serviços de dados, e não só escondidas na tela, para valerem igual quando a API existir.
+  serviços de dados, e não só escondidas na tela, para valerem igual quando a API existir. Sem ninguém conectado,
+  todo serviço DEVE recusar a operação, exceto a entrada (pedir e confirmar o código).
 - **RF-031**: Os dados de exemplo DEVEM incluir, para cada perfil, pessoas fictícias prontas para entrar (síndico,
   porteiros, responsáveis e familiares), um apartamento com convite pendente e apartamentos sem cadastro.
 - **RF-032**: Todos os textos novos DEVEM existir em português, inglês e espanhol.
 
 ### Entidades principais
 
-- **Pessoa (morador)**: já existe na spec 001; ganha situação (convite pendente ou ativa), data do convite, data do
+- **Pessoa**: quem entra com o celular (antes, na spec 001, o morador guardava esses dados); ganha situação (convite pendente ou ativa), data do convite, data do
   primeiro acesso, data da confirmação das regras e foto.
 - **Papel**: o que uma pessoa é no condomínio — morador de um apartamento, porteiro ou síndico. Uma pessoa (um
   celular) pode ter mais de um papel; cada porteiro e o síndico entram com o próprio celular.
@@ -360,3 +361,5 @@ apartamento passa a "Ativo".
 - Os botões de WhatsApp seguem a identidade do Térreo (azul `#1B4FD8` com branco e o ícone do WhatsApp), e não o verde
   dos mockups.
 - O número de 6 meses é contado desde a última abertura do app no aparelho.
+- Na versão real (dos moradores), a entrada continua mostrando "Entrada em breve" até a Etapa 3, porque ainda não há
+  servidor para enviar o código pelo WhatsApp. Nesta etapa, a entrada funciona no desenvolvimento e na demonstração.

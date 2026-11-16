@@ -154,9 +154,9 @@ Primeiro acesso do morador: entrar → boas-vindas (ou pular) → regras ("Li e 
 - Pessoas para cada perfil, com celular fictício (DDD `00`):
   - síndica, que também mora no 1201 (dois papéis);
   - 3 porteiros com `personId` (o chefe é um deles); 2 faxineiros sem pessoa;
-  - responsável e familiares em 44 apartamentos (como na spec 001);
+  - 44 apartamentos com responsável ativo e familiares (como na spec 001);
   - 1 apartamento (o 902) com o responsável ainda com convite pendente;
-  - 3 apartamentos sem responsável (303, 704, 1102), como na spec 001.
+  - 3 apartamentos sem cadastro (303, 704, 1102), como na spec 001 — total de 48.
 - Alguns carros, animais e contatos de emergência.
 - 10 a 15 regras de exemplo, nos 6 temas.
 - Uma lista de "Contas de exemplo" (síndica, porteiro, responsável, familiar, convite pendente) para a tela de

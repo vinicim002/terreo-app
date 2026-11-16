@@ -12,7 +12,8 @@ type Role =
 
 interface Actor { personId: string; role: Role }
 
-// O contexto passa a levar quem está agindo. Sem actor, só `auth` funciona.
+// O contexto passa a levar quem está agindo. Sem actor, todo serviço lança `forbidden`,
+// exceto `auth` (pedir e confirmar o código, sessão atual) — RF-030.
 type ServiceContext = { condominiumId: string; actor?: Actor }
 
 type ServiceErrorCode = "not_found" | "forbidden" | "validation" | "unavailable" | "rate_limited"

@@ -11,5 +11,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/unit/**/*.test.{ts,tsx}"],
+    // Mesmo modo do next dev; testes do modo real passam `mode: "real"` aos serviços.
+    env: { NEXT_PUBLIC_APP_MODE: "dev" },
   },
 })

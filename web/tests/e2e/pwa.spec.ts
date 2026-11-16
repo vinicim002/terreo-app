@@ -2,7 +2,7 @@ import { execFileSync } from "node:child_process"
 import { rmSync, symlinkSync } from "node:fs"
 import { join } from "node:path"
 import type { Page } from "@playwright/test"
-import { expect, test, withPrefs } from "./helpers"
+import { expect, test, signInProfile } from "./helpers"
 
 // História 3 — rodar com E2E_BUILD=1 (build estático). Service worker só no Chromium do
 // Playwright; no iPhone real, os cenários 17 a 21 do quickstart.
@@ -35,8 +35,8 @@ test("@build H3: manifesto e ícones da marca", async ({ request }) => {
     name: "Térreo",
     short_name: "Térreo",
     display: "standalone",
-    theme_color: "#1B4FD8",
-    background_color: "#1B4FD8",
+    theme_color: "#E8590C",
+    background_color: "#E8590C",
   })
   expect(
     manifest.icons.map((i: { sizes: string; purpose?: string }) => `${i.sizes}${i.purpose ?? ""}`),
@@ -54,9 +54,9 @@ test("@build H3-4: sem internet, todas as telas abrem, com aviso e sem VLibras",
   page,
   context,
 }) => {
-  await withPrefs(page, { profile: "resident" })
-  await page.goto("/resident/")
+  await page.goto("/login/")
   await waitForServiceWorker(page)
+  await signInProfile(page, "resident")
 
   await context.setOffline(true)
   await page.goto("/resident/lost-and-found/") // nunca visitada
@@ -68,15 +68,14 @@ test("@build H3-4: sem internet, todas as telas abrem, com aviso e sem VLibras",
 
   await page.goto("/settings/")
   await expect(page.getByText("Tradução para Libras indisponível sem internet.")).toBeVisible()
-  await page.getByRole("button", { name: "Trocar perfil" }).click()
-  await page.getByRole("link", { name: /Portaria/ }).click()
+  // Outra pessoa entra neste aparelho, ainda sem internet (o código é simulado nesta etapa).
+  await signInProfile(page, "front-desk")
+  await page.goto("/front-desk/")
   await page.getByRole("link", { name: "Mais" }).click()
   await page.getByRole("link", { name: "Receber encomenda" }).click()
   await expect(page.getByRole("heading", { level: 1, name: "Receber encomenda" })).toBeVisible()
 
-  await page.goto("/settings/")
-  await page.getByRole("button", { name: "Trocar perfil" }).click()
-  await page.getByRole("link", { name: /Síndico/ }).click()
+  await signInProfile(page, "manager")
   await page.goto("/manager/schedule/")
   await expect(page.getByRole("heading", { level: 1, name: "Escala da equipe" })).toBeVisible()
 

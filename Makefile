@@ -1,5 +1,5 @@
 # Comandos do Térreo. Veja docs/documentacao/04-desenvolvimento.md.
-.PHONY: dev down logs test test-web test-api lint e2e e2e-build build-demo serve-demo perf
+.PHONY: dev down logs test test-web test-api lint e2e e2e-build e2e-build-real build-demo serve-demo perf
 
 dev:            ## Sobe db, redis, api, worker e web
 	docker compose up --build -d --renew-anon-volumes
@@ -28,7 +28,11 @@ e2e:            ## Requer `make dev` rodando (testes contra o next dev, no cont�
 
 e2e-build:      ## Gera a demonstração e roda os testes @build (PWA, demonstração) no contêiner do Playwright
 	cd web && npm run build:demo && ln -sfn out out-current
-	docker compose --profile e2e run --rm -e E2E_BUILD=1 e2e npx playwright test --grep @build $(ARGS)
+	docker compose --profile e2e run --rm -e E2E_BUILD=1 e2e npx playwright test --grep "@build(?!-real)" $(ARGS)
+
+e2e-build-real: ## Gera a versão real (out-real/) e confere que não há atalhos de teste nem contas de exemplo
+	cd web && npm run build:real
+	docker compose --profile e2e run --rm -e E2E_BUILD=real e2e npx playwright test --grep @build-real $(ARGS)
 
 build-demo:
 	cd web && npm run build:demo

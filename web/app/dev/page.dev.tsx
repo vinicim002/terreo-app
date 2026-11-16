@@ -1,4 +1,4 @@
-import { ApiStatus, SeedTools } from "@/dev/DevTools"
+import { ApiStatus, OutboxPanel, SeedTools } from "@/dev/DevTools"
 import { Markdown } from "@/dev/Markdown"
 import { readDoc } from "@/dev/repo"
 
@@ -10,6 +10,7 @@ export default async function DevOverview() {
         <ApiStatus />
         <SeedTools />
       </div>
+      <OutboxPanel />
       <Markdown text={await readDoc("README.md")} />
     </div>
   )

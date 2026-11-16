@@ -17,6 +17,7 @@ const eslintConfig = defineConfig([
     ".lighthouseci/**",
     "public/sw.js",
     "out-next/**",
+    "out-real/**",
     "out-current/**",
     ".serwist/**",
   ]),

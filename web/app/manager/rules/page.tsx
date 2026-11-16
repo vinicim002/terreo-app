@@ -1,0 +1,10 @@
+import { ScreenPage } from "@/components/layout/ScreenPage"
+import { RulesList } from "@/components/rules/RulesList"
+
+export default function Rules() {
+  return (
+    <ScreenPage profile="manager" slug="rules">
+      <RulesList />
+    </ScreenPage>
+  )
+}

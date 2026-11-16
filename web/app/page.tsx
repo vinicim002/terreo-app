@@ -1,5 +1,5 @@
-import { ProfilePicker } from "@/components/home/ProfilePicker"
+import { HomeRedirect } from "@/components/auth/HomeRedirect"
 
 export default function Home() {
-  return <ProfilePicker />
+  return <HomeRedirect />
 }

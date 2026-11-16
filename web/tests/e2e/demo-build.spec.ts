@@ -1,4 +1,4 @@
-import { expect, test, withPrefs } from "./helpers"
+import { expect, signInProfile, test } from "./helpers"
 
 // CS-008 e RF-004a — rodar com E2E_BUILD=1 sobre o build de demonstração.
 test("@build painel de desenvolvimento não existe na demonstração", async ({ page, request }) => {
@@ -17,7 +17,7 @@ test("@build faixa de demonstração em todas as telas", async ({ page, browser 
   await expect(limpa.getByRole("note")).toContainText("Demonstração")
   await limpa.close()
 
-  await withPrefs(page, { profile: "manager" })
+  await signInProfile(page, "manager")
   for (const url of ["/manager/", "/manager/more/", "/manager/schedule/", "/settings/"]) {
     await page.goto(url)
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible()

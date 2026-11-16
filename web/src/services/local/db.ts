@@ -1,35 +1,24 @@
-// Banco IndexedDB do aparelho (research R5). Os dados de exemplo são criados uma única vez
-// por versão (SEED_VERSION), numa só transação, para que duas abas não dupliquem nada.
-import { openDB, type DBSchema, type IDBPDatabase } from "idb"
-import { STORES, type StoreMap, type StoreName } from "../core"
-import type { SeedMeta } from "../schemas"
+// Banco IndexedDB do aparelho (research R5 da 001; versão 2 do banco na spec 002).
+// Os dados de exemplo são criados uma única vez por SEED_VERSION, numa só transação, para que duas abas não
+// dupliquem nada. Sessões, códigos e mensagens simuladas também são apagados ao recriar.
+import { openDB, type IDBPDatabase } from "idb"
+import { INDEXES, STORES, type StoreMap, type StoreName } from "../base"
 import { SEED_VERSION, buildSeed } from "./seed"
 
 export const DB_NAME = "terreo"
-const DB_VERSION = 1
+const DB_VERSION = 2
 
-type StoreSchema<S extends StoreName> = {
-  key: string
-  value: StoreMap[S]
-  indexes: { byCondominium: string }
-}
+// O esquema do idb é tipado de forma solta aqui: as lojas e índices vêm de INDEXES (base.ts).
+export type TerreoDB = IDBPDatabase<unknown>
 
-export interface TerreoDB extends DBSchema {
-  condominiums: StoreSchema<"condominiums">
-  apartments: StoreSchema<"apartments">
-  residents: StoreSchema<"residents">
-  staff: StoreSchema<"staff">
-  shifts: StoreSchema<"shifts">
-  meta: { key: string; value: SeedMeta }
-}
-
-export async function openTerreoDB(): Promise<IDBPDatabase<TerreoDB>> {
-  const db = await openDB<TerreoDB>(DB_NAME, DB_VERSION, {
+export async function openTerreoDB(): Promise<TerreoDB> {
+  const db = await openDB(DB_NAME, DB_VERSION, {
     upgrade(database) {
+      // Dados só de exemplo: na mudança de versão, recria todas as lojas.
+      for (const name of Array.from(database.objectStoreNames)) database.deleteObjectStore(name)
       for (const store of STORES) {
         const os = database.createObjectStore(store, { keyPath: "id" })
-        // No condomínio, o índice é o próprio id; nos demais, condominiumId.
-        os.createIndex("byCondominium", store === "condominiums" ? "id" : "condominiumId")
+        for (const [index, field] of Object.entries(INDEXES[store])) os.createIndex(index, field!)
       }
       database.createObjectStore("meta")
     },
@@ -38,25 +27,38 @@ export async function openTerreoDB(): Promise<IDBPDatabase<TerreoDB>> {
   return db
 }
 
-export async function ensureSeeded(db: IDBPDatabase<TerreoDB>, force = false) {
+export function seedRows(): { [S in StoreName]: StoreMap[S][] } {
+  const seed = buildSeed()
+  return {
+    condominiums: [seed.condominium],
+    apartments: seed.apartments,
+    people: seed.people,
+    residencies: seed.residencies,
+    staff: seed.staff,
+    managers: seed.managers,
+    shifts: seed.shifts,
+    vehicles: seed.vehicles,
+    pets: seed.pets,
+    emergencyContacts: seed.emergencyContacts,
+    rules: seed.rules,
+    otpRequests: [],
+    sessions: [],
+    outbox: [],
+  }
+}
+
+export async function ensureSeeded(db: TerreoDB, force = false) {
   const tx = db.transaction([...STORES, "meta"], "readwrite")
-  const meta = await tx.objectStore("meta").get("seed")
+  const meta = (await tx.objectStore("meta").get("seed")) as { version?: number } | undefined
   if (!force && meta?.version === SEED_VERSION) {
     await tx.done
     return
   }
-  const seed = buildSeed()
-  const rows: { [S in StoreName]: StoreMap[S][] } = {
-    condominiums: [seed.condominium],
-    apartments: seed.apartments,
-    residents: seed.residents,
-    staff: seed.staff,
-    shifts: seed.shifts,
-  }
+  const rows = seedRows()
   for (const store of STORES) {
     const os = tx.objectStore(store)
     await os.clear()
-    for (const row of rows[store]) await os.put(row as never)
+    for (const row of rows[store]) await os.put(row)
   }
   await tx
     .objectStore("meta")

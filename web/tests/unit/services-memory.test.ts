@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest"
 import { createMemoryServices } from "@/services/memory"
-import { TAQUARETINGA_ID } from "@/services/local/seed"
+import { TAQUARETINGA_ID, buildSeed } from "@/services/local/seed"
 import { createLocalServices } from "@/services/local"
 
-const ctx = { condominiumId: TAQUARETINGA_ID }
+const sindica = buildSeed().managers[0].personId
+const ctx = {
+  condominiumId: TAQUARETINGA_ID,
+  actor: { personId: sindica, role: { kind: "manager" as const, condominiumId: TAQUARETINGA_ID } },
+}
 
 describe("serviços em memória (armazenamento indisponível)", () => {
   it("têm os mesmos dados de exemplo", async () => {

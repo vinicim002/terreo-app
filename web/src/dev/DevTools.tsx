@@ -3,13 +3,21 @@
 import { useQuery } from "@tanstack/react-query"
 import { useState } from "react"
 import { useDataCounts, useResetSeed } from "@/hooks/data"
+import { getServices } from "@/services"
+import { formatPhone } from "@/phone/phone"
 
 const LABELS: Record<string, string> = {
   condominiums: "Condomínios",
   apartments: "Apartamentos",
-  residents: "Moradores",
+  people: "Pessoas",
+  residencies: "Moradores",
   staff: "Funcionários",
+  managers: "Síndicos",
   shifts: "Turnos da escala",
+  vehicles: "Carros",
+  pets: "Animais",
+  emergencyContacts: "Contatos de emergência",
+  rules: "Regras",
 }
 
 /** Situação da API (GET /api/health) — RF-002, RF-032. */
@@ -88,6 +96,34 @@ export function SeedTools() {
           Dados de exemplo restaurados.
         </p>
       )}
+    </div>
+  )
+}
+
+/** Mensagens de WhatsApp simuladas (códigos e convites) enviadas neste navegador — spec 002, RF-008. */
+export function OutboxPanel() {
+  const { data } = useQuery({
+    queryKey: ["dev", "outbox"],
+    queryFn: () => getServices().outbox?.list() ?? Promise.resolve([]),
+    refetchInterval: 3_000,
+  })
+  return (
+    <div className="rounded-xl border border-border bg-card p-4" data-testid="outbox">
+      <h2 className="font-semibold">WhatsApp simulado (últimas mensagens)</h2>
+      {!data?.length && (
+        <p className="text-sm text-muted-foreground">Nenhuma mensagem enviada ainda.</p>
+      )}
+      <ul className="mt-2 flex flex-col gap-2 text-sm">
+        {data?.slice(0, 10).map((m) => (
+          <li key={m.id} className="rounded-lg bg-muted p-2">
+            <span className="font-semibold">{m.kind === "otp" ? "Código" : "Convite"}</span> para{" "}
+            {formatPhone(m.toPhone)} ·{" "}
+            {new Date(m.createdAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
+            <br />
+            {m.body}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

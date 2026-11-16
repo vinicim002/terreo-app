@@ -101,9 +101,9 @@ describe("cobertura das funcionalidades (RF-007)", () => {
       join(__dirname, "../../../docs/documentacao/02-funcionalidades.md"),
       "utf8",
     )
-    const nomes = [...capitulo.matchAll(/^\| ([^|]+?) \| [^|]+ \| Planejada \|$/gm)].map(
-      (m) => m[1],
-    )
+    const nomes = [
+      ...capitulo.matchAll(/^\| ([^|]+?) \| [^|]+ \| (?:Planejada|Em construção|Pronta) \|$/gm),
+    ].map((m) => m[1])
     expect(nomes.length).toBeGreaterThan(30)
     for (const nome of nomes) expect(Object.keys(FUNCIONALIDADES), nome).toContain(nome)
   })

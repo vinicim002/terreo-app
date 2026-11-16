@@ -2,10 +2,21 @@ import { IDBFactory } from "fake-indexeddb"
 import { beforeEach, describe, expect, it } from "vitest"
 import { ServiceError, type Services } from "@/services/contracts"
 import { createLocalServices } from "@/services/local"
-import { SEED_VERSION, TAQUARETINGA_ID } from "@/services/local/seed"
+import { SEED_VERSION, TAQUARETINGA_ID, buildSeed } from "@/services/local/seed"
 
-const ctx = { condominiumId: TAQUARETINGA_ID }
-const outro = { condominiumId: "00000000-0000-4000-8000-999999999999" }
+// A partir da spec 002, os serviços exigem quem está agindo (RF-030): aqui, a síndica.
+const seed = buildSeed()
+const sindica = seed.managers[0].personId
+const ctx = {
+  condominiumId: TAQUARETINGA_ID,
+  actor: { personId: sindica, role: { kind: "manager" as const, condominiumId: TAQUARETINGA_ID } },
+}
+const OUTRO = "00000000-0000-4000-8000-999999999999"
+/** A mesma síndica, mas com o papel apontando para outro condomínio. */
+const outro = {
+  condominiumId: OUTRO,
+  actor: { personId: sindica, role: { kind: "manager" as const, condominiumId: OUTRO } },
+}
 
 /** Instante a partir de um horário de Brasília (UTC−3) num dia da semana de novembro de 2026. */
 function brasilia(dia: number, hhmm: string) {
@@ -25,11 +36,11 @@ describe("dados de exemplo", () => {
   it("cria o Taquaretinga com as contagens do data-model.md", async () => {
     const condo = await services.condominium.getCurrent(ctx)
     expect(condo).toMatchObject({ name: "Edifício Taquaretinga", floors: 12, unitsPerFloor: 4 })
-    expect(await services.dev.counts(ctx)).toEqual({
+    expect(await services.dev.counts(ctx)).toMatchObject({
       condominiums: 1,
       apartments: 48,
-      residents: expect.any(Number),
       staff: 5,
+      managers: 1,
       shifts: 33,
     })
     expect(await services.apartments.list(ctx, { withoutResponsible: true })).toHaveLength(3)
@@ -57,7 +68,7 @@ describe("dados de exemplo", () => {
       expect(moradores.length).toBeLessThanOrEqual(4)
       const responsaveis = moradores.filter((r) => r.isResponsible)
       expect(responsaveis, apt.number).toHaveLength(1)
-      expect(apt.responsibleResidentId).toBe(responsaveis[0].id)
+      expect(apt.responsibleResidentId).toBe(responsaveis[0].residencyId)
       for (const r of moradores) {
         expect(r.apartmentId).toBe(apt.id)
         // Telefone fictício com DDD inexistente 00 (RF-028), único no condomínio.
@@ -82,24 +93,34 @@ describe("dados de exemplo", () => {
   })
 })
 
-describe("isolamento por condomínio (RF-026)", () => {
-  it("não devolve nada de outro condomínio", async () => {
+describe("isolamento por condomínio (RF-026) e quem está agindo (RF-030 da 002)", () => {
+  it("papel de outro condomínio não lê nada", async () => {
     await expect(services.condominium.getCurrent(outro)).rejects.toMatchObject({
-      code: "not_found",
+      code: "forbidden",
     })
-    expect(await services.apartments.list(outro)).toEqual([])
-    expect(await services.staff.list(outro)).toEqual([])
-    expect(await services.schedule.listWeek(outro)).toEqual([])
+    await expect(services.apartments.list(outro)).rejects.toMatchObject({ code: "forbidden" })
+    await expect(services.staff.list(outro)).rejects.toMatchObject({ code: "forbidden" })
+    await expect(services.schedule.listWeek(outro)).rejects.toMatchObject({ code: "forbidden" })
     await expect(services.apartments.getByNumber(outro, "804")).rejects.toBeInstanceOf(ServiceError)
+  })
+
+  it("sem ninguém conectado, os serviços da spec 001 recusam", async () => {
+    const semAtor = { condominiumId: TAQUARETINGA_ID }
+    await expect(services.condominium.getCurrent(semAtor)).rejects.toMatchObject({
+      code: "forbidden",
+    })
+    await expect(services.apartments.list(semAtor)).rejects.toMatchObject({ code: "forbidden" })
+    await expect(services.staff.onDutyAt(semAtor, new Date())).rejects.toMatchObject({
+      code: "forbidden",
+    })
   })
 
   it("um id de outro condomínio dá not_found, nunca o dado", async () => {
     const [apt] = await services.apartments.list(ctx)
     const [morador] = await services.residents.listByApartment(ctx, apt.id)
-    await expect(services.residents.get(outro, morador.id)).rejects.toMatchObject({
-      code: "not_found",
-    })
-    expect(await services.residents.listByApartment(outro, apt.id)).toEqual([])
+    await expect(services.residents.get(outro, morador.residencyId)).rejects.toBeInstanceOf(
+      ServiceError,
+    )
   })
 
   it("apartamento inexistente dá not_found", async () => {

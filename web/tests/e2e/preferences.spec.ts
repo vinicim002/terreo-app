@@ -1,11 +1,11 @@
-import { expect, markNoReload, test, wasNotReloaded, withPrefs } from "./helpers"
+import { expect, markNoReload, test, wasNotReloaded, withPrefs, signInProfile } from "./helpers"
 
 // História 2 — cenários H2-1 a H2-6 e CS-003.
 test.describe("idioma inicial pelo celular (H2-1)", () => {
   test.use({ locale: "es-ES" })
   test("celular em espanhol abre em espanhol", async ({ page }) => {
     await page.goto("/")
-    await expect(page.getByRole("heading", { name: "¿Cómo quieres ver Térreo?" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Entrar en Térreo" })).toBeVisible()
     await expect(page.locator("html")).toHaveAttribute("lang", "es")
   })
 })
@@ -14,13 +14,13 @@ test.describe("idioma inicial pelo celular (H2-1, outro idioma)", () => {
   test.use({ locale: "fr-FR" })
   test("celular em francês abre em português", async ({ page }) => {
     await page.goto("/")
-    await expect(page.getByRole("heading", { name: "Como você quer ver o Térreo?" })).toBeVisible()
+    await expect(page.getByRole("heading", { level: 1, name: "Entrar no Térreo" })).toBeVisible()
   })
 })
 
 test.describe("ajustes", () => {
   test.beforeEach(async ({ page }) => {
-    await withPrefs(page, { profile: "resident" })
+    await signInProfile(page, "resident")
   })
 
   test("H2-2 e CS-003: troca de idioma na hora, sem recarregar, em menos de 1 s", async ({
@@ -58,7 +58,7 @@ test.describe("ajustes", () => {
     await page.getByRole("radio", { name: "Escuro" }).check({ force: true })
     await expect(html).toHaveAttribute("data-theme", "dark")
     expect(Date.now() - inicio).toBeLessThan(1000)
-    expect(await fundo()).toBe("rgb(11, 21, 51)") // #0b1533, azul-escuro da marca
+    expect(await fundo()).toBe("rgb(26, 19, 16)") // #1a1310, marrom-escuro da marca
 
     const contraste = page.getByRole("switch", { name: /Alto contraste/ })
     await contraste.click()
@@ -96,7 +96,8 @@ test.describe("letra no máximo em tela de 320 px (H2-5)", () => {
   test.use({ viewport: { width: 320, height: 640 } })
 
   test("sem rolagem para os lados e barra de baixo legível", async ({ page }) => {
-    await withPrefs(page, { profile: "front-desk", fontScale: 3, locale: "es" })
+    await withPrefs(page, { fontScale: 3, locale: "es" })
+    await signInProfile(page, "front-desk")
     for (const url of [
       "/front-desk/",
       "/front-desk/more/",
@@ -124,13 +125,8 @@ test.describe("letra no máximo em tela de 320 px (H2-5)", () => {
 test("H2-6: escolhas mantidas ao reabrir, aplicadas antes da primeira pintura", async ({
   page,
 }) => {
-  await withPrefs(page, {
-    profile: "manager",
-    theme: "dark",
-    highContrast: true,
-    fontScale: 2,
-    locale: "en",
-  })
+  await withPrefs(page, { theme: "dark", highContrast: true, fontScale: 2, locale: "en" })
+  await signInProfile(page, "manager")
   // Logo que o HTML é lido, antes da hidratação, os atributos já estão aplicados.
   await page.goto("/manager/", { waitUntil: "commit" })
   await page.waitForFunction(() => document.documentElement.dataset.theme !== undefined)

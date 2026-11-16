@@ -1,37 +1,46 @@
-// Serviços em memória: usados quando o navegador não deixa usar o IndexedDB (modo anônimo,
-// armazenamento bloqueado). Começam com os mesmos dados de exemplo e não sobrevivem ao fechar.
-import { createServices, type Repository, type StoreMap, type StoreName } from "../core"
-import { buildSeed } from "../local/seed"
+// Repositório em memória: usado quando o navegador não deixa usar o IndexedDB (modo anônimo,
+// armazenamento bloqueado). Começa com os mesmos dados de exemplo e não sobrevive ao fechar.
+import { INDEXES, type Repository, type StoreMap, type StoreName } from "../base"
+import { seedRows } from "../local/db"
+import { createServices, type ServiceOptions } from "../core"
 import type { Services } from "../contracts"
 
 export function createMemoryRepository(): Repository {
-  let data = load()
-  function load(): { [S in StoreName]: StoreMap[S][] } {
-    const seed = buildSeed()
-    return {
-      condominiums: [seed.condominium],
-      apartments: seed.apartments,
-      residents: seed.residents,
-      staff: seed.staff,
-      shifts: seed.shifts,
-    }
-  }
+  let data = seedRows()
+  const rows = <S extends StoreName>(store: S) => data[store] as StoreMap[S][]
+  const clone = <T>(value: T): T => structuredClone(value)
   return {
-    async byCondominium(store, condominiumId) {
-      const rows = data[store] as { id: string; condominiumId?: string }[]
-      return rows.filter(
-        (r) => (store === "condominiums" ? r.id : r.condominiumId) === condominiumId,
-      ) as never
+    async byIndex(store, index, value) {
+      const field = INDEXES[store][index]
+      if (!field) throw new Error(`Índice ${index} não existe em ${store}`)
+      return rows(store)
+        .filter((r) => (r as Record<string, unknown>)[field] === value)
+        .map(clone)
     },
     async get(store, id) {
-      return (data[store] as { id: string }[]).find((r) => r.id === id) as never
+      const found = rows(store).find((r) => (r as { id: string }).id === id)
+      return found ? clone(found) : undefined
+    },
+    async all(store) {
+      return rows(store).map(clone)
+    },
+    async put(store, value) {
+      const list = rows(store)
+      const i = list.findIndex((r) => (r as { id: string }).id === (value as { id: string }).id)
+      if (i >= 0) list[i] = clone(value)
+      else list.push(clone(value))
+    },
+    async remove(store, id) {
+      const list = rows(store)
+      const i = list.findIndex((r) => (r as { id: string }).id === id)
+      if (i >= 0) list.splice(i, 1)
     },
     async resetSeed() {
-      data = load()
+      data = seedRows()
     },
   }
 }
 
-export function createMemoryServices(): Services {
-  return createServices(createMemoryRepository())
+export function createMemoryServices(options: ServiceOptions = {}): Services {
+  return createServices(createMemoryRepository(), options)
 }

@@ -139,6 +139,8 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
       { slug: "on-duty", icon: AlarmClock, group: "building" },
       { slug: "travel-watch", icon: Plane, group: "building" },
       { slug: "contacts", icon: Contact, group: "building" },
+      { slug: "residents", icon: Users, group: "building" },
+      { slug: "rules", icon: FileText, group: "building" },
     ],
   },
   manager: {

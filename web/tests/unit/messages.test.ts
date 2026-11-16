@@ -18,6 +18,34 @@ function leaves(obj: object, prefix = ""): [string, string][] {
 
 const ptKeys = keys(pt).sort()
 
+const IGUAIS_EM_ESPANHOL = [
+  "auth.codeTitle",
+  "auth.codeLabel",
+  "auth.confirm",
+  "auth.resend",
+  "auth.cancel",
+  "onboarding.next",
+  "kinds.tenant",
+  "kinds.family",
+  "kindLabels.tenant",
+  "kindLabels.family",
+  "household.kind",
+  "household.cancel",
+  "household.phone",
+  "profile.edit",
+  "profile.editTitle",
+  "profile.photo",
+  "profile.model",
+  "profile.petKinds.cat",
+  "profile.petKind",
+  "profile.cancel",
+  "profile.contactPhone",
+  "profile.relationship",
+  "admin.filters.all",
+  "admin.filters.tenants",
+  "admin.status.pending",
+]
+
 describe.each([
   ["inglês", en],
   ["espanhol", es],
@@ -48,6 +76,10 @@ describe.each([
       "settings.languages.en",
       "settings.languages.es",
       "settings.libras",
+      "phone.country", // "País" é igual em português e espanhol
+      "profile.color", // "Color" é igual em inglês e espanhol
+      // Palavras que se escrevem igual em português e espanhol:
+      ...(_nome === "espanhol" ? IGUAIS_EM_ESPANHOL : []),
     ])
     const iguais = leaves(messages).filter(
       ([key, value]) => !PERMITIDOS.has(key) && ptMap.get(key) === value,
@@ -58,7 +90,16 @@ describe.each([
   it("mantém os mesmos parâmetros {…} do português", () => {
     const ptMap = new Map(leaves(pt))
     for (const [key, value] of leaves(messages)) {
-      const params = (s: string) => (s.match(/\{\w+\}/g) ?? []).sort()
+      // Só nomes de variável: {nome} ou {nome, plural, ...}; os ramos do plural ({hoje}, {# dia}) são texto.
+      const params = (s: string) =>
+        [
+          ...s
+            .replace(/(=\d+|zero|one|two|few|many|other)\s*\{[^{}]*\}/g, "")
+            .matchAll(/\{(\w+)(?=[},])/g),
+        ]
+          .map((m) => m[1])
+          .filter((n, i, a) => a.indexOf(n) === i)
+          .sort()
       expect(params(value), key).toEqual(params(ptMap.get(key) ?? ""))
     }
   })

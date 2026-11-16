@@ -1,13 +1,12 @@
 "use client"
 
 import { Check } from "lucide-react"
-import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useId, type ReactNode } from "react"
 import { LibrasStatus } from "@/components/accessibility/LibrasStatus"
 import { Header } from "@/components/layout/Header"
-import { HAS_PROFILE_PICKER } from "@/config/app-mode"
-import { PROFILES_DEF } from "@/navigation/screens"
+import { AccountSection } from "@/components/settings/AccountSection"
+import { roleHome, useSession } from "@/auth/session"
 import { usePreferences } from "@/preferences/store"
 import { FONT_SCALES, LOCALES, THEMES, type FontScale } from "@/preferences/types"
 
@@ -68,10 +67,10 @@ function Choice<T extends string | number>({
 
 export function SettingsScreen() {
   const t = useTranslations("settings")
-  const tp = useTranslations("profiles")
-  const router = useRouter()
   const [prefs, update] = usePreferences()
-  const backHref = prefs.profile ? `${PROFILES_DEF[prefs.profile].basePath}/` : "/"
+  const state = useSession()
+  const role = state.status === "ready" ? state.session?.activeRole : null
+  const backHref = role ? roleHome(role) : "/"
 
   return (
     <>
@@ -137,25 +136,7 @@ export function SettingsScreen() {
           <LibrasStatus />
         </Section>
 
-        {HAS_PROFILE_PICKER && (
-          <Section title={tp("switch")}>
-            {prefs.profile && (
-              <p className="text-sm text-muted-foreground">
-                {tp("current", { profile: tp(prefs.profile) })}
-              </p>
-            )}
-            <button
-              type="button"
-              className="btn-outline"
-              onClick={() => {
-                update({ profile: null })
-                router.push("/")
-              }}
-            >
-              {tp("switch")}
-            </button>
-          </Section>
-        )}
+        <AccountSection />
       </main>
     </>
   )

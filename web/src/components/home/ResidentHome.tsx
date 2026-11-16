@@ -16,7 +16,7 @@ export function ResidentHome() {
           href="/resident/services/"
           className="flex min-h-16 items-center gap-3 rounded-xl border border-border bg-card p-4 text-card-foreground hover:bg-muted"
         >
-          <span className="inline-flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <span className="inline-flex size-10 items-center justify-center rounded-xl bg-brand text-brand-foreground">
             <LayoutGrid aria-hidden className="size-5" />
           </span>
           <span className="flex-1">

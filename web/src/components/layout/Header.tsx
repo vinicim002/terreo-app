@@ -45,7 +45,7 @@ export function Header({
           // Ícone do app (kit da marca) nas telas principais, como nos mockups.
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src="/icone-app.svg"
+            src="/icon-192.png"
             alt=""
             width={40}
             height={40}

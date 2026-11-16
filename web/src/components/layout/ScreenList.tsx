@@ -40,7 +40,7 @@ export function ScreenList({ profile }: { profile: Profile }) {
                   >
                     {/* Ícone no quadrado azul da marca, com branco (kit da marca). */}
                     <span
-                      className={`inline-flex items-center justify-center rounded-xl bg-primary text-primary-foreground ${
+                      className={`inline-flex items-center justify-center rounded-xl bg-brand text-brand-foreground ${
                         big ? "size-14" : "size-10"
                       }`}
                     >

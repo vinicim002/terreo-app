@@ -57,13 +57,22 @@ export function contrast(a: string, b: string) {
   return (l1 + 0.05) / (l2 + 0.05)
 }
 
-describe("cores da marca", () => {
-  it("usa o azul #1B4FD8 com branco nos preenchimentos, no claro e no escuro", () => {
+describe("cores da marca (terreo-kit)", () => {
+  it("usa o laranja #E8590C nos elementos grandes e #C2410C, da mesma família, nos botões e textos", () => {
     for (const nome of ["claro", "escuro"] as const) {
-      expect(appearances[nome].primary).toBe("#1b4fd8")
+      expect(appearances[nome].brand).toBe("#e8590c")
+      expect(appearances[nome]["brand-foreground"]).toBe("#ffffff")
+      expect(appearances[nome].primary).toBe("#c2410c")
       expect(appearances[nome]["primary-foreground"]).toBe("#ffffff")
     }
     expect(appearances.claro.background).toBe("#ffffff")
+    expect(appearances.claro.secondary).toBe("#f4eee2") // creme
+    expect(appearances.claro["secondary-foreground"]).toBe("#7a4e35") // marrom
+  })
+
+  // Ícones sobre o laranja não são texto: mínimo 3,0 (WCAG 1.4.11).
+  it.each(Object.entries(appearances))("ícones sobre o laranja — %s ≥ 3", (_nome, tokens) => {
+    expect(contrast(tokens["brand-foreground"], tokens.brand)).toBeGreaterThanOrEqual(3)
   })
 })
 

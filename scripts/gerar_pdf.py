@@ -18,7 +18,7 @@ from weasyprint import HTML
 RAIZ = Path(__file__).resolve().parent.parent
 DOCS = RAIZ / "docs"
 SAIDA = DOCS / "pdf" / "terreo-documentacao.pdf"
-LOGO = DOCS / "assets" / "terreo-logo-horizontal-azul.svg"
+LOGO = DOCS / "assets" / "terreo-logo-horizontal-laranja.svg"
 
 CAPITULOS = sorted((DOCS / "documentacao").glob("*.md")) + [
     DOCS / "backlog.md",
@@ -36,21 +36,21 @@ CSS = """
 body { font-family: "Plus Jakarta Sans", "DejaVu Sans", sans-serif; font-size: 10.5pt; line-height: 1.5; color: #0f172a; }
 .capa { page-break-after: always; text-align: center; padding-top: 7cm; }
 .capa img { width: 9cm; }
-.capa .subtitulo { font-size: 16pt; color: #1B4FD8; margin-top: 1cm; font-weight: bold; }
+.capa .subtitulo { font-size: 16pt; color: #C2410C; margin-top: 1cm; font-weight: bold; }
 .capa .data { color: #64748b; margin-top: 0.5cm; }
 .sumario { page-break-after: always; }
 .sumario li { margin: 4pt 0; }
 .capitulo { page-break-before: always; }
-h1 { color: #1B4FD8; font-size: 20pt; border-bottom: 2px solid #1B4FD8; padding-bottom: 4pt; }
-h2 { color: #1B4FD8; font-size: 14pt; margin-top: 18pt; }
+h1 { color: #C2410C; font-size: 20pt; border-bottom: 2px solid #E8590C; padding-bottom: 4pt; }
+h2 { color: #C2410C; font-size: 14pt; margin-top: 18pt; }
 h3 { font-size: 12pt; }
 table { border-collapse: collapse; width: 100%; margin: 8pt 0; font-size: 9.5pt; }
-th { background: #1B4FD8; color: #fff; text-align: left; }
+th { background: #C2410C; color: #fff; text-align: left; }
 th, td { border: 1px solid #cbd5e1; padding: 4pt 6pt; vertical-align: top; }
-tr:nth-child(even) td { background: #f1f5f9; }
+tr:nth-child(even) td { background: #F4EEE2; }
 code { font-family: "DejaVu Sans Mono", monospace; font-size: 9pt; background: #f1f5f9; padding: 0 2pt; }
 pre { background: #f1f5f9; padding: 6pt; }
-a { color: #1B4FD8; text-decoration: none; }
+a { color: #C2410C; text-decoration: none; }
 .commits td:first-child { font-family: "DejaVu Sans Mono", monospace; white-space: nowrap; }
 """
 

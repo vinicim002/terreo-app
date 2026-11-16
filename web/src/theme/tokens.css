@@ -1,9 +1,13 @@
 /*
- * Tokens do Térreo (research R3). Quatro aparências:
+ * Tokens do Térreo (research R3 da spec 001). Quatro aparências:
  *   claro · escuro · claro com alto contraste · escuro com alto contraste.
  * Aplicadas pelos atributos data-theme e data-contrast no <html>.
- * Cores da marca: azul #1B4FD8 e branco #FFFFFF. Preenchimentos usam sempre o azul com texto branco;
- * no escuro, texto sobre o fundo é branco. Só o alto contraste escurece o azul, para chegar a AAA.
+ *
+ * Cores da marca (terreo-kit): laranja #E8590C, branco #FFFFFF, marrom #7A4E35, creme #F4EEE2.
+ * - --brand (#E8590C, o laranja exato): ícone do app, quadrados dos ícones, mascote e faixas grandes.
+ *   Com branco dá 3,58 — vale para ícones (mínimo 3,0), não para texto.
+ * - --primary (#C2410C, mesmo laranja mais escuro): botões e texto, com branco dá 5,18 (AA).
+ * - Só o alto contraste escurece mais (#9A3412), para chegar a AAA.
  * Componentes usam só estas variáveis, nunca cores soltas (RF-015).
  * Contraste conferido por tests/unit/contrast.test.ts (RF-018).
  */
@@ -11,63 +15,67 @@
 :root,
 :root[data-theme="light"] {
   --background: #ffffff;
-  --foreground: #0f172a;
+  --foreground: #1c1410;
   --card: #ffffff;
-  --card-foreground: #0f172a;
+  --card-foreground: #1c1410;
   --popover: #ffffff;
-  --popover-foreground: #0f172a;
-  --primary: #1b4fd8;
+  --popover-foreground: #1c1410;
+  --brand: #e8590c;
+  --brand-foreground: #ffffff;
+  --primary: #c2410c;
   --primary-foreground: #ffffff;
-  --secondary: #eef2ff;
-  --secondary-foreground: #1e3a8a;
-  --muted: #f1f5f9;
-  --muted-foreground: #475569;
-  --accent: #e0e7ff;
-  --accent-foreground: #1e3a8a;
+  --secondary: #f4eee2;
+  --secondary-foreground: #7a4e35;
+  --muted: #f4eee2;
+  --muted-foreground: #6b5547;
+  --accent: #f4eee2;
+  --accent-foreground: #7a4e35;
   --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
   --warning: #92400e;
   --warning-background: #fef3c7;
-  --border: #e2e8f0;
-  --input: #94a3b8;
-  --ring: #1b4fd8;
+  --border: #e8dccb;
+  --input: #a08a7a;
+  --ring: #e8590c;
   --nav-background: #ffffff;
-  --nav-foreground: #475569;
-  --nav-active: #1b4fd8;
+  --nav-foreground: #6b5547;
+  --nav-active: #c2410c;
+  --nav-pill: #ffffff;
+  --link: #c2410c;
   --radius: 0.75rem;
   color-scheme: light;
-  --link: #1b4fd8;
-  --nav-pill: #ffffff;
 }
 
 :root[data-theme="dark"] {
-  --background: #0b1533;
-  --foreground: #ffffff;
-  --card: #13224d;
-  --card-foreground: #ffffff;
-  --popover: #13224d;
-  --popover-foreground: #ffffff;
-  --primary: #1b4fd8;
+  --background: #1a1310;
+  --foreground: #f4eee2;
+  --card: #2a1f1a;
+  --card-foreground: #f4eee2;
+  --popover: #2a1f1a;
+  --popover-foreground: #f4eee2;
+  --brand: #e8590c;
+  --brand-foreground: #ffffff;
+  --primary: #c2410c;
   --primary-foreground: #ffffff;
-  --secondary: #1a2d63;
-  --secondary-foreground: #ffffff;
-  --muted: #1a2d63;
-  --muted-foreground: #c9d4f2;
-  --accent: #1a2d63;
-  --accent-foreground: #ffffff;
+  --secondary: #2e231d;
+  --secondary-foreground: #f4eee2;
+  --muted: #2e231d;
+  --muted-foreground: #cdbfb3;
+  --accent: #3a2b23;
+  --accent-foreground: #f4eee2;
   --destructive: #f87171;
-  --destructive-foreground: #0b1220;
+  --destructive-foreground: #1a1310;
   --warning: #fcd34d;
   --warning-background: #3a2a05;
-  --border: #2a3f7a;
-  --input: #8ea2d8;
-  --ring: #ffffff;
-  --nav-background: #0e1a3d;
-  --nav-foreground: #c9d4f2;
+  --border: #4a3a30;
+  --input: #8e7b6e;
+  --ring: #f08a4b;
+  --nav-background: #211814;
+  --nav-foreground: #cdbfb3;
   --nav-active: #ffffff;
+  --nav-pill: #c2410c;
+  --link: #f08a4b;
   color-scheme: dark;
-  --nav-pill: #1b4fd8;
-  --link: #ffffff;
 }
 
 :root[data-contrast="high"] {
@@ -77,13 +85,15 @@
   --card-foreground: #000000;
   --popover: #ffffff;
   --popover-foreground: #000000;
-  --primary: #0f2f99;
+  --brand: #9a3412;
+  --brand-foreground: #ffffff;
+  --primary: #9a3412;
   --primary-foreground: #ffffff;
   --secondary: #ffffff;
   --secondary-foreground: #000000;
-  --muted: #f1f5f9;
-  --muted-foreground: #1f2937;
-  --accent: #dbe4ff;
+  --muted: #f4eee2;
+  --muted-foreground: #3b2a20;
+  --accent: #f4eee2;
   --accent-foreground: #000000;
   --destructive: #8b0000;
   --destructive-foreground: #ffffff;
@@ -94,9 +104,9 @@
   --ring: #000000;
   --nav-background: #ffffff;
   --nav-foreground: #000000;
-  --nav-active: #0f2f99;
-  --link: #0f2f99;
+  --nav-active: #9a3412;
   --nav-pill: #ffffff;
+  --link: #9a3412;
 }
 
 :root[data-theme="dark"][data-contrast="high"] {
@@ -106,13 +116,15 @@
   --card-foreground: #ffffff;
   --popover: #000000;
   --popover-foreground: #ffffff;
+  --brand: #ffffff;
+  --brand-foreground: #000000;
   --primary: #ffffff;
   --primary-foreground: #000000;
   --secondary: #000000;
   --secondary-foreground: #ffffff;
   --muted: #111111;
   --muted-foreground: #e5e7eb;
-  --accent: #1a1f33;
+  --accent: #241a14;
   --accent-foreground: #ffffff;
   --destructive: #ffb3b3;
   --destructive-foreground: #000000;
@@ -124,8 +136,8 @@
   --nav-background: #000000;
   --nav-foreground: #ffffff;
   --nav-active: #000000;
-  --link: #ffffff;
   --nav-pill: #ffffff;
+  --link: #ffb38a;
 }
 
 /* Tamanho de letra (RF-016): todo o layout usa rem. */

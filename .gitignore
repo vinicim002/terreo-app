@@ -1,5 +1,7 @@
 # Material interno (requisitos, telas e kit da marca) — não versionar por enquanto
 arquivos-gerais-terreo/
+# Kit da marca original (os arquivos usados ficam em web/public e web/app)
+terreo-kit/
 
 # Segredos e variáveis de ambiente
 .env
@@ -50,3 +52,4 @@ web/test-results/
 api/.venv/
 .pytest_cache/
 .ruff_cache/
+web/out-real/

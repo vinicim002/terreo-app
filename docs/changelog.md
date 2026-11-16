@@ -6,6 +6,10 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
 
 ### Adicionado
 
+- Especificação completa da spec 002 pelo Spec Kit (`specs/002-acesso-e-cadastro/`): spec com 6 esclarecimentos
+  (portaria com celular próprio, permissões no convite, mais de um papel por pessoa, o que a portaria vê, celular de
+  outro país, poderes do síndico), plano, pesquisa, modelo de dados, contratos (serviços, matriz de permissões e
+  rotas), 67 tarefas e análise de consistência com 10 achados corrigidos antes do código.
 - Acesso e cadastro (spec 002), com dados no aparelho:
   - Entrada com celular e código de 6 dígitos "enviado" pelo WhatsApp (simulado, com o código visível no
     desenvolvimento e na demonstração), com as regras reais: 10 minutos, 5 tentativas, reenvio após 1 minuto e até 5
@@ -28,6 +32,7 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
 
 ### Alterado
 
+- Guia de publicação no Cloudflare Pages: `NODE_VERSION` passa a ser 22 (o Next.js 16 exige Node 20.9 ou mais novo).
 - Nova marca (`terreo-kit/`): laranja `#E8590C`, branco, marrom `#7A4E35` e creme `#F4EEE2`, com o mascote
   sabiá-laranjeira. Ícone do app, favicon, ícones do PWA, quadrados dos ícones e o mascote nas boas-vindas usam o
   laranja exato; botões e textos usam o mesmo laranja mais escuro (`#C2410C`), porque o laranja exato com texto branco

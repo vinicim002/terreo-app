@@ -21,6 +21,8 @@ O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "I
 - [x] Painel de desenvolvimento: andamento, backlog, changelog, commits e documentos.
 - [ ] Publicar a demonstração no Cloudflare Pages (passos em `04-desenvolvimento.md`; precisa da conta Cloudflare).
 - [ ] Validar em celulares reais: instalação no Android e no iPhone, VLibras, "seguir o celular" no iPhone.
+- [ ] Validar em celulares reais as telas da spec 002: foto do perfil pela câmera e textos em inglês e espanhol.
+- [ ] Conferir a licença do desenho do mascote (sabiá) antes do lançamento, como avisa o kit da marca.
 
 ## Etapa 2 — Telas com dados locais (Proposta)
 

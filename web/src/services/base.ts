@@ -15,6 +15,24 @@ import {
   ShiftAssignmentSchema,
   StaffSchema,
   VehicleSchema,
+  NoticeSchema,
+  NoticeReadSchema,
+  PollSchema,
+  PollVoteSchema,
+  PollSuggestionSchema,
+  MeetingSchema,
+  AgendaEventSchema,
+  NotificationSchema,
+  NotificationPrefsSchema,
+  type Notice,
+  type NoticeRead,
+  type Poll,
+  type PollVote,
+  type PollSuggestion,
+  type Meeting,
+  type AgendaEvent,
+  type Notification,
+  type NotificationPrefs,
   type Apartment,
   type Condominium,
   type EmergencyContact,
@@ -47,6 +65,15 @@ export interface StoreMap {
   otpRequests: OtpRequest
   sessions: Session
   outbox: OutboxMessage
+  notices: Notice
+  noticeReads: NoticeRead
+  polls: Poll
+  pollVotes: PollVote
+  pollSuggestions: PollSuggestion
+  meetings: Meeting
+  agendaEvents: AgendaEvent
+  notifications: Notification
+  notificationPrefs: NotificationPrefs
 }
 export type StoreName = keyof StoreMap
 export const STORES = [
@@ -64,6 +91,15 @@ export const STORES = [
   "otpRequests",
   "sessions",
   "outbox",
+  "notices",
+  "noticeReads",
+  "polls",
+  "pollVotes",
+  "pollSuggestions",
+  "meetings",
+  "agendaEvents",
+  "notifications",
+  "notificationPrefs",
 ] as const satisfies readonly StoreName[]
 
 /** Índices por loja: nome do índice → campo. */
@@ -81,9 +117,19 @@ export const INDEXES: { [S in StoreName]: Partial<Record<IndexName, string>> } =
   rules: { byCondominium: "condominiumId" },
   otpRequests: { byPhone: "phone" },
   sessions: { byPerson: "personId", byDevice: "deviceId" },
-  outbox: { byPhone: "toPhone" },
+  outbox: { byPhone: "toPhone", byCondominium: "condominiumId" },
+  notices: { byCondominium: "condominiumId" },
+  noticeReads: { byCondominium: "condominiumId", byNotice: "noticeId", byPerson: "personId" },
+  polls: { byCondominium: "condominiumId" },
+  pollVotes: { byCondominium: "condominiumId", byPoll: "pollId" },
+  pollSuggestions: { byCondominium: "condominiumId", byPoll: "pollId" },
+  meetings: { byCondominium: "condominiumId" },
+  agendaEvents: { byCondominium: "condominiumId" },
+  notifications: { byCondominium: "condominiumId", byPerson: "personId" },
+  notificationPrefs: { byCondominium: "condominiumId", byPerson: "personId" },
 }
-export type IndexName = "byCondominium" | "byPhone" | "byPerson" | "byApartment" | "byDevice"
+export type IndexName =
+  "byCondominium" | "byPhone" | "byPerson" | "byApartment" | "byDevice" | "byNotice" | "byPoll"
 
 export interface Repository {
   byIndex<S extends StoreName>(store: S, index: IndexName, value: string): Promise<StoreMap[S][]>
@@ -118,6 +164,15 @@ const SCHEMAS = {
   otpRequests: OtpRequestSchema,
   sessions: SessionSchema,
   outbox: OutboxMessageSchema,
+  notices: NoticeSchema,
+  noticeReads: NoticeReadSchema,
+  polls: PollSchema,
+  pollVotes: PollVoteSchema,
+  pollSuggestions: PollSuggestionSchema,
+  meetings: MeetingSchema,
+  agendaEvents: AgendaEventSchema,
+  notifications: NotificationSchema,
+  notificationPrefs: NotificationPrefsSchema,
 } as const
 
 export function validate<S extends StoreName>(store: S, value: unknown): StoreMap[S] {

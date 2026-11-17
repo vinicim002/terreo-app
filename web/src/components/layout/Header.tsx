@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { canGoBackInApp } from "@/navigation/history"
+import { useUnreadCount } from "@/hooks/data"
 
 interface HeaderProps {
   title: string
@@ -28,6 +29,7 @@ export function Header({
 }: HeaderProps) {
   const t = useTranslations()
   const router = useRouter()
+  const { data: unread = 0 } = useUnreadCount(!!notificationsHref)
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-background/95 pt-[env(safe-area-inset-top)] backdrop-blur">
       <div className="mx-auto flex max-w-xl items-center gap-3 px-4 py-3">
@@ -60,8 +62,22 @@ export function Header({
           <Accessibility aria-hidden className="size-5" />
         </Link>
         {notificationsHref && (
-          <Link href={notificationsHref} className={iconButton} aria-label={t("nav.notifications")}>
+          <Link
+            href={notificationsHref}
+            className={`${iconButton} relative`}
+            aria-label={t("comm.notifications.bell", { count: unread })}
+            data-testid="bell"
+          >
             <Bell aria-hidden className="size-5" />
+            {unread > 0 && (
+              // Contagem de não lidas (spec 003, RF-022): até "9+".
+              <span
+                aria-hidden
+                className="absolute -right-1.5 -top-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1 text-xs font-bold leading-5 text-primary-foreground"
+              >
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
           </Link>
         )}
       </div>

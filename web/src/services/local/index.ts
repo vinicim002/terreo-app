@@ -6,13 +6,16 @@ import { ensureSeeded, openTerreoDB, type TerreoDB } from "./db"
 import { createServices, type ServiceOptions } from "../core"
 import type { Services } from "../contracts"
 
-export function createLocalRepository(onFallback?: () => void): Repository {
+export function createLocalRepository(
+  onFallback?: () => void,
+  now: () => Date = () => new Date(),
+): Repository {
   let memory: Repository | null = null
   const dbPromise: Promise<TerreoDB | null> = (async () => {
     try {
-      return await openTerreoDB()
+      return await openTerreoDB(now)
     } catch {
-      memory = createMemoryRepository()
+      memory = createMemoryRepository(now)
       onFallback?.()
       return null
     }
@@ -47,7 +50,7 @@ export function createLocalRepository(onFallback?: () => void): Repository {
     async resetSeed() {
       const db = await dbPromise
       if (!db) return memory!.resetSeed()
-      await ensureSeeded(db, true)
+      await ensureSeeded(db, true, now)
     },
   }
 }
@@ -55,5 +58,5 @@ export function createLocalRepository(onFallback?: () => void): Repository {
 export function createLocalServices(
   options: ServiceOptions & { onFallback?: () => void } = {},
 ): Services {
-  return createServices(createLocalRepository(options.onFallback), options)
+  return createServices(createLocalRepository(options.onFallback, options.now), options)
 }

@@ -95,3 +95,48 @@ for (const aparencia of APARENCIAS) {
     }
   })
 }
+
+// Spec 003: telas de comunicação (T045). Ids fixos dos dados de exemplo (seed-communication.ts).
+const AVISO_AGUA = "00000000-0000-4000-800c-000000000003"
+const REUNIAO_PASSADA = "00000000-0000-4000-8011-000000000002"
+const TELAS_003: { conta: AccountKey; papel?: "manager"; url: string }[] = [
+  { conta: "responsible", url: "/resident/notices/" },
+  { conta: "responsible", url: `/resident/notice/?id=${AVISO_AGUA}` },
+  { conta: "responsible", url: "/resident/polls/" },
+  { conta: "responsible", url: "/resident/calendar/" },
+  { conta: "responsible", url: "/resident/meetings/" },
+  { conta: "responsible", url: `/resident/meeting/?id=${REUNIAO_PASSADA}` },
+  { conta: "responsible", url: "/resident/notifications/" },
+  { conta: "family", url: "/resident/polls/" },
+  { conta: "manager", papel: "manager", url: `/manager/notice/?id=${AVISO_AGUA}` },
+  { conta: "manager", papel: "manager", url: "/manager/notice/edit/" },
+  { conta: "manager", papel: "manager", url: "/manager/poll/new/" },
+  { conta: "manager", papel: "manager", url: "/manager/meeting/edit/" },
+  { conta: "manager", papel: "manager", url: "/manager/event/new/" },
+  { conta: "front-desk", url: "/front-desk/notices/" },
+  { conta: "front-desk", url: "/front-desk/calendar/" },
+]
+
+for (const aparencia of APARENCIAS) {
+  test.describe(`acessibilidade (spec 003) — ${aparencia.nome}`, () => {
+    test.skip(({ browserName }) => browserName !== "chromium", "auditoria só no Chromium")
+    for (const tela of TELAS_003) {
+      test(`${tela.conta} ${tela.url}`, async ({ page }) => {
+        await withPrefs(page, aparencia.prefs)
+        await signInAs(page, tela.conta, tela.papel)
+        await page.goto(tela.url)
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+        await page.waitForLoadState("networkidle")
+        const tags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]
+        if (aparencia.prefs.highContrast) tags.push("wcag2aaa")
+        const result = await new AxeBuilder({ page }).withTags(tags).exclude("[vw]").analyze()
+        const graves = result.violations.filter(
+          (v) => v.impact === "serious" || v.impact === "critical",
+        )
+        expect(
+          graves.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
+        ).toEqual([])
+      })
+    }
+  })
+}

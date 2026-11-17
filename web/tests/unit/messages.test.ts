@@ -44,6 +44,17 @@ const IGUAIS_EM_ESPANHOL = [
   "admin.filters.all",
   "admin.filters.tenants",
   "admin.status.pending",
+  // Spec 003
+  "screens.noticeEdit",
+  "comm.notices.resolveNote",
+  "comm.form.chars",
+  "comm.pollForm.partial",
+  "comm.agenda.upcoming",
+  "comm.agenda.recurrence.semiannual",
+  "comm.meetings.upcoming",
+  "comm.notifications.types.delivery",
+  "comm.prefs.types.notices",
+  "comm.prefs.types.deliveries",
 ]
 
 describe.each([

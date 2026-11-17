@@ -1,6 +1,12 @@
 // Interfaces dos serviços de dados (specs 001 e 002: contracts/servicos-dados.md e contracts/servicos.md).
 // A implementação local (IndexedDB), a em memória e a futura HTTP seguem exatamente este contrato (RF-025 da 001).
 import type {
+  AgendaEvent,
+  NoticeKind,
+  NotificationPrefs,
+  NotificationTarget,
+  NotificationType,
+  Recurrence,
   Apartment,
   Condominium,
   EmergencyContact,
@@ -121,6 +127,8 @@ export interface ScheduleService {
 export interface DevDataService {
   resetSeed(): Promise<void>
   counts(ctx: ServiceContext): Promise<Record<string, number>>
+  /** Esquece os códigos pedidos por um celular (atalho dos testes trocar de conta sem esperar 60 s). */
+  forgetCodes(phone: string): Promise<void>
 }
 
 // ---------- Serviços da spec 002 ----------
@@ -234,6 +242,188 @@ export interface OutboxService {
   list(): Promise<OutboxMessage[]>
 }
 
+// ---------- Serviços da spec 003 (contracts/servicos.md) ----------
+
+export interface NoticeInput {
+  kind: NoticeKind
+  title: string
+  body: string
+  important: boolean
+  sendToGroup: boolean
+  requireConfirmation: boolean
+  /** Dia do assunto (`AAAA-MM-DD`), para o lembrete da véspera e a agenda. */
+  referenceDate: string | null
+  remindDayBefore: boolean
+  /** null = publicar agora. */
+  publishAt: string | null
+}
+
+export interface NoticeView {
+  id: string
+  kind: NoticeKind
+  title: string
+  body: string
+  important: boolean
+  sendToGroup: boolean
+  requireConfirmation: boolean
+  referenceDate: string | null
+  remindDayBefore: boolean
+  status: "scheduled" | "published" | "resolved"
+  publishAt: string
+  publishedAt: string | null
+  editedAt: string | null
+  resolvedAt: string | null
+  resolutionNote: string | null
+  author: { name: string }
+  /** Da versão atual do aviso. */
+  me: { read: boolean; confirmed: boolean }
+}
+
+export interface NoticeStats {
+  readApartments: number
+  totalApartments: number
+  confirmations: { personName: string; apartment: string; at: string }[]
+  /** Apartamentos sem confirmação (só em avisos com confirmação). */
+  pendingApartments: string[]
+}
+
+export type NoticeFilter = "all" | "unread" | "scheduled"
+
+export interface NoticeService {
+  list(ctx: ServiceContext, filter: NoticeFilter): Promise<{ items: NoticeView[]; unread: number }>
+  /** Abre o aviso e marca como lido (RF-006). */
+  get(ctx: ServiceContext, id: string): Promise<NoticeView>
+  confirm(ctx: ServiceContext, id: string): Promise<NoticeView>
+  create(ctx: ServiceContext, input: NoticeInput): Promise<NoticeView>
+  update(ctx: ServiceContext, id: string, input: NoticeInput): Promise<NoticeView>
+  resolve(ctx: ServiceContext, id: string, note: string | null): Promise<NoticeView>
+  remove(ctx: ServiceContext, id: string): Promise<void>
+  stats(ctx: ServiceContext, id: string): Promise<NoticeStats>
+}
+
+export interface PollOptionView {
+  id: string
+  label: string
+  /** null quando o resultado está oculto. */
+  votes: number | null
+  percent: number | null
+}
+
+export interface PollView {
+  id: string
+  question: string
+  official: boolean
+  showPartial: boolean
+  options: PollOptionView[]
+  totalVotes: number | null
+  status: "open" | "closed"
+  closesAt: string
+  closedAt: string | null
+  winner: { optionIds: string[]; tie: boolean } | null
+  me: {
+    canVote: boolean
+    canSuggest: boolean
+    /** Oficial: o voto do apartamento (dado pelo responsável). */
+    vote: { optionId: string; byName: string } | null
+    /** optionId que eu sugeri. */
+    suggestion: string | null
+    /** Só para o responsável: sugestões das pessoas do apartamento. */
+    householdSuggestions: { personName: string; optionId: string }[]
+  }
+}
+
+export interface PollInput {
+  question: string
+  options: string[]
+  closesAt: string
+  official: boolean
+  showPartial: boolean
+}
+
+export interface PollService {
+  list(ctx: ServiceContext): Promise<{ open: PollView[]; closed: PollView[] }>
+  get(ctx: ServiceContext, id: string): Promise<PollView>
+  vote(ctx: ServiceContext, id: string, optionId: string): Promise<PollView>
+  suggest(ctx: ServiceContext, id: string, optionId: string): Promise<PollView>
+  create(ctx: ServiceContext, input: PollInput): Promise<PollView>
+  close(ctx: ServiceContext, id: string): Promise<PollView>
+}
+
+export interface MeetingView {
+  id: string
+  startsAt: string
+  place: string
+  agenda: string[]
+  summary: string | null
+  summaryAt: string | null
+  status: "upcoming" | "past" | "cancelled"
+}
+
+export interface MeetingInput {
+  startsAt: string
+  place: string
+  agenda: string[]
+}
+
+export interface MeetingService {
+  list(ctx: ServiceContext): Promise<{ upcoming: MeetingView[]; past: MeetingView[] }>
+  get(ctx: ServiceContext, id: string): Promise<MeetingView>
+  create(ctx: ServiceContext, input: MeetingInput): Promise<MeetingView>
+  update(ctx: ServiceContext, id: string, input: MeetingInput): Promise<MeetingView>
+  setSummary(ctx: ServiceContext, id: string, summary: string): Promise<MeetingView>
+  cancel(ctx: ServiceContext, id: string): Promise<void>
+}
+
+export interface AgendaItem {
+  /** Ocorrência (ISO, UTC). */
+  date: string
+  kind: "meeting" | "maintenance" | "routine" | "notice"
+  title: string
+  recurrence: Recurrence
+  target: { kind: "meeting" | "notice" | "event"; id: string }
+}
+
+export interface AgendaEventInput {
+  title: string
+  kind: AgendaEvent["kind"]
+  startsAt: string
+  durationMinutes: number | null
+  recurrence: Recurrence
+}
+
+export interface AgendaService {
+  /** `month` de 1 a 12; chaves `AAAA-MM-DD` em Brasília. */
+  month(
+    ctx: ServiceContext,
+    year: number,
+    month: number,
+  ): Promise<{ days: Record<string, AgendaItem[]> }>
+  upcoming(ctx: ServiceContext, limit?: number): Promise<AgendaItem[]>
+  createEvent(ctx: ServiceContext, input: AgendaEventInput): Promise<AgendaItem>
+  cancelEvent(ctx: ServiceContext, id: string): Promise<void>
+}
+
+export interface NotificationView {
+  id: string
+  type: NotificationType
+  title: string
+  body: string
+  target: NotificationTarget | null
+  createdAt: string
+  read: boolean
+}
+
+export type NotificationPrefsInput = Pick<NotificationPrefs, "app" | "whatsapp">
+
+export interface NotificationService {
+  list(ctx: ServiceContext): Promise<NotificationView[]>
+  unreadCount(ctx: ServiceContext): Promise<number>
+  markRead(ctx: ServiceContext, id: string): Promise<void>
+  markAllRead(ctx: ServiceContext): Promise<void>
+  getPrefs(ctx: ServiceContext): Promise<NotificationPrefsInput>
+  setPrefs(ctx: ServiceContext, prefs: NotificationPrefsInput): Promise<NotificationPrefsInput>
+}
+
 export interface Services {
   condominium: CondominiumService
   apartments: ApartmentService
@@ -248,6 +438,11 @@ export interface Services {
   apartmentData: ApartmentDataService
   directory: FrontDeskDirectoryService
   rules: RulesService
+  notices: NoticeService
+  polls: PollService
+  meetings: MeetingService
+  agenda: AgendaService
+  notifications: NotificationService
   /** Só existe nos modos dev e demo. */
   outbox?: OutboxService
 }

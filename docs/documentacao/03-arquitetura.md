@@ -52,6 +52,22 @@ Celular (PWA Next.js) ──HTTPS──> Caddy ──> /       Next.js (telas)
   (`specs/002-acesso-e-cadastro/contracts/permissoes.md`): só o responsável convida; o síndico edita qualquer pessoa;
   a portaria só consulta nome, foto, tipo e carros. Sem ninguém conectado, nada funciona além da entrada.
 
+## Comunicação: horários e canais (spec 003)
+
+- **Tarefas com horário sem servidor.** Publicar um aviso agendado, mandar o lembrete da véspera (avisos e reuniões) e
+  encerrar enquetes vencidas ficam numa função só, `runDue` (`web/src/services/due.ts`). Ela confere o que já venceu
+  sempre que alguém abre o app ou uma lista, não repete o que já fez e roda uma de cada vez. Os testes controlam o
+  relógio. **Na Etapa 3**, a mesma lógica vira tarefa agendada do ARQ no servidor.
+- **Quem recebe o quê.** Todo envio passa por `notify` (`web/src/services/notify.ts`): uma notificação no app por
+  pessoa, conforme as preferências; **uma** mensagem no grupo do WhatsApp para assuntos gerais (avisos, reuniões,
+  enquetes), nunca cópia no privado; o privado é só para assuntos pessoais (entregas, visitantes) e emergências, que
+  ignoram as preferências. Hoje as mensagens ficam na caixa de saída simulada do painel `/dev`; na Etapa 3, `notify` vira
+  a entrada da fila de envios.
+- **Leituras com versão.** Cada aviso tem uma versão; editar um aviso publicado sobe a versão e só contam as leituras da
+  versão atual. "Lido por N de M" conta apartamentos com pelo menos uma pessoa que leu.
+- **Enquetes oficiais.** O voto do apartamento é do responsável; quem mais tem permissão deixa uma sugestão, que só o
+  responsável vê. O resultado é calculado na leitura.
+
 ## Login e sessão
 
 **Hoje (Etapa 2, provisório):** o código e a sessão são simulados no próprio aparelho, com as mesmas regras que o
@@ -98,7 +114,8 @@ Interface 3100, API 8100, PostgreSQL 5440, Redis 6390 (sem colidir com os outros
 | `CLAUDE.md` | Orientações para o Claude Code trabalhar no repositório. |
 | `web/app/` | Rotas da interface: escolha de perfil, `/resident`, `/front-desk`, `/manager`, `/settings` e o painel `/dev`. |
 | `web/src/navigation/screens.ts` | Catálogo único de telas: gera rotas, barra de baixo, "Mais" e "Todos os serviços". |
-| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`). |
+| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), avisos (`notices.ts`), enquetes (`polls.ts`), reuniões e agenda (`meetings.ts`), notificações (`notifications.ts`, `notify.ts`), tarefas com horário (`due.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`, `local/seed-communication.ts`). |
+| `web/src/components/` | Telas e peças: `notices/`, `polls/`, `agenda/`, `meetings/`, `notifications/` e `comm/` (comunicação), além das de cadastro, perfil, síndico e portaria. |
 | `web/src/auth/` | Sessão do aparelho, guarda de acesso e o atalho de testes (só em desenvolvimento e demonstração). |
 | `web/src/phone/` · `web/src/photo/` · `web/src/lib/crypto.ts` | Celular por país, redução da foto e criptografia que funciona também fora de HTTPS. |
 | `web/app/login/` · `welcome/` · `rules-accept/` · `choose-role/` | Entrada, primeiro acesso e escolha de papel. |

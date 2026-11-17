@@ -5,8 +5,8 @@ import { seedRows } from "../local/db"
 import { createServices, type ServiceOptions } from "../core"
 import type { Services } from "../contracts"
 
-export function createMemoryRepository(): Repository {
-  let data = seedRows()
+export function createMemoryRepository(now: () => Date = () => new Date()): Repository {
+  let data = seedRows(now())
   const rows = <S extends StoreName>(store: S) => data[store] as StoreMap[S][]
   const clone = <T>(value: T): T => structuredClone(value)
   return {
@@ -36,11 +36,11 @@ export function createMemoryRepository(): Repository {
       if (i >= 0) list.splice(i, 1)
     },
     async resetSeed() {
-      data = seedRows()
+      data = seedRows(now())
     },
   }
 }
 
 export function createMemoryServices(options: ServiceOptions = {}): Services {
-  return createServices(createMemoryRepository(), options)
+  return createServices(createMemoryRepository(options.now), options)
 }

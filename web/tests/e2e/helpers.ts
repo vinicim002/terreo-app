@@ -85,3 +85,18 @@ export async function signInAs(
 export async function signInProfile(page: Page, profile: keyof typeof ACCOUNT_FOR_PROFILE) {
   await signInAs(page, ACCOUNT_FOR_PROFILE[profile], profile)
 }
+
+// ---------- Comunicação (spec 003) ----------
+
+/** Dia em Brasília (`AAAA-MM-DD`) daqui a `days` dias. */
+export function dayFromNow(days: number) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(
+    new Date(Date.now() + days * 86_400_000),
+  )
+}
+
+/** Troca de conta na mesma aba (os dados do aparelho continuam) e abre a tela. */
+export async function switchTo(page: Page, account: AccountKey, path: string) {
+  await signInAs(page, account)
+  await page.goto(path)
+}

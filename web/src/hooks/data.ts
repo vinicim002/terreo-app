@@ -138,3 +138,92 @@ export function useDirectory(number: string | undefined) {
     enabled: !!number,
   })
 }
+
+// ---------- Spec 003: comunicação ----------
+
+/** Não lidas do sino (research R7): recarrega a cada 30 s e depois de qualquer mutação. */
+export function useUnreadCount(enabled = true) {
+  return useQuery({
+    queryKey: ["notifications", "unread"],
+    queryFn: () => getServices().notifications.unreadCount(ctx()),
+    refetchInterval: 30_000,
+    enabled,
+  })
+}
+
+export function useNotices(filter: "all" | "unread" | "scheduled") {
+  return useQuery({
+    queryKey: ["notices", filter],
+    queryFn: () => getServices().notices.list(ctx(), filter),
+    placeholderData: (previous) => previous,
+  })
+}
+
+/** Abre o aviso (marca como lido). */
+export function useNotice(id: string | null) {
+  const client = useQueryClient()
+  return useQuery({
+    queryKey: ["notice", id],
+    queryFn: async () => {
+      const notice = await getServices().notices.get(ctx(), id!)
+      client.invalidateQueries({ queryKey: ["notifications", "unread"] })
+      return notice
+    },
+    enabled: !!id,
+    retry: false,
+  })
+}
+
+export function useNoticeStats(id: string | null, enabled: boolean) {
+  return useQuery({
+    queryKey: ["notice-stats", id],
+    queryFn: () => getServices().notices.stats(ctx(), id!),
+    enabled: !!id && enabled,
+  })
+}
+
+export function usePolls() {
+  return useQuery({ queryKey: ["polls"], queryFn: () => getServices().polls.list(ctx()) })
+}
+
+export function useMeetings() {
+  return useQuery({ queryKey: ["meetings"], queryFn: () => getServices().meetings.list(ctx()) })
+}
+
+export function useMeeting(id: string | null) {
+  return useQuery({
+    queryKey: ["meeting", id],
+    queryFn: () => getServices().meetings.get(ctx(), id!),
+    enabled: !!id,
+    retry: false,
+  })
+}
+
+export function useAgendaMonth(year: number, month: number) {
+  return useQuery({
+    queryKey: ["agenda", year, month],
+    queryFn: () => getServices().agenda.month(ctx(), year, month),
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function useUpcoming() {
+  return useQuery({
+    queryKey: ["agenda", "upcoming"],
+    queryFn: () => getServices().agenda.upcoming(ctx()),
+  })
+}
+
+export function useNotifications() {
+  return useQuery({
+    queryKey: ["notifications", "list"],
+    queryFn: () => getServices().notifications.list(ctx()),
+  })
+}
+
+export function useNotificationPrefs() {
+  return useQuery({
+    queryKey: ["notifications", "prefs"],
+    queryFn: () => getServices().notifications.getPrefs(ctx()),
+  })
+}

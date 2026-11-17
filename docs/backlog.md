@@ -22,6 +22,7 @@ O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "I
 - [ ] Publicar a demonstração no Cloudflare Pages (passos em `04-desenvolvimento.md`; precisa da conta Cloudflare).
 - [ ] Validar em celulares reais: instalação no Android e no iPhone, VLibras, "seguir o celular" no iPhone.
 - [ ] Validar em celulares reais as telas da spec 002: foto do perfil pela câmera e textos em inglês e espanhol.
+- [ ] Validar em celulares reais as telas da spec 003: campos de data e hora, calendário e o sino.
 - [ ] Conferir a licença do desenho do mascote (sabiá) antes do lançamento, como avisa o kit da marca.
 
 ## Etapa 2 — Telas com dados locais (Proposta)
@@ -30,7 +31,9 @@ Ordem sugerida, uma spec por grupo:
 
 - [x] Acesso e cadastro (spec 002): login com código simulado, papéis, boas-vindas e regras, perfil, convites,
   carros, animais, contato de emergência, apartamentos do síndico e consulta da portaria.
-- [ ] Comunicação: avisos, calendário, reuniões, enquetes, notificações.
+- [x] Comunicação (spec 003): avisos (agendar, importante, confirmação, véspera, editar, resolvido), agenda do mês,
+  reuniões com pauta e resumo, enquetes (oficiais com voto do responsável e sugestões), central de notificações e
+  "Como receber", com WhatsApp simulado (grupo para assuntos gerais, privado só para pessoais).
 - [ ] Portaria: entregas e códigos, correspondência, visitantes, modo viagem, plantão, voz, achados e perdidos.
 - [ ] Segurança: botão de emergência, alerta geral, contatos.
 - [ ] Participação: sugestões, melhorias, avisar problema, barulho, prestadores, comércio, pesquisa de satisfação.
@@ -43,6 +46,9 @@ Ordem sugerida, uma spec por grupo:
 - [ ] Modelo de dados multi-condomínio, sessão e permissões por perfil.
 - [ ] API de cada grupo da Etapa 2, trocando os dados locais.
 - [ ] Fila ARQ, WhatsApp (Evolution API), Web Push e fotos no R2.
+- [ ] Comunicação no servidor (spec 003): `runDue` como tarefa agendada do ARQ, `notify` como entrada da fila, testes
+  pytest das regras (permissões, um voto por apartamento, canais, isolamento entre condomínios) e confirmar leitura
+  respondendo à mensagem no WhatsApp.
 
 ## Etapa 4 — Piloto (Proposta)
 

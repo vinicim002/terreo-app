@@ -100,7 +100,17 @@ export function SeedTools() {
   )
 }
 
-/** Mensagens de WhatsApp simuladas (códigos e convites) enviadas neste navegador — spec 002, RF-008. */
+const OUTBOX_LABEL = {
+  otp: "Código",
+  invite: "Convite",
+  group: "Grupo",
+  private: "Privado",
+} as const
+
+/**
+ * Mensagens de WhatsApp simuladas enviadas neste navegador: códigos e convites (spec 002, RF-008), grupo do
+ * condomínio e privado (spec 003, RF-027).
+ */
 export function OutboxPanel() {
   const { data } = useQuery({
     queryKey: ["dev", "outbox"],
@@ -114,10 +124,10 @@ export function OutboxPanel() {
         <p className="text-sm text-muted-foreground">Nenhuma mensagem enviada ainda.</p>
       )}
       <ul className="mt-2 flex flex-col gap-2 text-sm">
-        {data?.slice(0, 10).map((m) => (
+        {data?.slice(0, 15).map((m) => (
           <li key={m.id} className="rounded-lg bg-muted p-2">
-            <span className="font-semibold">{m.kind === "otp" ? "Código" : "Convite"}</span> para{" "}
-            {formatPhone(m.toPhone)} ·{" "}
+            <span className="font-semibold">{OUTBOX_LABEL[m.kind]}</span>{" "}
+            {m.toPhone ? `para ${formatPhone(m.toPhone)}` : "do condomínio"} ·{" "}
             {new Date(m.createdAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
             <br />
             {m.body}

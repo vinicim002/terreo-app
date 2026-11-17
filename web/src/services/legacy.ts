@@ -119,6 +119,11 @@ export function devService(deps: ServiceDeps): DevDataService {
       guard()
       await deps.repo.resetSeed()
     },
+    async forgetCodes(phone) {
+      guard()
+      for (const r of await deps.repo.byIndex("otpRequests", "byPhone", phone))
+        await deps.repo.remove("otpRequests", r.id)
+    },
     async counts(ctx) {
       guard()
       const entries = await Promise.all(

@@ -1,5 +1,5 @@
 /**
- * Dados de exemplo do Edifício Taquaretinga (data-model.md das specs 001 e 002).
+ * Dados de exemplo do Edifício Taquaretinga (data-model.md das specs 001, 002 e 003).
  * TUDO É FICTÍCIO: nomes inventados e celulares com DDD inexistente (00).
  * Os números do prédio (48 apartamentos, 12 andares) são provisórios — mude só aqui.
  */
@@ -18,9 +18,10 @@ import type {
   Staff,
   Vehicle,
 } from "../schemas"
+import { buildCommunicationSeed, type CommunicationSeed } from "./seed-communication"
 
 /** Mude ao alterar os dados: aparelhos com versão diferente recriam os dados de exemplo. */
-export const SEED_VERSION = 2
+export const SEED_VERSION = 3
 
 export const FLOORS = 12
 export const UNITS_PER_FLOOR = 4
@@ -84,7 +85,7 @@ const LAST_NAMES = [
   "Queiroz",
 ]
 
-export interface SeedData {
+export interface SeedData extends CommunicationSeed {
   condominium: Condominium
   apartments: Apartment[]
   people: Person[]
@@ -111,7 +112,8 @@ export const EXAMPLE_ACCOUNTS = [
   name?: string
 }[]
 
-export function buildSeed(): SeedData {
+/** `now`: data de referência das datas da comunicação (spec 003). */
+export function buildSeed(now: Date = new Date()): SeedData {
   const condominiumId = TAQUARETINGA_ID
   const condominium: Condominium = {
     id: condominiumId,
@@ -167,7 +169,8 @@ export function buildSeed(): SeedData {
             kind: number === MANAGER_HOME ? "owner" : kind,
             isResponsible,
             canRegisterDeliveries: true,
-            canVotePolls: isResponsible,
+            // Spec 003: o familiar da conta de exemplo "family" (804) pode votar, para sugerir em enquetes oficiais.
+            canVotePolls: isResponsible || (number === "804" && p === 1),
             invitedById: null,
             invitedAt: PAST,
             lastInviteAt: PAST,
@@ -384,7 +387,21 @@ export function buildSeed(): SeedData {
     order: i,
   }))
 
+  const communication = buildCommunicationSeed(
+    {
+      condominiumId,
+      apartments,
+      people,
+      residencies,
+      managerPersonId: managerPerson,
+      frontDeskPersonId: staff[0].personId!,
+      id,
+    },
+    now,
+  )
+
   return {
+    ...communication,
     condominium,
     apartments,
     people,

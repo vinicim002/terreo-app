@@ -17,11 +17,11 @@ com dados no aparelho, ainda sem servidor) ou **Pronta** (com servidor e WhatsAp
 
 | Funcionalidade | Descrição | Situação |
 |---|---|---|
-| Avisos do prédio | O síndico publica avisos (falta d'água, elevador, obras). O morador recebe alerta e o aviso vai ao grupo do WhatsApp. Avisos podem ser agendados, marcados como resolvidos e ter confirmação de leitura. | Planejada |
-| Calendário | Reuniões, manutenções e lembretes da rotina em uma só tela. | Planejada |
-| Reuniões do conselho | Data, horário, local, pauta e resumo do que foi decidido. | Planejada |
-| Enquetes | Perguntas rápidas com opções; nas oficiais, um voto por apartamento. | Planejada |
-| Notificações | Cada morador escolhe o que quer receber; emergências chegam sempre a todos. | Planejada |
+| Avisos do prédio | O síndico publica avisos (falta d'água, elevador, energia, reunião, geral) na hora ou agendados, com marca de importante, confirmação de leitura, lembrete na véspera e "resolvido". O aviso aparece para moradores e portaria e vai uma vez ao grupo do WhatsApp (nunca ao privado). O síndico vê "Lido por N de M apartamentos" e quem confirmou; editar um aviso publicado o devolve a não lido para todos. | Em construção |
+| Calendário | Agenda do mês com marcas nos dias e lista "Próximos": reuniões, manutenções e rotinas que se repetem (toda semana, todo mês, semestral, todo ano) e avisos com data. Só o síndico cadastra. | Em construção |
+| Reuniões do conselho | Data, horário, local e pauta; os moradores são avisados na hora e na véspera. Depois da reunião, o síndico registra o resumo do que foi decidido. | Em construção |
+| Enquetes | Pergunta com 2 a 6 opções, encerramento e resultado parcial opcional; voto com um toque e troca de voto enquanto aberta. Nas oficiais, o voto do apartamento é do responsável e as outras pessoas com permissão deixam sugestões. Encerrada, mostra a vencedora ou o empate. A portaria não vê enquetes. | Em construção |
+| Notificações | Sino com o número de não lidas, central agrupada (Hoje, Ontem, Antes) com "Ler todas" e "Como receber": cada pessoa escolhe, por tipo, o que recebe no app; o privado do WhatsApp é só para assuntos pessoais (entregas, visitantes). Emergências chegam sempre a todos. | Em construção |
 
 ## Portaria
 

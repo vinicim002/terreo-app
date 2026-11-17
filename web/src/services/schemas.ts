@@ -168,10 +168,163 @@ export const SessionSchema = z.object({
 export const OutboxMessageSchema = z.object({
   id: uuid,
   condominiumId: uuid.nullable(),
-  toPhone: E164,
-  kind: z.enum(["otp", "invite"]),
+  toPhone: E164.nullable(), // nulo nas mensagens ao grupo do condomínio (spec 003)
+  kind: z.enum(["otp", "invite", "group", "private"]),
   body: z.string(),
   createdAt: isoDateTime,
+})
+
+// ---------- Spec 003: comunicação (data-model.md) ----------
+
+const dayKey = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data no formato AAAA-MM-DD")
+
+export const NoticeKindSchema = z.enum(["water", "elevator", "power", "meeting", "general"])
+
+export const NoticeSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  authorId: uuid,
+  kind: NoticeKindSchema,
+  title: z.string().trim().min(3).max(120),
+  body: z.string().trim().min(1).max(2000),
+  important: z.boolean(),
+  sendToGroup: z.boolean(),
+  requireConfirmation: z.boolean(),
+  referenceDate: dayKey.nullable(), // dia do assunto (lembrete e agenda)
+  remindDayBefore: z.boolean(), // exige referenceDate
+  publishAt: isoDateTime,
+  publishedAt: nullableDate,
+  editedAt: nullableDate,
+  version: z.int().min(1),
+  resolvedAt: nullableDate,
+  resolutionNote: z.string().trim().max(500).nullable(),
+  reminderSentAt: nullableDate,
+  deletedAt: nullableDate,
+})
+
+export const NoticeReadSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  noticeId: uuid,
+  personId: uuid,
+  version: z.int().min(1),
+  readAt: isoDateTime,
+  confirmedAt: nullableDate,
+})
+
+export const PollOptionSchema = z.object({ id: uuid, label: z.string().trim().min(1).max(80) })
+
+export const PollSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  authorId: uuid,
+  question: z.string().trim().min(5).max(200),
+  options: z
+    .array(PollOptionSchema)
+    .min(2)
+    .max(6)
+    .refine(
+      (opts) => new Set(opts.map((o) => o.label.toLocaleLowerCase())).size === opts.length,
+      "Opções repetidas",
+    ),
+  official: z.boolean(),
+  showPartial: z.boolean(),
+  createdAt: isoDateTime,
+  closesAt: isoDateTime,
+  closedAt: nullableDate,
+})
+
+export const PollVoteSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  pollId: uuid,
+  optionId: uuid,
+  personId: uuid,
+  apartmentId: uuid.nullable(), // preenchido nas oficiais
+  votedAt: isoDateTime,
+})
+
+export const PollSuggestionSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  pollId: uuid,
+  optionId: uuid,
+  personId: uuid,
+  apartmentId: uuid,
+  suggestedAt: isoDateTime,
+})
+
+export const MeetingSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  authorId: uuid,
+  startsAt: isoDateTime,
+  place: z.string().trim().min(2).max(120),
+  agenda: z.array(z.string().trim().min(2).max(200)).min(1).max(15),
+  summary: z.string().trim().min(1).max(5000).nullable(),
+  summaryAt: nullableDate,
+  reminderSentAt: nullableDate,
+  cancelledAt: nullableDate,
+})
+
+export const RecurrenceSchema = z.enum(["none", "weekly", "monthly", "semiannual", "yearly"])
+
+export const AgendaEventSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  title: z.string().trim().min(2).max(80),
+  kind: z.enum(["maintenance", "routine"]),
+  startsAt: isoDateTime,
+  durationMinutes: z.int().min(15).max(1440).nullable(),
+  recurrence: RecurrenceSchema,
+  cancelledAt: nullableDate,
+})
+
+export const NotificationTypeSchema = z.enum([
+  "notice",
+  "notice-updated",
+  "notice-resolved",
+  "notice-reminder",
+  "meeting",
+  "meeting-reminder",
+  "meeting-summary",
+  "poll",
+  "poll-closed",
+  "delivery",
+  "visitor",
+  "emergency",
+])
+
+export const NotificationTargetSchema = z.object({
+  kind: z.enum(["notice", "poll", "meeting"]),
+  id: uuid,
+})
+
+export const NotificationSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  personId: uuid,
+  type: NotificationTypeSchema,
+  title: z.string().max(120),
+  body: z.string().max(200),
+  target: NotificationTargetSchema.nullable(),
+  createdAt: isoDateTime,
+  readAt: nullableDate,
+})
+
+export const NotificationPrefsSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  personId: uuid,
+  app: z.object({
+    notices: z.boolean(),
+    meetings: z.boolean(),
+    polls: z.boolean(),
+    deliveries: z.boolean(),
+    visitors: z.boolean(),
+  }),
+  // Só tipos pessoais: assuntos gerais vão ao grupo, nunca ao privado (esclarecimento 2).
+  whatsapp: z.object({ deliveries: z.boolean(), visitors: z.boolean() }).strict(),
 })
 
 export const SeedMetaSchema = z.object({
@@ -198,3 +351,17 @@ export type Role = z.infer<typeof RoleSchema>
 export type Session = z.infer<typeof SessionSchema>
 export type OutboxMessage = z.infer<typeof OutboxMessageSchema>
 export type SeedMeta = z.infer<typeof SeedMetaSchema>
+
+export type NoticeKind = z.infer<typeof NoticeKindSchema>
+export type Notice = z.infer<typeof NoticeSchema>
+export type NoticeRead = z.infer<typeof NoticeReadSchema>
+export type Poll = z.infer<typeof PollSchema>
+export type PollVote = z.infer<typeof PollVoteSchema>
+export type PollSuggestion = z.infer<typeof PollSuggestionSchema>
+export type Meeting = z.infer<typeof MeetingSchema>
+export type Recurrence = z.infer<typeof RecurrenceSchema>
+export type AgendaEvent = z.infer<typeof AgendaEventSchema>
+export type NotificationType = z.infer<typeof NotificationTypeSchema>
+export type NotificationTarget = z.infer<typeof NotificationTargetSchema>
+export type Notification = z.infer<typeof NotificationSchema>
+export type NotificationPrefs = z.infer<typeof NotificationPrefsSchema>

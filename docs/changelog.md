@@ -2,6 +2,40 @@
 
 Registro diário do que foi adicionado, alterado e removido no projeto. A entrada mais recente fica no topo.
 
+## 2026-11-17
+
+### Adicionado
+
+- Especificação completa da spec 003 pelo Spec Kit (`specs/003-comunicacao/`): spec com 3 esclarecimentos (voto
+  oficial só do responsável, com sugestões da casa; assuntos gerais só no grupo do WhatsApp; aviso publicado pode ser
+  editado e volta a não lido), plano, pesquisa, modelo de dados, contratos, 55 tarefas e análise com 11 achados
+  corrigidos antes do código.
+- Comunicação (spec 003), com dados no aparelho:
+  - Avisos: o síndico publica na hora ou agenda (tipo, título, mensagem, importante, confirmação de leitura, data do
+    assunto com lembrete na véspera, envio ao grupo); moradores e portaria leem, com "Todos" e "Não lidos (N)";
+    "Confirmar leitura"; o síndico vê "Lido por N de M apartamentos", quem confirmou e quem falta; editar, marcar como
+    resolvido com nota e apagar.
+  - Enquetes: de 2 a 6 opções, encerramento, resultado parcial opcional, voto com um toque e "Mudar voto"; nas oficiais,
+    só o responsável vota e as outras pessoas com permissão sugerem; encerradas mostram a vencedora ou o empate.
+  - Agenda do prédio: calendário do mês com marcas, eventos do dia e "Próximos"; reuniões, manutenções e rotinas que se
+    repetem (toda semana, todo mês, semestral, todo ano) e avisos com data.
+  - Reuniões do conselho: data, horário, local e pauta; aviso na hora e na véspera; resumo do que foi decidido depois.
+  - Notificações: sino com o número de não lidas em todas as telas, central em Hoje/Ontem/Antes com "Ler todas" e
+    "Como receber" por tipo; emergências sempre ativas.
+  - WhatsApp simulado no painel `/dev`: uma mensagem no grupo para assuntos gerais, privado só para assuntos pessoais.
+  - Início do morador com avisos não lidos e a próxima reunião; atalhos do síndico (novo aviso, enquete, reunião).
+  - Dados de exemplo v3 com avisos, enquetes, reuniões, eventos e notificações relativos ao dia em que são criados.
+  - Testes: 433 unitários (com relógio controlado para agendamentos, véspera e encerramento) e 273 de ponta a ponta no
+    desenvolvimento, incluindo acessibilidade das telas novas nas quatro aparências; builds de demonstração e real e
+    Lighthouse conferidos.
+
+### Alterado
+
+- Portaria ganha "Avisos" e "Agenda do prédio" no "Mais".
+- O familiar de exemplo do 804 pode votar em enquetes (para sugerir nas oficiais).
+- Banco do aparelho na versão 3 (os dados de exemplo são recriados).
+- O atalho de testes troca de conta sem esperar o intervalo entre códigos (só em desenvolvimento e demonstração).
+
 ## 2026-11-16
 
 ### Adicionado

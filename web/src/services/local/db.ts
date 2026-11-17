@@ -1,4 +1,4 @@
-// Banco IndexedDB do aparelho (research R5 da 001; versão 2 do banco na spec 002).
+// Banco IndexedDB do aparelho (research R5 da 001; versão 2 na spec 002; versão 3 na spec 003).
 // Os dados de exemplo são criados uma única vez por SEED_VERSION, numa só transação, para que duas abas não
 // dupliquem nada. Sessões, códigos e mensagens simuladas também são apagados ao recriar.
 import { openDB, type IDBPDatabase } from "idb"
@@ -6,12 +6,12 @@ import { INDEXES, STORES, type StoreMap, type StoreName } from "../base"
 import { SEED_VERSION, buildSeed } from "./seed"
 
 export const DB_NAME = "terreo"
-const DB_VERSION = 2
+const DB_VERSION = 3
 
 // O esquema do idb é tipado de forma solta aqui: as lojas e índices vêm de INDEXES (base.ts).
 export type TerreoDB = IDBPDatabase<unknown>
 
-export async function openTerreoDB(): Promise<TerreoDB> {
+export async function openTerreoDB(now: () => Date = () => new Date()): Promise<TerreoDB> {
   const db = await openDB(DB_NAME, DB_VERSION, {
     upgrade(database) {
       // Dados só de exemplo: na mudança de versão, recria todas as lojas.
@@ -23,12 +23,13 @@ export async function openTerreoDB(): Promise<TerreoDB> {
       database.createObjectStore("meta")
     },
   })
-  await ensureSeeded(db)
+  await ensureSeeded(db, false, now)
   return db
 }
 
-export function seedRows(): { [S in StoreName]: StoreMap[S][] } {
-  const seed = buildSeed()
+/** Linhas dos dados de exemplo; as datas da comunicação são relativas a `now` (spec 003, research R8). */
+export function seedRows(now: Date = new Date()): { [S in StoreName]: StoreMap[S][] } {
+  const seed = buildSeed(now)
   return {
     condominiums: [seed.condominium],
     apartments: seed.apartments,
@@ -44,24 +45,35 @@ export function seedRows(): { [S in StoreName]: StoreMap[S][] } {
     otpRequests: [],
     sessions: [],
     outbox: [],
+    notices: seed.notices,
+    noticeReads: seed.noticeReads,
+    polls: seed.polls,
+    pollVotes: seed.pollVotes,
+    pollSuggestions: seed.pollSuggestions,
+    meetings: seed.meetings,
+    agendaEvents: seed.agendaEvents,
+    notifications: seed.notifications,
+    notificationPrefs: [],
   }
 }
 
-export async function ensureSeeded(db: TerreoDB, force = false) {
+export async function ensureSeeded(
+  db: TerreoDB,
+  force = false,
+  now: () => Date = () => new Date(),
+) {
   const tx = db.transaction([...STORES, "meta"], "readwrite")
   const meta = (await tx.objectStore("meta").get("seed")) as { version?: number } | undefined
   if (!force && meta?.version === SEED_VERSION) {
     await tx.done
     return
   }
-  const rows = seedRows()
+  const rows = seedRows(now())
   for (const store of STORES) {
     const os = tx.objectStore(store)
     await os.clear()
     for (const row of rows[store]) await os.put(row)
   }
-  await tx
-    .objectStore("meta")
-    .put({ version: SEED_VERSION, seededAt: new Date().toISOString() }, "seed")
+  await tx.objectStore("meta").put({ version: SEED_VERSION, seededAt: now().toISOString() }, "seed")
   await tx.done
 }

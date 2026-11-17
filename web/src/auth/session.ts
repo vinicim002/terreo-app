@@ -92,6 +92,8 @@ if (typeof window !== "undefined" && APP_MODE !== "real") {
     /** Entra com um celular dos dados de exemplo, pelo mesmo fluxo do código. */
     async signInAs(phone: string, roleKind?: Role["kind"]) {
       const services = getServices()
+      // Trocar de conta várias vezes no mesmo teste não espera o intervalo entre códigos.
+      await services.dev.forgetCodes(phone)
       const sent = await services.auth.requestCode(phone)
       if (sent.status !== "sent") throw new Error(`Número não cadastrado: ${phone}`)
       const message = await services.outbox!.latestTo(phone)

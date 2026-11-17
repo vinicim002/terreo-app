@@ -78,7 +78,7 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
-Spec em andamento: `specs/003-comunicacao/` (plano pronto: `runDue` idempotente para tarefas com horário, `notify`
+Spec mais recente: `specs/003-comunicacao/` (implementada: `runDue` idempotente para tarefas com horário, `notify`
 único para canais — gerais só no grupo, privado só pessoal —, leituras de aviso por versão, voto oficial do responsável
 com sugestões, `SEED_VERSION` 3 relativo a `now`). Anterior: `specs/002-acesso-e-cadastro/` (implementada: pessoa separada dos papéis, `ServiceContext.actor` com
 matriz de permissões em `contracts/permissoes.md` conferida nos serviços, código e sessão simulados no aparelho,

@@ -122,7 +122,7 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
     basePath: "/front-desk",
     nav: ["", "deliveries", "visitors", "more"],
     hub: "more",
-    groups: ["actions", "building"],
+    groups: ["actions", "communication", "building"],
     screens: [
       { slug: "", icon: Home },
       { slug: "deliveries", icon: Package },
@@ -135,6 +135,8 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
       { slug: "dictate", icon: Mic, group: "actions" },
       { slug: "general-alert", icon: BellRing, group: "actions" },
       { slug: "emergency-alert", icon: ShieldAlert, group: "actions" },
+      { slug: "notices", icon: Megaphone, group: "communication" },
+      { slug: "calendar", icon: CalendarDays, group: "communication" },
       { slug: "lost-and-found", icon: Search, group: "building" },
       { slug: "on-duty", icon: AlarmClock, group: "building" },
       { slug: "travel-watch", icon: Plane, group: "building" },

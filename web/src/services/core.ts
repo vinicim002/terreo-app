@@ -14,6 +14,10 @@ import {
   rulesService,
 } from "./household"
 import { uuid } from "@/lib/crypto"
+import { agendaService, meetingService } from "./meetings"
+import { noticeService } from "./notices"
+import { notificationService } from "./notifications"
+import { pollService } from "./polls"
 import {
   apartmentService,
   condominiumService,
@@ -55,6 +59,11 @@ export function createServices(repo: Repository, options: ServiceOptions = {}): 
     apartmentData: apartmentDataService(deps),
     directory: directoryService(deps),
     rules: rulesService(deps),
+    notices: noticeService(deps),
+    polls: pollService(deps),
+    meetings: meetingService(deps),
+    agenda: agendaService(deps),
+    notifications: notificationService(deps),
     // A caixa de saída simulada só existe nos modos dev e demo (RF-008).
     outbox: deps.mode === "real" ? undefined : outboxService(deps),
   }

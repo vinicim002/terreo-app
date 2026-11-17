@@ -15,6 +15,17 @@ export type Action =
   | "apartmentData.edit" // carros, animais, contato de emergência
   | "admin.manage" // lista de todos os apartamentos, cadastrar e trocar responsável
   | "directory.view" // consulta restrita da portaria
+  // Spec 003 (contracts/permissoes.md)
+  | "notice.read" // listar, abrir, marcar lido
+  | "notice.confirm"
+  | "notice.manage" // criar, editar, agendar, apagar, resolver, estatísticas e agendados
+  | "poll.view"
+  | "poll.vote" // alvo.official: oficial só o responsável; comum, quem tem canVotePolls
+  | "poll.suggest" // só em oficiais: quem tem canVotePolls e não é o responsável
+  | "poll.manage"
+  | "agenda.read" // agenda, reuniões e resumos
+  | "agenda.manage"
+  | "notification.own"
 
 /** Estado atual do ator, carregado do repositório (não confiar no que estava na sessão). */
 export interface ActorInfo {
@@ -22,12 +33,15 @@ export interface ActorInfo {
   personId: string
   apartmentId?: string
   isResponsible?: boolean
+  canVotePolls?: boolean
 }
 
 export interface Target {
   apartmentId?: string
   /** Pessoa alvo (para "não remover a si mesmo"). */
   personId?: string
+  /** Enquete oficial (um voto por apartamento). */
+  official?: boolean
 }
 
 export type Decision = "ok" | "forbidden" | "not_found"
@@ -70,6 +84,24 @@ export function can(actor: ActorInfo | null, action: Action, target: Target = {}
       return actor.kind === "manager" ? "ok" : "forbidden"
     case "directory.view":
       return actor.kind === "front-desk" ? "ok" : "forbidden"
+    case "notice.read":
+    case "agenda.read":
+    case "notification.own":
+      return "ok"
+    case "notice.confirm":
+    case "poll.view":
+      return actor.kind === "front-desk" ? "forbidden" : "ok"
+    case "notice.manage":
+    case "poll.manage":
+    case "agenda.manage":
+      return actor.kind === "manager" ? "ok" : "forbidden"
+    case "poll.vote":
+      if (actor.kind !== "resident") return "forbidden"
+      if (target.official) return actor.isResponsible ? "ok" : "forbidden"
+      return actor.canVotePolls || actor.isResponsible ? "ok" : "forbidden"
+    case "poll.suggest":
+      if (actor.kind !== "resident" || !target.official) return "forbidden"
+      return !actor.isResponsible && actor.canVotePolls ? "ok" : "forbidden"
   }
 }
 
@@ -88,6 +120,7 @@ export async function loadActor(deps: ServiceDeps, ctx: ServiceContext): Promise
       personId: person.id,
       apartmentId: residency.apartmentId,
       isResponsible: residency.isResponsible,
+      canVotePolls: residency.canVotePolls,
     }
   }
   if (role.kind === "front-desk") {

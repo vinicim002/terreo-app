@@ -106,3 +106,19 @@ describe("pedido de código", () => {
     })
   })
 })
+
+describe("atalho de testes: esquecer códigos (spec 003)", () => {
+  it("permite pedir de novo sem esperar, só fora do modo real", async () => {
+    const { services } = setup()
+    await services.auth.requestCode(PHONE.responsible)
+    await expect(services.auth.requestCode(PHONE.responsible)).rejects.toMatchObject({
+      code: "rate_limited",
+    })
+    await services.dev.forgetCodes(PHONE.responsible)
+    expect((await services.auth.requestCode(PHONE.responsible)).status).toBe("sent")
+    const real = setup("real").services
+    await expect(real.dev.forgetCodes(PHONE.responsible)).rejects.toMatchObject({
+      code: "forbidden",
+    })
+  })
+})

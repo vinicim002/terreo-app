@@ -108,3 +108,10 @@ describe("cobertura das funcionalidades (RF-007)", () => {
     for (const nome of nomes) expect(Object.keys(FUNCIONALIDADES), nome).toContain(nome)
   })
 })
+
+describe("comunicação na portaria (spec 003, contracts/rotas.md)", () => {
+  it("tem avisos e agenda no grupo de comunicação do Mais", () => {
+    const grupo = hubGroups("front-desk").find((g) => g.group === "communication")!
+    expect(grupo.screens.map((s) => s.slug)).toEqual(["notices", "calendar"])
+  })
+})

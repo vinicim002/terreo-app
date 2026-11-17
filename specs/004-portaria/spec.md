@@ -118,11 +118,11 @@ toca "Chegou"; o morador recebe o aviso e vê no histórico "Chegou às 19:05, l
 2. **Dado** a portaria, **quando** abre Visitantes, **então** vê os esperados de hoje em ordem de horário, com o
    apartamento, e os que já entraram hoje.
 3. **Dado** um visitante esperado, **quando** o porteiro toca "Chegou", **então** fica registrado o horário e quem
-   liberou; o morador recebe o aviso (conforme as preferências) e vê no histórico.
+   liberou; quem avisou e o responsável do apartamento recebem o aviso (conforme as preferências) e veem no histórico.
 4. **Dado** um prestador esperado, **quando** o porteiro o abre, **então** vê "Interfone antes de liberar" e só depois
    confirma a entrada.
 5. **Dado** alguém sem cadastro, **quando** o porteiro registra nome e apartamento, **então** a entrada fica no
-   histórico do apartamento com a marca "sem cadastro" e o morador é avisado.
+   histórico do apartamento com a marca "sem cadastro" e todas as pessoas ativas do apartamento são avisadas.
 6. **Dado** qualquer cadastro de visitante, **então** não há campo de documento, CPF ou foto da visita.
 7. **Dado** um visitante esperado que não veio, **quando** o dia termina, **então** ele sai de "Esperados" e fica no
    histórico como "Não veio".
@@ -132,7 +132,7 @@ toca "Chegou"; o morador recebe o aviso e vê no histórico "Chegou às 19:05, l
 ### História 4: Tela da portaria simples e falar em vez de escrever (Prioridade: P4)
 
 O início da portaria mostra o essencial em botões grandes: buscar apartamento, Receber encomenda, Correspondência,
-Visitante chegou e Ditar recado; e os números do dia (códigos aguardando, encomendas na portaria, visitas esperadas).
+Visitante chegou, Ditar recado e Achados; e os números do dia (códigos aguardando, encomendas na portaria, visitas esperadas).
 Em todo campo de texto da portaria há um microfone: o porteiro fala e o app escreve. Com "Ditar recado", o porteiro
 fala um recado para o síndico (ex.: "o elevador social está parado"), confere o texto e envia; o síndico recebe e pode
 transformar o recado num aviso.
@@ -264,6 +264,8 @@ pode avisar que perdeu algo; se a portaria encontrar, marca "Encontrei" e o mora
 - **RF-012**: A portaria DEVE ver os esperados de hoje de todos os apartamentos e registrar "Chegou" (com hora e
   porteiro); para prestador, o app DEVE mostrar "Interfone antes de liberar".
 - **RF-013**: A portaria DEVE poder registrar visitante sem cadastro (nome e apartamento).
+- **RF-013a**: A chegada de visitante DEVE avisar, no app e no privado conforme a preferência "Visitantes": visitante
+  esperado — quem avisou e o responsável do apartamento; sem cadastro — todas as pessoas ativas do apartamento.
 - **RF-014**: O app NÃO DEVE pedir nem guardar documento, CPF, data de nascimento ou foto de visitante.
 - **RF-015**: Esperados que não chegaram até o fim do dia DEVEM ir para o histórico como "Não veio".
 
@@ -280,7 +282,7 @@ pode avisar que perdeu algo; se a portaria encontrar, marca "Encontrei" e o mora
 
 - **RF-019**: Pessoas com a permissão "Pode cadastrar entregas" DEVEM poder ativar o modo viagem do apartamento com ida
   e volta (no máximo 120 dias) e encerrá-lo antes; a portaria DEVE ver a marca "Em viagem até dd/mm".
-- **RF-020**: "Equipe de plantão" DEVE mostrar, para todos os perfis, quem trabalha agora (portaria e limpeza) e os
+- **RF-020**: "Equipe de plantão" DEVE mostrar, para todos os perfis (morador, portaria e síndico), quem trabalha agora (portaria e limpeza) e os
   próximos turnos de hoje e amanhã, calculados pela escala semanal, inclusive turnos que passam da meia-noite.
 
 **Achados e perdidos**

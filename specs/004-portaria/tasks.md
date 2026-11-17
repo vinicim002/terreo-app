@@ -24,7 +24,7 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 
 ## Fase 1: Configuração
 
-- [ ] T001 Acrescentar `memos` (ícone `MessageSquareText`, grupo `communication`) ao catálogo do síndico em `web/src/navigation/screens.ts` e o título `screens.memos` ("Recados da portaria") nos três idiomas; atualizar `web/tests/unit/screens.test.ts` (contracts/rotas.md)
+- [ ] T001 Acrescentar ao catálogo do síndico em `web/src/navigation/screens.ts`: `memos` (ícone `MessageSquareText`, grupo `communication`), `on-duty` (ícone `AlarmClock`, grupo `management`, RF-020) e `lost-and-found` (ícone `Search`, grupo `info`, só leitura); título `screens.memos` ("Recados da portaria") nos três idiomas; atualizar `web/tests/unit/screens.test.ts` (contracts/rotas.md)
 - [ ] T002 [P] Tornar o tamanho máximo configurável em `web/src/photo/resize.ts` (`resizePhoto(file, { max = 512, quality = 0.8 })`), com encomendas e achados usando `{ max: 1024, quality: 0.7 }`; ampliar `web/tests/unit/photo.test.ts` (research R4)
 
 ---
@@ -74,7 +74,7 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 - [ ] T017 [US1] Implementar `web/src/services/deliveries.ts` (`mine`, `registerCode`, `cancelCode`, `byApartment`, `markArrived`) e o painel `apartment`/`overview` em `web/src/services/desk.ts` (moradores como a consulta da spec 002, contagens, marca de viagem) com `authorize`, `runDue` e `notify`; registrar em `web/src/services/core.ts`
 - [ ] T018 [US1] Implementar `web/src/services/inbox.ts` (`receive`, `list`; sem ator, identifica pela pessoa do celular; grava `InboundMessage`; responde na caixa de saída `private`); só em dev/demo em `core.ts`
 - [ ] T019 [P] [US1] Criar `web/src/components/deliveries/ResidentDeliveries.tsx` (mockup 08: botão "Cadastrar código de entrega", dica do WhatsApp, Aguardando com o código em letras grandes e "Cancelar", Na portaria, Retiradas) e `web/src/components/deliveries/CodeForm.tsx` (mockup 09: lojas em botões, código com dica por loja, observação, "Quando o pedido chegar", aviso de duplicado com "É outro pedido")
-- [ ] T020 [P] [US1] Criar `web/src/components/desk/DeskHome.tsx` (busca de apartamento com teclado numérico, 5 botões grandes ≥ 56 px — o que ainda não existe leva à tela "em construção" até a sua história —, três números do dia), `web/src/components/desk/ApartmentGrid.tsx` (andares, marcas de códigos e na portaria) e `web/src/components/desk/ApartmentDesk.tsx` (moradores, códigos em letras grandes com "Chegou")
+- [ ] T020 [P] [US1] Criar `web/src/components/desk/DeskHome.tsx` (busca de apartamento com teclado numérico, 5 botões grandes ≥ 56 px — o que ainda não existe leva à tela "em construção" até a sua história —, três números do dia), `web/src/components/desk/ApartmentGrid.tsx` (andares, marcas de códigos e na portaria) e `web/src/components/desk/ApartmentDesk.tsx` (moradores, códigos em letras grandes com "Chegou"; código com "me ligar" mostra "Ligar para o morador" antes de "Chegou"; "subir pelo elevador" mostra "Subir pelo elevador")
 - [ ] T021 [US1] Páginas `web/app/resident/deliveries/page.tsx`, `web/app/resident/delivery/new/page.tsx`, `web/app/front-desk/page.tsx` (início), `web/app/front-desk/deliveries/page.tsx`, `web/app/front-desk/apartment/page.tsx` (`?n=`); `OWN_PAGES`; `npx next typegen`; hooks em `web/src/hooks/data.ts`
 - [ ] T022 [US1] Painel `/dev` (`web/src/dev/DevTools.tsx`): "Simular mensagem recebida no WhatsApp" (celular das contas de exemplo ou livre + texto) com o resultado e a resposta
 - [ ] T023 [US1] Seed v4 — códigos aguardando no 804 (iFood 4821 "subir pelo elevador" pelo responsável; Mercado Livre MLB-73 "deixar na portaria" pelo familiar) e 5 em outros apartamentos; asserções em `web/tests/unit/seed-v4.test.ts`
@@ -98,10 +98,10 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 ### Implementação
 
 - [ ] T027 [US2] Completar `web/src/services/deliveries.ts` (`receive`, `mail`, `pickUp`, `registerPickup`)
-- [ ] T028 [P] [US2] Criar `web/src/components/desk/ReceiveDelivery.tsx` (mockup 32: foto pela câmera com `capture="environment"` e redução 1024 px, apartamento, tamanho, loja, "Avisar morador no WhatsApp", Registrar) e `web/src/components/desk/MailButton.tsx`; no `ApartmentDesk`, encomendas na portaria com "Retirada" (escolher a pessoa), "Correspondência" e "Receber encomenda"
+- [ ] T028 [P] [US2] Criar `web/src/components/desk/ReceiveDelivery.tsx` (mockup 32: foto pela câmera com `capture="environment"` e redução 1024 px, apartamento, tamanho, loja, "Avisar morador no WhatsApp", Registrar; apartamento sem moradores ativos mostra "Ninguém do apartamento será avisado") e `web/src/components/desk/MailButton.tsx`; no `ApartmentDesk`, encomendas na portaria com "Retirada" (escolher a pessoa), "Correspondência" e "Receber encomenda"
 - [ ] T029 [P] [US2] No `ResidentDeliveries`, cartão "Na portaria" com foto ampliável, quem recebeu, há quantos dias, e "Retirei"
 - [ ] T030 [US2] Páginas `web/app/front-desk/receive-delivery/page.tsx` (`?n=` opcional) e `web/app/front-desk/mail/page.tsx`; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
-- [ ] T031 [US2] Seed v4 — encomenda média da Amazon no 804 com foto (gerada no aparelho como desenho simples), Shopee retirada ontem, 3 encomendas na portaria em outros aptos (uma há 4 dias), uma correspondência; asserções em `seed-v4.test.ts`
+- [ ] T031 [US2] Seed v4 — encomenda média da Amazon no 804 com foto (uma imagem JPEG pequena fixa, embutida como `data:image/jpeg;base64` em `seed-front-desk.ts`, porque o seed também roda nos testes em Node, sem canvas), Shopee retirada ontem, 3 encomendas na portaria em outros aptos (uma há 4 dias), uma correspondência; asserções em `seed-v4.test.ts`
 
 **Ponto de controle**: H1 e H2 passam juntas.
 
@@ -115,7 +115,7 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 
 ### Testes
 
-- [ ] T032 [P] [US3] Escrever `web/tests/unit/visitors.test.ts`: `register` por qualquer pessoa ativa do apto (esclarecimento 3), validações (dia no passado ou além de 30 dias, `fromTime` ≥ `toTime`, `people` fora de 1–20); `mine` só do próprio apto; `cancel` por quem avisou ou pelo responsável (outro morador → `forbidden`); `today` (só portaria) em ordem de horário; `checkIn` grava hora e porteiro e avisa quem avisou e o responsável (preferência "Visitantes"); `walkIn` com marca sem cadastro; nenhum campo de documento existe no esquema (RF-014)
+- [ ] T032 [P] [US3] Escrever `web/tests/unit/visitors.test.ts`: `register` por qualquer pessoa ativa do apto (esclarecimento 3), validações (dia no passado ou além de 30 dias, `fromTime` ≥ `toTime`, `people` fora de 1–20); `mine` só do próprio apto; `cancel` por quem avisou ou pelo responsável (outro morador → `forbidden`); `today` (só portaria) em ordem de horário; `checkIn` grava hora e porteiro e avisa quem avisou e o responsável (preferência "Visitantes", RF-013a); `walkIn` com marca sem cadastro avisa todas as pessoas ativas do apto; visitante com a faixa de horário já passada continua em `today().expected` até o fim do dia; nenhum campo de documento existe no esquema (RF-014)
 - [ ] T033 [P] [US3] Escrever `web/tests/e2e/visitors.spec.ts`: morador avisa visita → portaria vê em Esperados → "Chegou" → morador vê no histórico; prestador mostra "Interfone antes de liberar"; "Visitante sem cadastro"
 
 ### Implementação
@@ -144,7 +144,7 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 ### Implementação
 
 - [ ] T041 [US4] Criar `web/src/voice/speech.ts` (detecção, idioma pelo `locale`, resultados parciais, erros de permissão) e `web/src/voice/DictateButton.tsx` (botão ≥ 56 px, estado gravando com rótulo acessível, aviso sem suporte) (research R5)
-- [ ] T042 [US4] Acrescentar o `DictateButton` a todos os campos de texto livre da portaria (`ReceiveDelivery`, visitante sem cadastro, achados, recado)
+- [ ] T042 [US4] Acrescentar o `DictateButton` aos campos de texto livre da portaria já existentes (`ReceiveDelivery` quando a loja for "Outro", visitante sem cadastro, recado); o formulário de achados nasce com ele no T056
 - [ ] T043 [US4] Implementar `web/src/services/memos.ts`; criar `web/src/components/desk/DictateMemo.tsx` (mockup 33: microfone grande, transcrição editável, "Corrigir" e "Enviar ao síndico") e `web/src/components/memos/MemosScreen.tsx` (lista, Visto, "Transformar em aviso" → `/manager/notice/edit/?memo=<id>`); o `NoticeForm` da spec 003 lê `?memo=` para preencher o texto e chama `linkNotice` ao publicar
 - [ ] T044 [US4] Páginas `web/app/front-desk/dictate/page.tsx` e `web/app/manager/memos/page.tsx`; a notificação `memo` leva a `/manager/memos/`; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
 - [ ] T045 [US4] Seed v4 — recado "Lâmpada do hall do 3º andar queimada" (ontem, não visto) com a notificação da síndica; asserções em `seed-v4.test.ts`
@@ -169,7 +169,7 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 
 - [ ] T049 [US5] Implementar `web/src/services/travel.ts` e `staff.board` em `web/src/services/legacy.ts` (research R6)
 - [ ] T050 [P] [US5] Criar `web/src/components/travel/TravelMode.tsx` (ida e volta, ativo com "Encerrar"), `web/src/components/staff/OnDuty.tsx` (mockup 14: Agora, Próximos turnos, nota da escala; recarrega a cada minuto) e `web/src/components/desk/TravelWatch.tsx`
-- [ ] T051 [US5] Páginas `web/app/resident/travel-mode/page.tsx`, `web/app/resident/on-duty/page.tsx`, `web/app/front-desk/on-duty/page.tsx`, `web/app/front-desk/travel-watch/page.tsx`; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
+- [ ] T051 [US5] Páginas `web/app/resident/travel-mode/page.tsx`, `web/app/resident/on-duty/page.tsx`, `web/app/front-desk/on-duty/page.tsx`, `web/app/manager/on-duty/page.tsx`, `web/app/front-desk/travel-watch/page.tsx`; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
 - [ ] T052 [US5] Seed v4 — 1003 em viagem até daqui a 6 dias; asserções em `seed-v4.test.ts`
 
 **Ponto de controle**: H5 funciona; o lembrete do `runDue` pula o apto em viagem.
@@ -190,8 +190,8 @@ relógio controlado e as quatro contas). Todo texto novo nos três idiomas (RF-0
 ### Implementação
 
 - [ ] T055 [US6] Implementar `web/src/services/lostfound.ts`; registrar em `core.ts`
-- [ ] T056 [P] [US6] Criar `web/src/components/lostfound/LostFound.tsx` (mockup 16: abas Achados (N), Perdidos (N), Devolvidos; "É meu", "Encontrei"; botão "+" do perfil) e `web/src/components/lostfound/LostFoundForm.tsx` (achado com foto e local pela portaria; perdido pelo morador)
-- [ ] T057 [US6] Páginas `web/app/resident/lost-and-found/page.tsx` e `web/app/front-desk/lost-and-found/page.tsx`; o botão "Achados" do `DeskHome` passa a levar a ela; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
+- [ ] T056 [P] [US6] Criar `web/src/components/lostfound/LostFound.tsx` (mockup 16: abas Achados (N), Perdidos (N), Devolvidos; "É meu", "Encontrei"; botão "+" do perfil; só leitura para o síndico) e `web/src/components/lostfound/LostFoundForm.tsx` (achado com foto e local pela portaria, com `DictateButton` na descrição e no local; perdido pelo morador)
+- [ ] T057 [US6] Páginas `web/app/resident/lost-and-found/page.tsx`, `web/app/front-desk/lost-and-found/page.tsx` e `web/app/manager/lost-and-found/page.tsx` (só leitura); o botão "Achados" do `DeskHome` passa a levar a ela; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
 - [ ] T058 [US6] Seed v4 — chaveiro (hoje), guarda-chuva azul (ontem, reclamado pelo 502), bichinho de pelúcia (há 7 dias), perdido: óculos de grau (1203, há 2 dias); asserções em `seed-v4.test.ts`
 
 **Ponto de controle**: as 6 histórias passam juntas.

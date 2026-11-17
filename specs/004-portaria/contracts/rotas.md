@@ -34,6 +34,8 @@ Detalhes por `?n=` (número do apartamento) ou `?id=` (exportação estática).
 | Rota | Tela |
 |---|---|
 | `/manager/memos/` | Recados da portaria: lista, "Visto", "Transformar em aviso" (abre `/manager/notice/edit/?memo=`) |
+| `/manager/on-duty/` | Equipe de plantão (RF-020) |
+| `/manager/lost-and-found/` | Achados e perdidos, só leitura |
 
 ## Painel `/dev`
 

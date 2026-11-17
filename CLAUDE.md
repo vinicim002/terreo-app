@@ -86,7 +86,7 @@ estática, next-intl sem idioma na URL, preferências aplicadas antes da pintura
 `NEXT_PUBLIC_APP_MODE` = dev|demo|real, demonstração no Cloudflare Pages, portas web 3100 / api 8100 / db 5440 /
 redis 6390).
 
-Fluxo: `/speckit-specify` → (`/speckit-clarify`) → `/speckit-plan` → `/speckit-tasks` → (`/speckit-analyze`) →
+Fluxo: `/speckit-specify` → `/speckit-clarify` (**sempre**, regra do usuário) → `/speckit-plan` → `/speckit-tasks` → (`/speckit-analyze`) →
 `/speckit-implement`. Cada mudança relevante vira `specs/NNN-nome/` (numeração sequencial). `spec.md` = o quê e por quê,
 sem tecnologia; `plan.md` = como, com "Verificação da constituição". Scripts e modelos ficam em `.specify/`; as skills
 em `.claude/skills/speckit-*`.

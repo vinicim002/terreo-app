@@ -50,7 +50,7 @@ ver que passou a lido; conferir a mensagem simulada no grupo do WhatsApp.
    topo da lista de todos os moradores e da portaria, com a data e a hora da publicação.
 2. **Dado** um aviso publicado com "Enviar também no WhatsApp", **quando** é publicado, **então** uma mensagem com o
    título e o texto é enviada ao grupo do WhatsApp do condomínio, e o detalhe do aviso informa isso.
-3. **Dado** um aviso novo, **quando** é publicado, **então** cada morador recebe uma notificação "Novo aviso do síndico"
+3. **Dado** um aviso novo, **quando** é publicado, **então** cada morador e a portaria recebem uma notificação "Novo aviso do síndico"
    (conforme as preferências da História 5).
 4. **Dado** um morador com avisos não lidos, **quando** abre Avisos, **então** vê o filtro "Não lidos (N)" e uma marca
    em cada aviso não lido; ao abrir um aviso, ele passa a lido.
@@ -131,7 +131,8 @@ permissão; votar como o responsável do 804 vendo a sugestão; mudar o voto; en
    porcentagens até o encerramento.
 8. **Dado** a data de encerramento, **quando** ela passa (ou o síndico encerra antes), **então** a enquete vai para
    "Encerradas", mostra a vencedora com a porcentagem e o total de votos, e ninguém mais vota. Empate: o app mostra
-   "Empate" e as opções empatadas.
+   "Empate" e as opções empatadas. Os moradores recebem a notificação "Enquete encerrada" com o resultado, e o
+   resultado vai ao grupo do WhatsApp.
 
 ---
 
@@ -152,7 +153,8 @@ e a ordem em "Próximos"; registrar o resumo da reunião depois da data e confer
 **Cenários de aceite**:
 
 1. **Dado** um morador, **quando** abre a Agenda, **então** vê o mês atual com marcas nos dias com eventos e a lista
-   "Próximos", em ordem de data, com o tipo de cada evento (reunião, manutenção, rotina, mudança).
+   "Próximos", em ordem de data, com o tipo de cada evento (reunião, manutenção, rotina, aviso com data). Mudanças
+   entram na agenda junto com a funcionalidade de mudanças (spec da Portaria).
 2. **Dado** o calendário, **quando** o morador toca num dia, **então** vê os eventos daquele dia; pode ir ao mês
    anterior e ao próximo.
 3. **Dado** o síndico, **quando** cadastra uma reunião com data, horário, local e pauta, **então** ela aparece na agenda
@@ -229,7 +231,8 @@ ao grupo do WhatsApp.
   opção de pedir confirmação de leitura e opção de lembrar na véspera de uma data.
 - **RF-003**: O aviso DEVE poder ser publicado na hora ou agendado para data e hora futuras; agendados só aparecem para
   o síndico, em "Agendados", até a hora da publicação.
-- **RF-004**: Ao ser publicado, o aviso DEVE gerar uma notificação no app para cada morador (conforme as preferências)
+- **RF-004**: Ao ser publicado, o aviso DEVE gerar uma notificação no app para cada morador e para a portaria (conforme
+  as preferências)
   e, se marcado, uma única mensagem ao grupo do WhatsApp do condomínio (simulada nesta etapa); nunca cópias no privado.
 - **RF-005**: A lista de avisos DEVE ter os filtros "Todos" e "Não lidos (N)" para todos e "Agendados" para o síndico,
   em ordem do mais novo para o mais antigo, com importantes destacados.
@@ -240,9 +243,11 @@ ao grupo do WhatsApp.
 - **RF-007a**: O síndico DEVE poder editar um aviso publicado; a edição registra a data, mostra "Editado às HH:MM",
   zera leituras e confirmações daquele aviso, notifica os moradores ("Aviso atualizado") e, se o original foi ao grupo,
   envia uma mensagem de correção ao grupo.
-- **RF-008**: Marcar um aviso como resolvido DEVE registrar a data, aceitar uma nota opcional e notificar todos os
-  moradores.
-- **RF-009**: O lembrete na véspera DEVE gerar uma notificação aos moradores no dia anterior à data indicada no aviso.
+- **RF-008**: Marcar um aviso como resolvido DEVE registrar a data, aceitar uma nota opcional, notificar moradores e
+  portaria e, se o aviso original foi ao grupo do WhatsApp, enviar ao grupo a mensagem de resolvido.
+- **RF-009**: O lembrete na véspera DEVE gerar uma notificação aos moradores no dia anterior à data indicada no aviso
+  e, se o aviso original foi ao grupo do WhatsApp, uma mensagem de lembrete ao grupo. Se ninguém abrir o app na
+  véspera (sem servidor nesta etapa), o lembrete não é mais enviado depois que a data chegar.
 
 **Enquetes**
 

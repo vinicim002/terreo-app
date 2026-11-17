@@ -19,6 +19,18 @@ Funcionários de plantão, Falar em vez de escrever, Achados e perdidos, WhatsAp
 portaria vê), `specs/003-comunicacao/` (notificações, canais, preferências de entregas e visitantes),
 `.specify/memory/constitution.md` (1.2.0).
 
+## Esclarecimentos
+
+### Sessão 2026-11-17
+
+- P: Quando uma entrega chega, quem do apartamento é avisado? → R: Entrega com código: quem cadastrou o código e o
+  responsável do apartamento. Encomenda sem código e correspondência: todas as pessoas ativas do apartamento. Sempre
+  conforme as preferências de cada pessoa.
+- P: Depois de quantos dias a encomenda parada gera lembrete? → R: No 3º dia na portaria, depois um por dia até a
+  retirada (exceto em modo viagem), para as mesmas pessoas avisadas na chegada.
+- P: Quem do apartamento pode avisar visitante ou prestador? → R: Qualquer pessoa ativa do apartamento; todos do
+  apartamento veem os visitantes, e quem avisou ou o responsável pode cancelar.
+
 ## Cenários de uso e testes *(obrigatório)*
 
 ### História 1: Código de entrega informado antes e encontrado pela portaria (Prioridade: P1)
@@ -48,7 +60,8 @@ o 804, vê o código e registra a chegada; o morador recebe o aviso e a entrega 
    em letras grandes, observação e o que fazer na chegada.
 5. **Dado** um código aguardando, **quando** o porteiro registra a chegada, **então** o que acontece segue a escolha do
    morador: "subir pelo elevador" e "me ligar" encerram como **Entregue**; "deixar na portaria" passa a **Na
-   portaria**; e o morador recebe o aviso no privado (conforme as preferências).
+   portaria**; e quem cadastrou o código e o responsável do apartamento recebem o aviso no privado (conforme as
+   preferências).
 6. **Dado** um código aguardando, **quando** o morador o apaga (pedido cancelado), **então** some da portaria.
 7. **Dado** qualquer entrega ou código, **então** nunca aparece no grupo do WhatsApp nem para moradores de outros
    apartamentos.
@@ -72,8 +85,8 @@ com a foto e confirma a retirada; a portaria vê quem retirou e quando.
 
 1. **Dado** a portaria, **quando** registra uma encomenda com apartamento, tamanho, loja e foto, **então** ela aparece
    em "Na portaria" para o apartamento e na contagem da portaria, com quem recebeu e a hora.
-2. **Dado** uma encomenda registrada com "Avisar o morador", **então** as pessoas do apartamento recebem no privado o
-   aviso com a foto (conforme as preferências); sem foto, o aviso diz só que chegou.
+2. **Dado** uma encomenda registrada com "Avisar o morador", **então** todas as pessoas ativas do apartamento recebem no
+   privado o aviso com a foto (conforme as preferências); sem foto, o aviso diz só que chegou.
 3. **Dado** uma encomenda na portaria, **quando** uma pessoa do apartamento toca em "Retirei", **então** ela passa a
    **Retirada**, com o nome de quem retirou e a hora, e sai da contagem da portaria.
 4. **Dado** uma encomenda na portaria, **quando** o morador vem buscar sem usar o app, **então** o porteiro pode
@@ -100,7 +113,7 @@ toca "Chegou"; o morador recebe o aviso e vê no histórico "Chegou às 19:05, l
 
 **Cenários de aceite**:
 
-1. **Dado** um morador, **quando** cadastra visita (nome, dia, faixa de horário, número de pessoas) ou prestador (nome
+1. **Dado** qualquer pessoa ativa do apartamento, **quando** cadastra visita (nome, dia, faixa de horário, número de pessoas) ou prestador (nome
    ou empresa, dia, faixa de horário), **então** aparece em "Esperados" para o apartamento e para a portaria no dia.
 2. **Dado** a portaria, **quando** abre Visitantes, **então** vê os esperados de hoje em ordem de horário, com o
    apartamento, e os que já entraram hoje.
@@ -231,21 +244,23 @@ pode avisar que perdeu algo; se a portaria encontrar, marca "Encontrei" e o mora
   registrar a chegada de um código; o resultado segue a escolha do morador (RF-001).
 - **RF-005**: A portaria DEVE poder registrar uma encomenda sem código com apartamento, tamanho (envelope, pequena,
   média, grande), loja e foto opcional (reduzida no aparelho), e escolher se avisa o morador (ligado por padrão).
-- **RF-006**: Chegada de entrega ou correspondência DEVE avisar as pessoas do apartamento no app e no privado do
-  WhatsApp, conforme as preferências de "Entregas" (spec 003), e NUNCA no grupo.
+- **RF-006**: Chegada de entrega ou correspondência DEVE avisar no app e no privado do WhatsApp, conforme as
+  preferências de "Entregas" (spec 003), e NUNCA no grupo: entrega com código avisa quem cadastrou o código e o
+  responsável do apartamento; encomenda sem código e correspondência avisam todas as pessoas ativas do apartamento.
 - **RF-007**: Uma pessoa do apartamento DEVE poder confirmar a retirada com um toque; a portaria DEVE poder registrar a
   retirada por uma pessoa do apartamento; fica registrado quem retirou e quando.
-- **RF-008**: Encomendas na portaria há 3 dias ou mais DEVEM gerar um lembrete diário ao apartamento até a retirada,
-  exceto durante o modo viagem.
+- **RF-008**: Encomendas na portaria há 3 dias ou mais DEVEM gerar um lembrete por dia, para as mesmas pessoas avisadas
+  na chegada (RF-006), até a retirada, exceto durante o modo viagem.
 - **RF-009**: A portaria DEVE poder avisar "Correspondência" para um apartamento com um toque; o aviso não diz o
   conteúdo.
 - **RF-010**: Códigos aguardando há mais de 7 dias DEVEM sair da lista e ir para o histórico como "Não chegou".
 
 **Visitantes**
 
-- **RF-011**: O morador DEVE poder avisar visita (nome, dia, faixa de horário, número de pessoas de 1 a 20) ou
-  prestador (nome ou empresa, dia, faixa de horário) para o seu apartamento, para hoje ou até 30 dias à frente, e
-  cancelar antes da chegada.
+- **RF-011**: Qualquer pessoa ativa do apartamento DEVE poder avisar visita (nome, dia, faixa de horário, número de
+  pessoas de 1 a 20) ou prestador (nome ou empresa, dia, faixa de horário) para o seu apartamento, para hoje ou até 30
+  dias à frente; todas as pessoas do apartamento veem os visitantes; quem avisou ou o responsável pode cancelar antes da
+  chegada. Moradores de outros apartamentos NÃO DEVEM ver.
 - **RF-012**: A portaria DEVE ver os esperados de hoje de todos os apartamentos e registrar "Chegou" (com hora e
   porteiro); para prestador, o app DEVE mostrar "Interfone antes de liberar".
 - **RF-013**: A portaria DEVE poder registrar visitante sem cadastro (nome e apartamento).

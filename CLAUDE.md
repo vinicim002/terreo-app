@@ -78,7 +78,9 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
-Spec mais recente: `specs/002-acesso-e-cadastro/` (implementada: pessoa separada dos papéis, `ServiceContext.actor` com
+Spec em andamento: `specs/003-comunicacao/` (plano pronto: `runDue` idempotente para tarefas com horário, `notify`
+único para canais — gerais só no grupo, privado só pessoal —, leituras de aviso por versão, voto oficial do responsável
+com sugestões, `SEED_VERSION` 3 relativo a `now`). Anterior: `specs/002-acesso-e-cadastro/` (implementada: pessoa separada dos papéis, `ServiceContext.actor` com
 matriz de permissões em `contracts/permissoes.md` conferida nos serviços, código e sessão simulados no aparelho,
 `libphonenumber-js`, `SEED_VERSION` 2). Anterior: `specs/001-base-do-app/` (implementada) (plano em `plan.md`; decisões em `research.md`: Next.js com exportação
 estática, next-intl sem idioma na URL, preferências aplicadas antes da pintura via atributos `data-*`, Serwist sobre

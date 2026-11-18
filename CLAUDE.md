@@ -85,7 +85,7 @@ Nome do app: **Térreo**. Os mockups usam "Condô" e "Edifício Aurora" — igno
 
 ## Spec Kit
 
-Spec em andamento: `specs/005-seguranca/` (plano pronto: `EmergencyAlert` e `GeneralAlert`, `EmergencyWatcher`
+Spec mais recente: `specs/005-seguranca/` (implementada: `EmergencyAlert` e `GeneralAlert`, `EmergencyWatcher`
 consulta a cada 3 s e abre a tela cheia, alerta geral no grupo e no privado de todos, repetição em 2 min no `runDue`,
 "SOS" no `whatsappInbox`, `SEED_VERSION` 5). Anterior: `specs/004-portaria/` (implementada: `Delivery` única com estados, `runDue` com lembrete de
 3 dias, `notify` com categoria só no app, código por WhatsApp reconhecido por `parseDeliveryMessage` e simulado no

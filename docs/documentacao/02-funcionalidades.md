@@ -51,9 +51,9 @@ com dados no aparelho, ainda sem servidor) ou **Pronta** (com servidor e WhatsAp
 
 | Funcionalidade | Descrição | Situação |
 |---|---|---|
-| Botão de emergência | A portaria recebe na hora um alerta com o número do apartamento. | Planejada |
-| Alerta geral | Porteiro ou síndico avisa todos os moradores ao mesmo tempo, com destaque e pelo WhatsApp. | Planejada |
-| Contatos importantes | Portaria, síndico, polícia, bombeiros e emergência. | Planejada |
+| Botão de emergência | O morador segura o botão por 3 segundos (ou manda "SOS" no WhatsApp); a portaria de plantão recebe na hora um alerta em tela cheia com apartamento, andar, tipo e contato de emergência, toca "Estou indo" e depois "Resolvido"; a casa, o síndico e o contato de emergência são avisados; histórico de 90 dias. | Em construção |
+| Alerta geral | Porteiro ou síndico avisa todos ao mesmo tempo (tipo, mensagem pronta ou ditada, confirmação): tela cheia no app, grupo e privado do WhatsApp mesmo com as notificações desligadas; encerrar avisa todos. | Em construção |
+| Contatos importantes | Do prédio (portaria, síndico e porteiro-chefe, com o celular só se a pessoa autorizar) e emergência e serviços (SAMU, Bombeiros, Polícia, Defesa Civil, luz, gás e água), com busca, ligar e WhatsApp; o síndico mantém a lista. | Em construção |
 
 ## Administração
 

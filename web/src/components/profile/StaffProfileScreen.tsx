@@ -4,6 +4,7 @@ import { Pencil } from "lucide-react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { AccountSection } from "@/components/settings/AccountSection"
+import { ShowPhoneToggle } from "@/components/contacts/ShowPhoneToggle"
 import { ScreenPage } from "@/components/layout/ScreenPage"
 import { useMe } from "@/auth/useMe"
 import { formatPhone } from "@/phone/phone"
@@ -38,6 +39,7 @@ export function StaffProfileScreen({ profile }: { profile: Profile }) {
               <Pencil aria-hidden className="size-5" />
             </Link>
           </section>
+          <ShowPhoneToggle />
           <AccountSection compact />
         </div>
       )}

@@ -20,9 +20,10 @@ import type {
 } from "../schemas"
 import { buildCommunicationSeed, type CommunicationSeed } from "./seed-communication"
 import { buildFrontDeskSeed, type FrontDeskSeed } from "./seed-front-desk"
+import { buildSecuritySeed, type SecuritySeed } from "./seed-security"
 
 /** Mude ao alterar os dados: aparelhos com versão diferente recriam os dados de exemplo. */
-export const SEED_VERSION = 4
+export const SEED_VERSION = 5
 
 export const FLOORS = 12
 export const UNITS_PER_FLOOR = 4
@@ -86,7 +87,7 @@ const LAST_NAMES = [
   "Queiroz",
 ]
 
-export interface SeedData extends CommunicationSeed, FrontDeskSeed {
+export interface SeedData extends CommunicationSeed, FrontDeskSeed, SecuritySeed {
   condominium: Condominium
   apartments: Apartment[]
   people: Person[]
@@ -315,6 +316,15 @@ export function buildSeed(now: Date = new Date()): SeedData {
       relationship: "Filha",
       phone: phone(9901),
     },
+    // Contato de emergência do 804, para a demonstração do botão de emergência (spec 005).
+    {
+      id: id(10, 2),
+      condominiumId,
+      apartmentId: apt("804").id,
+      name: "Rita Moreira",
+      relationship: "Irmã",
+      phone: phone(9902),
+    },
   ]
 
   const RULES: [RuleTopic, string, string][] = [
@@ -414,9 +424,23 @@ export function buildSeed(now: Date = new Date()): SeedData {
     now,
   )
 
+  const security = buildSecuritySeed(
+    {
+      condominiumId,
+      apartments,
+      people,
+      residencies,
+      managerPersonId: managerPerson,
+      doormanPersonIds: staff.filter((s) => s.role === "doorman").map((s) => s.personId!),
+      id,
+    },
+    now,
+  )
+
   return {
     ...communication,
     ...frontDesk,
+    ...security,
     condominium,
     apartments,
     people,

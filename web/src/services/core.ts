@@ -19,6 +19,9 @@ import { noticeService } from "./notices"
 import { notificationService } from "./notifications"
 import { pollService } from "./polls"
 import { deliveryService } from "./deliveries"
+import { contactService } from "./contacts"
+import { emergencyService } from "./emergency"
+import { generalAlertService } from "./general-alert"
 import {
   frontDeskService,
   lostFoundService,
@@ -79,6 +82,9 @@ export function createServices(repo: Repository, options: ServiceOptions = {}): 
     desk: frontDeskService(deps),
     memos: memoService(deps),
     lostFound: lostFoundService(deps),
+    emergency: emergencyService(deps),
+    generalAlert: generalAlertService(deps),
+    contacts: contactService(deps),
     // Mensagens recebidas simuladas só em dev e demo; na Etapa 3, o webhook do WhatsApp no servidor.
     whatsappInbox: deps.mode === "real" ? undefined : whatsappInboxService(deps),
     // A caixa de saída simulada só existe nos modos dev e demo (RF-008).

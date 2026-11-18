@@ -2,12 +2,15 @@
 // - no app: uma Notification por pessoa, conforme as preferências (emergência ignora preferências — RF-025);
 // - grupo do WhatsApp: uma única mensagem, só para assuntos gerais (avisos, reuniões, enquetes);
 // - privado do WhatsApp: só assuntos pessoais (entregas, visitantes) e emergências, nunca os gerais (RF-026);
-// - só no app: recados da portaria e achados e perdidos (spec 004, research R7), sem preferência e sem WhatsApp.
+// - só no app: recados da portaria e achados e perdidos (spec 004, research R7), sem preferência e sem WhatsApp;
+// - alerta geral (spec 005, research R3): todas as pessoas ativas no app e no privado, ignorando preferências, e
+//   uma mensagem ao grupo — a única exceção à regra "geral só no grupo".
 // Nesta etapa as mensagens ficam na caixa de saída simulada; na Etapa 3 isto vira a entrada da fila (ARQ).
 import { nowIso, save, type ServiceDeps } from "./base"
 import type { NotificationPrefs, NotificationTarget, NotificationType } from "./schemas"
 
-export type Audience = "residents" | "residents+staff" | { personIds: string[] }
+/** "everyone": moradores ativos, porteiros e síndicos (alerta geral da spec 005). */
+export type Audience = "residents" | "residents+staff" | "everyone" | { personIds: string[] }
 
 export interface Dispatch {
   type: NotificationType
@@ -44,6 +47,8 @@ const STAFF_TYPES = new Set<NotificationType>([
   "notice-reminder",
   "emergency",
 ])
+/** Avisos ao prédio inteiro que também vão ao grupo (spec 005). */
+const BROADCAST = new Set<NotificationType>(["general-alert", "general-alert-closed"])
 
 export const DEFAULT_PREFS: Pick<NotificationPrefs, "app" | "whatsapp"> = {
   app: { notices: true, meetings: true, polls: true, deliveries: true, visitors: true },
@@ -74,10 +79,15 @@ async function audienceOf(deps: ServiceDeps, condominiumId: string, dispatch: Di
     for (const id of dispatch.audience.personIds) if (byId.has(id)) ids.add(id)
   } else {
     for (const { person } of await activeResidents(deps, condominiumId)) ids.add(person.id)
-    if (dispatch.audience === "residents+staff" && STAFF_TYPES.has(dispatch.type)) {
+    const everyone = dispatch.audience === "everyone"
+    if (everyone || (dispatch.audience === "residents+staff" && STAFF_TYPES.has(dispatch.type))) {
       const staff = await deps.repo.byIndex("staff", "byCondominium", condominiumId)
       for (const s of staff)
         if (s.role === "doorman" && s.personId && byId.has(s.personId)) ids.add(s.personId)
+    }
+    if (everyone) {
+      const managers = await deps.repo.byIndex("managers", "byCondominium", condominiumId)
+      for (const m of managers) if (byId.has(m.personId)) ids.add(m.personId)
     }
   }
   return [...ids].map((id) => byId.get(id)!)
@@ -125,7 +135,7 @@ export async function notify(deps: ServiceDeps, condominiumId: string, dispatch:
     }
   }
 
-  if (dispatch.toGroup && general) {
+  if (dispatch.toGroup && (general || BROADCAST.has(dispatch.type))) {
     await save(deps, "outbox", {
       id: deps.uuid(),
       condominiumId,

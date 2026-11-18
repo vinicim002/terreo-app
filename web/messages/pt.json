@@ -567,7 +567,10 @@
         "delivery-reminder": "Encomenda esperando",
         "mail": "Correspondência",
         "lost-found": "Achados e perdidos",
-        "memo": "Recado da portaria"
+        "memo": "Recado da portaria",
+        "emergency-update": "Atualização da emergência",
+        "general-alert": "Alerta geral",
+        "general-alert-closed": "Alerta encerrado"
       }
     },
     "prefs": {
@@ -852,6 +855,184 @@
     "home": {
       "atDesk": "{count, plural, one {# encomenda na portaria} other {# encomendas na portaria}}",
       "nextVisitor": "Visita esperada hoje: {name}, a partir das {from}"
+    }
+  },
+  "security": {
+    "loading": "Carregando…",
+    "error": "Não deu certo. Tente de novo.",
+    "hold": {
+      "label": "SEGURE",
+      "hint": "Segure por 3 segundos para pedir ajuda. Soltar antes cancela.",
+      "holding": "Continue segurando…"
+    },
+    "raise": {
+      "title": "Precisa de ajuda?",
+      "hint": "Segure o botão por 3 segundos. A portaria recebe na hora um alerta com o seu apartamento.",
+      "what": "O que está acontecendo? (opcional)"
+    },
+    "kind": {
+      "health": "Saúde",
+      "fire": "Incêndio",
+      "intrusion": "Invasão",
+      "leak": "Vazamento",
+      "other": "Outro",
+      "unknown": "Não informado"
+    },
+    "generalKind": {
+      "fire": "Incêndio",
+      "gas": "Vazamento de gás",
+      "power": "Falta de energia",
+      "security": "Segurança",
+      "other": "Alerta"
+    },
+    "call": {
+      "title": "Ligar direto",
+      "samu": "SAMU {tel}",
+      "firefighters": "Bombeiros {tel}",
+      "police": "Polícia {tel}"
+    },
+    "sent": {
+      "title": "Alerta enviado!",
+      "at": "A portaria foi avisada às {time}. Mantenha a calma.",
+      "seen": "{name} viu o alerta",
+      "onTheWay": "Portaria · a caminho",
+      "waiting": "Esperando a portaria ver o alerta…",
+      "noDoorman": "Sem porteiro de plantão agora — o síndico também foi avisado.",
+      "callDesk": "Ligar para a portaria",
+      "callSamu": "Ligar para o SAMU (192)",
+      "cancel": "Cancelar alerta",
+      "confirmCancel": "Cancelar o pedido de ajuda?",
+      "keep": "Manter",
+      "yesCancel": "Sim, cancelar"
+    },
+    "history": {
+      "title": "Histórico de alertas",
+      "empty": "Nenhum alerta nos últimos 90 dias.",
+      "apartment": "Apto {n}",
+      "general": "Geral",
+      "byWhatsapp": "pelo WhatsApp",
+      "answered": "{name} atendeu em {time}",
+      "closedIn": "Encerrado em {time}",
+      "status": {
+        "open": "Em aberto",
+        "acknowledged": "Atendido",
+        "resolved": "Resolvido",
+        "cancelled": "Cancelado pelo morador"
+      }
+    },
+    "desk": {
+      "label": "Emergência",
+      "dialog": "Emergência no apartamento {n}",
+      "apartment": "Apto {n}",
+      "floor": "{floor}º andar",
+      "since": "enviado há {time}",
+      "byWhatsapp": "pelo WhatsApp",
+      "repeated": "Ainda sem resposta — o síndico foi avisado de novo.",
+      "going": "Estou indo",
+      "goingBy": "{name} está indo",
+      "samu": "SAMU",
+      "firefighters": "Bombeiros",
+      "callContact": "Contato",
+      "contact": "Contato de emergência: {name} ({relationship}) · {phone}",
+      "noContact": "Sem contato de emergência cadastrado.",
+      "note": "Como terminou? (opcional)",
+      "resolve": "Resolvido",
+      "minimize": "Voltar ao painel"
+    },
+    "general": {
+      "label": "Alerta geral",
+      "by": "{name} · {time}",
+      "understood": "Entendi",
+      "banner": "Alerta geral: {kind}",
+      "manage": "Ver e encerrar",
+      "open": "Ver alerta",
+      "openTitle": "Em aberto: {kind}",
+      "closingLabel": "Mensagem de encerramento (opcional)",
+      "closingPlaceholder": "Situação controlada.",
+      "close": "Encerrar alerta",
+      "onlySender": "Só quem enviou ou o síndico encerra este alerta.",
+      "hint": "Avisa todos os moradores de uma vez: no app, no grupo e no privado do WhatsApp, mesmo quem desligou as notificações.",
+      "sent": "Alerta enviado para todos.",
+      "kindLabel": "O que está acontecendo?",
+      "readyLabel": "Mensagens prontas",
+      "messageLabel": "Mensagem",
+      "confirm": "Enviar para todos os moradores?",
+      "back": "Voltar",
+      "sendNow": "Sim, enviar",
+      "send": "Enviar alerta geral",
+      "ready": {
+        "fire": {
+          "1": "Princípio de incêndio. Desçam pela escada e não usem o elevador.",
+          "2": "Fumaça no prédio. Fiquem calmos e aguardem orientação da portaria."
+        },
+        "gas": {
+          "1": "Cheiro de gás. Não acendam fogo nem luzes e abram as janelas."
+        },
+        "power": {
+          "1": "Falta de energia no prédio. Evitem o elevador até a luz voltar."
+        },
+        "security": {
+          "1": "Pessoa suspeita no prédio. Não abram a porta para desconhecidos."
+        },
+        "other": {
+          "1": "Situação urgente no prédio. Aguardem orientação da portaria."
+        }
+      }
+    },
+    "alerts": {
+      "open": "Em aberto",
+      "none": "Nenhum alerta em aberto."
+    },
+    "contacts": {
+      "search": "Buscar contato",
+      "edit": "Editar contatos",
+      "editPage": "Editar contatos",
+      "none": "Nenhum contato.",
+      "groups": {
+        "building": "Do prédio",
+        "emergency": "Emergência e serviços"
+      },
+      "roles": {
+        "manager": "Síndico",
+        "head-doorman": "Porteiro-chefe"
+      },
+      "noPhone": "fale pela portaria",
+      "whatsapp": "WhatsApp de {name}",
+      "call": "Ligar para {name}",
+      "add": "Acrescentar contato",
+      "addTitle": "Novo contato",
+      "editTitle": "Editar contato",
+      "frontDeskBadge": "número da portaria",
+      "up": "Subir {name}",
+      "down": "Descer {name}",
+      "editOne": "Editar {name}",
+      "remove": "Remover {name}",
+      "confirmRemove": "Remover {name} da lista?",
+      "keep": "Manter",
+      "yesRemove": "Sim, remover",
+      "error": "Não deu certo. Tente de novo.",
+      "group": "Grupo",
+      "name": "Nome",
+      "description": "Descrição (opcional)",
+      "phone": "Número",
+      "phoneHint": "Ex.: 192, 0800 021 0196 ou (21) 98765-4321",
+      "isFrontDesk": "É o número da portaria",
+      "invalid": {
+        "name": "O nome precisa ter de 2 a 60 letras.",
+        "description": "A descrição pode ter até 60 letras.",
+        "phone": "Número inválido. Use 192, 0800 ou um telefone com DDD."
+      },
+      "cancel": "Cancelar",
+      "save": "Salvar"
+    },
+    "showPhone": {
+      "label": "Mostrar meu celular nos contatos",
+      "hint": "Os moradores veem seu celular e podem ligar ou mandar WhatsApp. Desligado, aparece só seu nome."
+    },
+    "home": {
+      "emergency": "Emergência",
+      "contacts": "Contatos",
+      "deskCard": "Emergência · apto {n}"
     }
   }
 }

@@ -6,12 +6,16 @@ import { useTranslations } from "next-intl"
 import { EmptyScreen } from "@/components/layout/EmptyScreen"
 import { ScreenPage } from "@/components/layout/ScreenPage"
 import { ResidentHighlights } from "./CommHighlights"
+import { GeneralAlertBanner } from "@/components/security/GeneralAlertOverlay"
+import { ResidentSafetyShortcuts } from "@/components/security/HomeShortcuts"
 
 /** Início do morador: leva a "Todos os serviços" (História 1 da 001) e destaca avisos e reunião (spec 003). */
 export function ResidentHome() {
   const t = useTranslations("nav")
   return (
     <ScreenPage profile="resident" slug="">
+      <GeneralAlertBanner />
+      <ResidentSafetyShortcuts />
       <div className="mx-auto max-w-xl px-4 pt-4">
         <Link
           href="/resident/services/"

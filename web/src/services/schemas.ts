@@ -40,6 +40,8 @@ export const PersonSchema = z.object({
   welcomeSeenAt: nullableDate,
   rulesAcceptedAt: nullableDate,
   removedAt: nullableDate,
+  /** Síndico e porteiro-chefe: mostrar o celular nos contatos (spec 005, esclarecimento 2). Ausente = não. */
+  showPhoneInContacts: z.boolean().optional(),
 })
 
 export const ResidentKindSchema = z.enum(["owner", "tenant", "family"])
@@ -306,10 +308,23 @@ export const NotificationTypeSchema = z.enum([
   "lost-found",
   "memo",
   "emergency",
+  "emergency-update",
+  "general-alert",
+  "general-alert-closed",
 ])
 
 export const NotificationTargetSchema = z.object({
-  kind: z.enum(["notice", "poll", "meeting", "delivery", "visitor", "lost-item", "memo"]),
+  kind: z.enum([
+    "notice",
+    "poll",
+    "meeting",
+    "delivery",
+    "visitor",
+    "lost-item",
+    "memo",
+    "emergency",
+    "general-alert",
+  ]),
   id: uuid,
 })
 
@@ -475,8 +490,76 @@ export const InboundMessageSchema = z.object({
   fromPhone: E164,
   text: z.string().max(500),
   receivedAt: isoDateTime,
-  result: z.enum(["registered", "unknown-phone", "no-permission", "not-understood"]),
+  result: z.enum(["registered", "unknown-phone", "no-permission", "not-understood", "sos"]),
   deliveryId: uuid.nullable(),
+})
+
+// ---------- Segurança (spec 005, data-model.md) ----------
+
+export const EmergencyKindSchema = z.enum([
+  "health",
+  "fire",
+  "intrusion",
+  "leak",
+  "other",
+  "unknown",
+])
+
+export const EmergencyAlertSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  apartmentId: uuid, // um open/acknowledged por apartamento
+  kind: EmergencyKindSchema,
+  origin: z.enum(["app", "whatsapp"]),
+  createdById: uuid,
+  createdAt: isoDateTime,
+  status: z.enum(["open", "acknowledged", "resolved", "cancelled"]),
+  acknowledgedAt: nullableDate,
+  acknowledgedById: uuid.nullable(),
+  resolvedAt: nullableDate,
+  resolvedById: uuid.nullable(),
+  resolutionNote: z.string().trim().max(300).nullable(),
+  cancelledAt: nullableDate,
+  cancelledById: uuid.nullable(),
+  repeatedAt: nullableDate,
+})
+
+export const GeneralAlertKindSchema = z.enum(["fire", "gas", "power", "security", "other"])
+
+export const GeneralAlertSchema = z.object({
+  id: uuid,
+  condominiumId: uuid, // no máximo um open
+  kind: GeneralAlertKindSchema,
+  message: z.string().trim().min(5).max(280),
+  createdById: uuid,
+  createdAt: isoDateTime,
+  status: z.enum(["open", "closed"]),
+  closedAt: nullableDate,
+  closedById: uuid.nullable(),
+  closingMessage: z.string().trim().max(280).nullable(),
+})
+
+export const GeneralAlertSeenSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  alertId: uuid,
+  personId: uuid, // único por (alerta, pessoa)
+  seenAt: isoDateTime,
+})
+
+export const ContactGroupSchema = z.enum(["building", "emergency"])
+
+export const ContactSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  group: ContactGroupSchema,
+  name: z.string().trim().min(2).max(60),
+  description: z.string().trim().max(60).nullable(),
+  /** Número discável: serviço público (3 dígitos), 0800 ou telefone em E.164. */
+  phone: z.string().regex(/^(1\d\d|0800\d{7}|\+\d{10,15})$/),
+  isMobile: z.boolean(),
+  frontDesk: z.boolean(), // o número da portaria (no máximo um)
+  order: z.int().min(0),
 })
 
 export const SeedMetaSchema = z.object({
@@ -527,3 +610,10 @@ export type TravelMode = z.infer<typeof TravelModeSchema>
 export type FrontDeskMemo = z.infer<typeof FrontDeskMemoSchema>
 export type LostItem = z.infer<typeof LostItemSchema>
 export type InboundMessage = z.infer<typeof InboundMessageSchema>
+export type EmergencyKind = z.infer<typeof EmergencyKindSchema>
+export type EmergencyAlert = z.infer<typeof EmergencyAlertSchema>
+export type GeneralAlertKind = z.infer<typeof GeneralAlertKindSchema>
+export type GeneralAlert = z.infer<typeof GeneralAlertSchema>
+export type GeneralAlertSeen = z.infer<typeof GeneralAlertSeenSchema>
+export type ContactGroup = z.infer<typeof ContactGroupSchema>
+export type Contact = z.infer<typeof ContactSchema>

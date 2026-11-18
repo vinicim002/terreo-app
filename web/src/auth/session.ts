@@ -96,7 +96,10 @@ if (typeof window !== "undefined" && APP_MODE !== "real") {
       await services.dev.forgetCodes(phone)
       const sent = await services.auth.requestCode(phone)
       if (sent.status !== "sent") throw new Error(`Número não cadastrado: ${phone}`)
-      const message = await services.outbox!.latestTo(phone)
+      // A mensagem do código (não a última de qualquer tipo: com o relógio parado, avisos empatam na hora).
+      const message = (await services.outbox!.list()).find(
+        (m) => m.toPhone === phone && m.kind === "otp",
+      )
       const code = message!.body.match(/\d{6}/)![0]
       const result = await services.auth.verifyCode(phone, code, getDeviceId())
       if (result.status !== "ok") throw new Error(`Código não aceito: ${result.status}`)

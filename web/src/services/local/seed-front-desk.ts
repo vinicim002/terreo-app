@@ -53,6 +53,11 @@ export function buildFrontDeskSeed(base: FrontDeskBase, now: Date): FrontDeskSee
   const at = (offset: number, time: string) => brasiliaToIso(day(offset), time)
   /** Um instante já passado, `hours` antes de agora. */
   const ago = (hours: number) => new Date(now.getTime() - hours * 3_600_000).toISOString()
+  /** Como `ago`, mas sem passar para ontem: logo depois da meia-noite, fica no começo do dia de hoje. */
+  const agoToday = (hours: number) =>
+    new Date(
+      Math.max(now.getTime() - hours * 3_600_000, Math.min(today + 60_000, now.getTime())),
+    ).toISOString()
 
   const apt = (number: string) => base.apartments.find((a) => a.number === number)!
   const active = (r: Residency) => !!base.people.find((p) => p.id === r.personId)?.firstAccessAt
@@ -100,7 +105,7 @@ export function buildFrontDeskSeed(base: FrontDeskBase, now: Date): FrontDeskSee
     code: "4821",
     onArrival: "elevator",
     createdById: resp804,
-    createdAt: ago(1),
+    createdAt: agoToday(1),
   })
   delivery("804", {
     origin: "app",
@@ -110,7 +115,7 @@ export function buildFrontDeskSeed(base: FrontDeskBase, now: Date): FrontDeskSee
     onArrival: "front-desk",
     note: "Caixa grande, pode deixar na portaria",
     createdById: familyOf804,
-    createdAt: ago(3),
+    createdAt: agoToday(3),
   })
   // 804: caixa da Amazon na portaria com foto; Shopee retirada ontem.
   const amazon = ago(2)

@@ -2,6 +2,38 @@
 
 Registro diário do que foi adicionado, alterado e removido no projeto. A entrada mais recente fica no topo.
 
+## 2026-11-18
+
+### Adicionado
+
+- Especificação completa da spec 005 pelo Spec Kit (`specs/005-seguranca/`): spec com 3 esclarecimentos (o contato de
+  emergência e a casa também são avisados; celular do síndico e do porteiro-chefe só com autorização; pedir ajuda com
+  "SOS" pelo WhatsApp), plano, pesquisa, modelo de dados, contratos, 51 tarefas e análise com 8 achados corrigidos antes
+  do código.
+- Segurança (spec 005), com dados no aparelho:
+  - Botão de emergência do morador: segurar 3 segundos (toque rápido não envia), tipo opcional (saúde, incêndio,
+    invasão, vazamento, outro), ligar direto para SAMU 192, Bombeiros 193 e Polícia 190; acompanhamento com quem viu o
+    alerta e está a caminho, "Ligar para a portaria" e "Cancelar alerta".
+  - Na portaria de plantão, tela cheia por cima de tudo com apartamento, andar, tipo, quem pediu, há quanto tempo e o
+    contato de emergência, com som e vibração; "Estou indo", "Resolvido" com nota (pode ditar) e cartão no painel.
+    Sem resposta em 2 minutos, o alerta toca de novo e o síndico é avisado outra vez.
+  - A casa, a portaria e o síndico são avisados no app e no privado; o contato de emergência recebe mensagem no
+    WhatsApp ao pedir ajuda, ao cancelar e ao resolver. "SOS" ou "socorro" no WhatsApp (simulado no `/dev`) cria o
+    mesmo alerta.
+  - Alerta geral da portaria e do síndico: tipo, mensagens prontas, ditar, confirmação; tela cheia para todos,
+    mensagem no grupo e no privado de todos mesmo com as notificações desligadas; faixa no início enquanto estiver
+    em aberto; encerrar avisa todos.
+  - Contatos importantes com busca sem acento, ligar e WhatsApp; atalho "Contatos" no início do morador; o síndico
+    acrescenta, edita, reordena e remove; síndico e porteiro-chefe escolhem mostrar o celular.
+  - Histórico de alertas de 90 dias com quem atendeu e em quanto tempo; o morador vê os do apartamento e os gerais.
+  - Dados de exemplo v5: contatos, um alerta resolvido e um alerta geral encerrado; contato de emergência no 804.
+
+### Alterado
+
+- O atalho de testes lê o código de entrada pelo tipo da mensagem, e "esquecer códigos" também apaga as mensagens de
+  código antigas (com o relógio parado nos testes, os avisos empatavam na hora).
+- Notificações ganham os tipos de atualização de emergência e de alerta geral, com destino nas telas novas.
+
 ## 2026-11-17
 
 ### Adicionado

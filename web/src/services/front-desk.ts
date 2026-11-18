@@ -1,7 +1,7 @@
 // Portaria (spec 004): painel e números do dia, visitantes, modo viagem, recados, achados e perdidos e mensagens
 // recebidas no WhatsApp (simuladas agora; na Etapa 3, o webhook chama `receive` no servidor).
 import { dayKeyBrasilia, timeBrasilia } from "@/i18n/datetime"
-import { getIn, listIn, notFound, nowIso, save, type ServiceDeps } from "./base"
+import { fold, getIn, listIn, notFound, nowIso, save, type ServiceDeps } from "./base"
 import {
   ServiceError,
   type DeskApartment,
@@ -18,6 +18,7 @@ import {
   type WhatsappInboxService,
 } from "./contracts"
 import { apartmentByNumber, createCode, deliveryView, ownApartment } from "./deliveries"
+import { raiseEmergency } from "./emergency"
 import { runDue } from "./due"
 import {
   activePeopleOf,
@@ -529,7 +530,12 @@ export function lostFoundService(deps: ServiceDeps): LostFoundService {
 
 // ---------- Mensagens recebidas no WhatsApp ----------
 
-const REPLY: Record<Exclude<InboxResult, "registered">, string> = {
+/** "SOS" ou "socorro" como palavra inteira, sem diferença de maiúsculas e acentos (spec 005, research R6). */
+export function isSosMessage(text: string) {
+  return /(^|[^a-z0-9])(sos|socorro)([^a-z0-9]|$)/.test(fold(text))
+}
+
+const REPLY: Record<Exclude<InboxResult, "registered" | "sos">, string> = {
   "unknown-phone": "Térreo: este número não está cadastrado no condomínio. Fale com o síndico.",
   "no-permission":
     "Térreo: você não pode cadastrar entregas. Peça ao responsável do apartamento para liberar.",
@@ -572,9 +578,26 @@ export function whatsappInboxService(deps: ServiceDeps): WhatsappInboxService {
         await reply(null, fromPhone, REPLY["unknown-phone"])
         return { result: "unknown-phone", reply: REPLY["unknown-phone"] }
       }
-      const residency = (await deps.repo.byIndex("residencies", "byPerson", person.id)).find(
-        (r) => r.isResponsible || r.canRegisterDeliveries,
-      )
+      const residencies = await deps.repo.byIndex("residencies", "byPerson", person.id)
+      // Pedido de ajuda vem antes de tudo: qualquer pessoa ativa de um apartamento (RF-007a).
+      if (residencies[0] && isSosMessage(text)) {
+        const { alert, created } = await raiseEmergency(
+          deps,
+          person.condominiumId,
+          residencies[0].apartmentId,
+          person.id,
+          "unknown",
+          "whatsapp",
+        )
+        await record("sos", person.condominiumId)
+        const apt = await deps.repo.get("apartments", alert.apartmentId)
+        const body = created
+          ? `Térreo: a portaria foi avisada do seu pedido de ajuda no apartamento ${apt?.number}. Se puder, ligue para 192 (SAMU).`
+          : `Térreo: o pedido de ajuda do apartamento ${apt?.number} já está com a portaria. Se puder, ligue para 192 (SAMU).`
+        await reply(person.condominiumId, fromPhone, body)
+        return { result: "sos", reply: body }
+      }
+      const residency = residencies.find((r) => r.isResponsible || r.canRegisterDeliveries)
       if (!residency) {
         await record("no-permission", person.condominiumId)
         await reply(person.condominiumId, fromPhone, REPLY["no-permission"])

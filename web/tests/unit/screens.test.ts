@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import pt from "../../messages/pt.json"
@@ -113,5 +113,29 @@ describe("comunicação na portaria (spec 003, contracts/rotas.md)", () => {
   it("tem avisos e agenda no grupo de comunicação do Mais", () => {
     const grupo = hubGroups("front-desk").find((g) => g.group === "communication")!
     expect(grupo.screens.map((s) => s.slug)).toEqual(["notices", "calendar"])
+  })
+})
+
+describe("catálogo — segurança (spec 005)", () => {
+  it("morador tem emergência e contatos; portaria e síndico têm alerta geral, alertas de emergência e contatos", () => {
+    const slugs = (p: (typeof PROFILES)[number]) => PROFILES_DEF[p].screens.map((s) => s.slug)
+    expect(slugs("resident")).toEqual(expect.arrayContaining(["emergency", "contacts"]))
+    for (const p of ["front-desk", "manager"] as const)
+      expect(slugs(p)).toEqual(
+        expect.arrayContaining(["general-alert", "emergency-alert", "contacts"]),
+      )
+  })
+})
+
+describe("rotas da portaria (spec 005)", () => {
+  // Todas as telas da portaria têm página própria; por isso não existe mais a rota genérica `[screen]` (com a
+  // exportação estática, ela não pode ficar vazia). Tela nova da portaria precisa da sua página.
+  it("cada tela do catálogo da portaria tem página própria", () => {
+    for (const s of PROFILES_DEF["front-desk"].screens) {
+      if (s.slug === "" || s.href) continue
+      expect(existsSync(join(__dirname, `../../app/front-desk/${s.slug}/page.tsx`)), s.slug).toBe(
+        true,
+      )
+    }
   })
 })

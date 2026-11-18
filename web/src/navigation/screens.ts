@@ -166,6 +166,7 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
       { slug: "suggestions", icon: Lightbulb, group: "communication" },
       { slug: "improvements", icon: Hammer, group: "communication" },
       { slug: "general-alert", icon: BellRing, group: "communication" },
+      { slug: "emergency-alert", icon: ShieldAlert, group: "communication" },
       { slug: "reminders", icon: CalendarClock, group: "communication" },
       { slug: "memos", icon: MessageSquareText, group: "communication" },
       { slug: "schedule", icon: ClipboardList, group: "management" },

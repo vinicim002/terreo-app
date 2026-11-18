@@ -18,6 +18,8 @@ const OWN_PAGES = [
   "travel-mode",
   "on-duty",
   "lost-and-found",
+  "emergency",
+  "contacts",
 ]
 
 export const dynamicParams = false

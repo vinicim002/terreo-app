@@ -14,6 +14,9 @@ const OWN_PAGES = [
   "memos",
   "on-duty",
   "lost-and-found",
+  "contacts",
+  "general-alert",
+  "emergency-alert",
 ]
 
 export const dynamicParams = false

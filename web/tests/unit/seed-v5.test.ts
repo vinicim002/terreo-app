@@ -17,9 +17,9 @@ const byNumber = (n: string) => seed.apartments.find((a) => a.number === n)!
 const residentsOf = (n: string) => seed.residencies.filter((r) => r.apartmentId === byNumber(n).id)
 const person = (id: string) => seed.people.find((p) => p.id === id)!
 
-describe("dados de exemplo v4 — base da spec 002", () => {
-  it("está na versão 4 e passa nos esquemas", () => {
-    expect(SEED_VERSION).toBe(4)
+describe("dados de exemplo v5 — base da spec 002", () => {
+  it("está na versão 5 e passa nos esquemas", () => {
+    expect(SEED_VERSION).toBe(5)
     seed.apartments.forEach((a) => ApartmentSchema.parse(a))
     seed.people.forEach((p) => PersonSchema.parse(p))
     seed.residencies.forEach((r) => ResidencySchema.parse(r))
@@ -228,5 +228,66 @@ describe("dados de exemplo v4 — portaria (spec 004, RF-026)", () => {
     expect(s.lostItems.filter((i) => i.kind === "found")).toHaveLength(3)
     expect(s.lostItems.some((i) => i.status === "claimed")).toBe(true)
     expect(s.lostItems.filter((i) => i.kind === "lost")).toHaveLength(1)
+  })
+})
+
+describe("dados de exemplo v5 — segurança (spec 005, RF-022)", () => {
+  const agora = new Date("2026-11-16T12:00:00Z")
+  const s = buildSeed(agora)
+
+  it("contatos: portaria (24h) e emergência e serviços, passando no esquema", async () => {
+    const { ContactSchema } = await import("@/services/schemas")
+    s.contacts.forEach((c) => ContactSchema.parse(c))
+    expect(s.contacts.filter((c) => c.frontDesk).map((c) => c.name)).toEqual(["Portaria"])
+    expect(s.contacts.filter((c) => c.group === "emergency").map((c) => c.phone)).toEqual([
+      "192",
+      "193",
+      "190",
+      "199",
+      "08000210196",
+      "08000240197",
+      "08001950195",
+    ])
+  })
+
+  it("um alerta do 501 resolvido há 3 dias, atendido em 1 minuto por Jonas", async () => {
+    const { EmergencyAlertSchema } = await import("@/services/schemas")
+    expect(s.emergencyAlerts).toHaveLength(1)
+    const [a] = s.emergencyAlerts.map((x) => EmergencyAlertSchema.parse(x))
+    expect(s.apartments.find((x) => x.id === a.apartmentId)?.number).toBe("501")
+    expect(a.status).toBe("resolved")
+    expect(Date.parse(a.acknowledgedAt!) - Date.parse(a.createdAt)).toBe(60_000)
+    expect(agora.getTime() - Date.parse(a.createdAt)).toBe(3 * 86_400_000)
+    expect(s.people.find((p) => p.id === a.acknowledgedById)?.name).toBe("Jonas Siqueira")
+  })
+
+  it("um alerta geral de gás encerrado há 10 dias", async () => {
+    const { GeneralAlertSchema } = await import("@/services/schemas")
+    const [g] = s.generalAlerts.map((x) => GeneralAlertSchema.parse(x))
+    expect(g).toMatchObject({ kind: "gas", status: "closed" })
+    expect(agora.getTime() - Date.parse(g.createdAt)).toBe(10 * 86_400_000)
+    expect(s.generalAlerts.filter((x) => x.status === "open")).toHaveLength(0)
+  })
+
+  it("o 804 tem contato de emergência para a demonstração", () => {
+    const c = s.emergencyContacts.find((x) => x.apartmentId === byNumber("804").id)
+    expect(c).toMatchObject({ name: "Rita Moreira", relationship: "Irmã" })
+  })
+})
+
+describe("dados de exemplo — códigos do 804 sempre de hoje", () => {
+  it("logo depois da meia-noite de Brasília, os códigos aguardando continuam no dia de hoje", async () => {
+    const { dayKeyBrasilia } = await import("@/i18n/datetime")
+    const meiaNoite = new Date("2026-11-18T03:20:00Z") // 00:20 em Brasília
+    const s = buildSeed(meiaNoite)
+    const apt = s.apartments.find((a) => a.number === "804")!
+    const aguardando = s.deliveries.filter(
+      (d) => d.apartmentId === apt.id && d.status === "awaiting",
+    )
+    expect(aguardando.length).toBeGreaterThanOrEqual(2)
+    for (const d of aguardando) {
+      expect(dayKeyBrasilia(d.createdAt)).toBe("2026-11-18")
+      expect(Date.parse(d.createdAt)).toBeLessThanOrEqual(meiaNoite.getTime())
+    }
   })
 })

@@ -30,6 +30,14 @@ import {
   FrontDeskMemoSchema,
   LostItemSchema,
   InboundMessageSchema,
+  EmergencyAlertSchema,
+  GeneralAlertSchema,
+  GeneralAlertSeenSchema,
+  ContactSchema,
+  type EmergencyAlert,
+  type GeneralAlert,
+  type GeneralAlertSeen,
+  type Contact,
   type Delivery,
   type Visitor,
   type TravelMode,
@@ -92,6 +100,10 @@ export interface StoreMap {
   memos: FrontDeskMemo
   lostItems: LostItem
   inboundMessages: InboundMessage
+  emergencyAlerts: EmergencyAlert
+  generalAlerts: GeneralAlert
+  generalAlertSeen: GeneralAlertSeen
+  contacts: Contact
 }
 export type StoreName = keyof StoreMap
 export const STORES = [
@@ -124,6 +136,10 @@ export const STORES = [
   "memos",
   "lostItems",
   "inboundMessages",
+  "emergencyAlerts",
+  "generalAlerts",
+  "generalAlertSeen",
+  "contacts",
 ] as const satisfies readonly StoreName[]
 
 /** Índices por loja: nome do índice → campo. */
@@ -157,6 +173,10 @@ export const INDEXES: { [S in StoreName]: Partial<Record<IndexName, string>> } =
   memos: { byCondominium: "condominiumId" },
   lostItems: { byCondominium: "condominiumId" },
   inboundMessages: { byCondominium: "condominiumId", byPhone: "fromPhone" },
+  emergencyAlerts: { byCondominium: "condominiumId", byApartment: "apartmentId" },
+  generalAlerts: { byCondominium: "condominiumId" },
+  generalAlertSeen: { byCondominium: "condominiumId", byPerson: "personId" },
+  contacts: { byCondominium: "condominiumId" },
 }
 export type IndexName =
   "byCondominium" | "byPhone" | "byPerson" | "byApartment" | "byDevice" | "byNotice" | "byPoll"
@@ -209,6 +229,10 @@ const SCHEMAS = {
   memos: FrontDeskMemoSchema,
   lostItems: LostItemSchema,
   inboundMessages: InboundMessageSchema,
+  emergencyAlerts: EmergencyAlertSchema,
+  generalAlerts: GeneralAlertSchema,
+  generalAlertSeen: GeneralAlertSeenSchema,
+  contacts: ContactSchema,
 } as const
 
 export function validate<S extends StoreName>(store: S, value: unknown): StoreMap[S] {

@@ -155,8 +155,8 @@ export function OutboxPanel() {
 }
 
 /**
- * Simula uma mensagem recebida no WhatsApp do condomínio (spec 004, RF-002): na Etapa 3, o webhook do WhatsApp
- * chama a mesma função no servidor.
+ * Simula uma mensagem recebida no WhatsApp do condomínio (spec 004, RF-002; "SOS" da spec 005): na Etapa 3, o
+ * webhook do WhatsApp chama a mesma função no servidor.
  */
 export function InboxSimulator() {
   const [phone, setPhone] = useState(EXAMPLE_ACCOUNTS[3]?.phone ?? "")
@@ -165,16 +165,19 @@ export function InboxSimulator() {
   const client = useQueryClient()
   const { data } = useInboundMessages()
   if (!getServices().whatsappInbox) return null
+  const send = async (message: string) => {
+    const r = await getServices().whatsappInbox!.receive(phone, message)
+    setResult(`${r.result}: ${r.reply}`)
+    await client.invalidateQueries()
+  }
   return (
     <div className="rounded-xl border border-border bg-card p-4" data-testid="inbox-simulator">
       <h2 className="font-semibold">Simular mensagem recebida no WhatsApp</h2>
       <form
         className="mt-2 flex flex-col gap-2"
-        onSubmit={async (e) => {
+        onSubmit={(e) => {
           e.preventDefault()
-          const r = await getServices().whatsappInbox!.receive(phone, text)
-          setResult(`${r.result}: ${r.reply}`)
-          await client.invalidateQueries()
+          void send(text)
         }}
       >
         <label className="flex flex-col gap-1 text-sm font-semibold">
@@ -200,9 +203,22 @@ export function InboxSimulator() {
             className="min-h-11 rounded-lg border border-input bg-card px-2 font-normal"
           />
         </label>
-        <button type="submit" className="btn-primary self-start">
-          Receber mensagem
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button type="submit" className="btn-primary">
+            Receber mensagem
+          </button>
+          {/* Spec 005, RF-007a: pedido de ajuda pelo WhatsApp. */}
+          <button
+            type="button"
+            className="btn-outline"
+            onClick={() => {
+              setText("SOS")
+              void send("SOS")
+            }}
+          >
+            Simular &quot;SOS&quot;
+          </button>
+        </div>
       </form>
       {result && (
         <p role="status" className="mt-2 text-sm">

@@ -24,6 +24,10 @@ O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "I
 - [ ] Validar em celulares reais as telas da spec 002: foto do perfil pela câmera e textos em inglês e espanhol.
 - [ ] Validar em celulares reais as telas da spec 003: campos de data e hora, calendário e o sino.
 - [ ] Validar em celulares reais as telas da spec 004: câmera da encomenda, ditar (Android e iPhone) e botões da portaria.
+- [ ] Validar em celulares reais a spec 005: segurar 3 s no toque, som e vibração da tela cheia na portaria, ligar e
+  abrir o WhatsApp pelos contatos.
+- [ ] Conferir com o síndico os números das concessionárias nos contatos (Light, Naturgy e Águas do Rio são exemplos)
+  e cadastrar o número real da portaria antes do lançamento.
 - [ ] Conferir a licença do desenho do mascote (sabiá) antes do lançamento, como avisa o kit da marca.
 
 ## Etapa 2 — Telas com dados locais (Proposta)
@@ -38,7 +42,9 @@ Ordem sugerida, uma spec por grupo:
 - [x] Portaria (spec 004): códigos de entrega pelo app e pelo WhatsApp (simulado), encomenda com foto, correspondência,
   retirada, lembrete de encomenda parada, visitantes e prestadores, modo viagem, equipe de plantão, ditar e recados ao
   síndico, achados e perdidos.
-- [ ] Segurança: botão de emergência, alerta geral, contatos.
+- [x] Segurança (spec 005): botão de emergência (segurar 3 s, tela cheia na portaria de plantão, "Estou indo",
+  cancelar, resolver, repetição em 2 min, contato de emergência avisado, "SOS" pelo WhatsApp simulado), alerta geral
+  (tela cheia, grupo e privado de todos, encerrar), contatos importantes e histórico de 90 dias.
 - [ ] Participação: sugestões, melhorias, avisar problema, barulho, prestadores, comércio, pesquisa de satisfação.
 - [ ] Administração: mudanças e obras, edição da escala e rodízio de folgas (depende do síndico), controle ou chave, advertências, prestação de contas, resumo do mês, lembretes,
   perguntas frequentes, apartamento disponível.
@@ -54,6 +60,9 @@ Ordem sugerida, uma spec por grupo:
   respondendo à mensagem no WhatsApp.
 - [ ] Portaria no servidor (spec 004): webhook do WhatsApp para códigos de entrega (`parseDeliveryMessage`), foto no
   privado e no R2, pytest das regras (permissões, quem é avisado, lembretes, isolamento entre condomínios).
+- [ ] Segurança no servidor (spec 005): Web Push e atualização em tempo real no lugar da consulta a cada 1 s e 3 s,
+  repetição do alerta como tarefa do ARQ, "SOS" no webhook do WhatsApp, pytest das regras (permissões, quem recebe,
+  repetição, alerta geral ignorando preferências, isolamento entre condomínios).
 
 ## Etapa 4 — Piloto (Proposta)
 

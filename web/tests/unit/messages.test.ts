@@ -77,6 +77,15 @@ const IGUAIS_EM_ESPANHOL = [
   "fd.lost.cancel",
   "fd.lost.reportLost",
   "fd.lost.photo",
+  // Spec 005
+  "security.sent.cancel",
+  "security.general.open",
+  "security.contacts.whatsapp",
+  "security.contacts.up",
+  "security.contacts.editOne",
+  "security.contacts.group",
+  "security.contacts.phone",
+  "security.contacts.cancel",
 ]
 
 describe.each([
@@ -120,6 +129,7 @@ describe.each([
       "fd.sizes.envelope",
       "fd.onDuty.range",
       "fd.memos.by",
+      "security.general.by", // só parâmetros
       // Palavras que se escrevem igual em português e espanhol:
       ...(_nome === "espanhol" ? IGUAIS_EM_ESPANHOL : []),
     ])

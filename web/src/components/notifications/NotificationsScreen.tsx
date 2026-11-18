@@ -1,7 +1,9 @@
 "use client"
 
 import {
+  BellRing,
   CheckCheck,
+  ShieldCheck,
   Mail,
   MessageSquareText,
   Search,
@@ -51,6 +53,9 @@ const ICON: Record<NotificationType, LucideIcon> = {
   "lost-found": Search,
   memo: MessageSquareText,
   emergency: Siren,
+  "emergency-update": ShieldCheck,
+  "general-alert": BellRing,
+  "general-alert-closed": CheckCircle2,
 }
 
 function targetHref(base: string, n: NotificationView) {
@@ -70,6 +75,11 @@ function targetHref(base: string, n: NotificationView) {
       return `${base}/lost-and-found/`
     case "memo":
       return `${base}/memos/`
+    // Spec 005: o morador acompanha na tela de emergência; portaria e síndico, na lista de alertas.
+    case "emergency":
+      return base === "/resident" ? `${base}/emergency/` : `${base}/emergency-alert/`
+    case "general-alert":
+      return base === "/resident" ? `${base}/emergency/` : `${base}/general-alert/`
   }
 }
 

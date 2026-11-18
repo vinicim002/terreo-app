@@ -38,7 +38,8 @@ test.describe("perfil, carros, animais e contato de emergência", () => {
     await page.getByRole("button", { name: "Salvar" }).click()
     await expect(page.getByText("Luna")).toBeVisible()
 
-    await expect(page.getByText("Opcional · não informado")).toBeVisible()
+    // O 804 já tem contato de emergência nos dados de exemplo (spec 005); aqui ele é trocado.
+    await expect(page.getByText(/Rita Moreira \(Irmã\)/)).toBeVisible()
     await page.getByRole("link", { name: /Contato de emergência/ }).click()
     await page.getByLabel("Nome").fill("Rita Prado")
     await page.getByLabel("Parentesco").fill("Mãe")

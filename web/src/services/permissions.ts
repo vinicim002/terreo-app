@@ -43,6 +43,18 @@ export type Action =
   | "memo.send"
   | "memo.manage"
   | "staff.board"
+  // Spec 005 (contracts/permissoes.md)
+  | "emergency.raise"
+  | "emergency.viewOwn"
+  | "emergency.cancel" // alvo.createdById: outro morador só cancela o que pediu
+  | "emergency.viewAll"
+  | "emergency.respond" // "Estou indo", "Resolvido"
+  | "generalAlert.view"
+  | "generalAlert.send"
+  | "generalAlert.close" // alvo.createdById: a portaria só encerra o que enviou
+  | "contacts.view"
+  | "contacts.manage"
+  | "contacts.showOwnPhone"
 
 /** Estado atual do ator, carregado do repositório (não confiar no que estava na sessão). */
 export interface ActorInfo {
@@ -52,6 +64,8 @@ export interface ActorInfo {
   isResponsible?: boolean
   canVotePolls?: boolean
   canRegisterDeliveries?: boolean
+  /** Porteiro-chefe (Staff.isHead). */
+  isHeadDoorman?: boolean
 }
 
 export interface Target {
@@ -149,7 +163,32 @@ export function can(actor: ActorInfo | null, action: Action, target: Target = {}
       return actor.kind === "resident" ? "ok" : "forbidden"
     case "lostfound.view":
     case "staff.board":
+    case "generalAlert.view":
+    case "contacts.view":
       return "ok"
+    case "emergency.raise":
+    case "emergency.viewOwn":
+      if (actor.kind !== "resident") return "forbidden"
+      return sameApartment ? "ok" : "not_found"
+    case "emergency.cancel":
+      if (actor.kind !== "resident") return "forbidden"
+      if (!sameApartment) return "not_found"
+      return actor.isResponsible || target.createdById === actor.personId ? "ok" : "forbidden"
+    case "emergency.viewAll":
+      return actor.kind === "resident" ? "forbidden" : "ok"
+    case "emergency.respond":
+      return actor.kind === "front-desk" ? "ok" : "forbidden"
+    case "generalAlert.send":
+      return actor.kind === "resident" ? "forbidden" : "ok"
+    case "generalAlert.close":
+      if (actor.kind === "manager") return "ok"
+      if (actor.kind !== "front-desk") return "forbidden"
+      return target.createdById === actor.personId ? "ok" : "forbidden"
+    case "contacts.manage":
+      return actor.kind === "manager" ? "ok" : "forbidden"
+    case "contacts.showOwnPhone":
+      if (actor.kind === "manager") return "ok"
+      return actor.kind === "front-desk" && actor.isHeadDoorman ? "ok" : "forbidden"
   }
 }
 
@@ -175,7 +214,7 @@ export async function loadActor(deps: ServiceDeps, ctx: ServiceContext): Promise
   if (role.kind === "front-desk") {
     const staff = await deps.repo.get("staff", role.staffId)
     if (!staff || staff.personId !== person.id || staff.role !== "doorman") return null
-    return { kind: "front-desk", personId: person.id }
+    return { kind: "front-desk", personId: person.id, isHeadDoorman: staff.isHead }
   }
   const managers = await deps.repo.byIndex("managers", "byPerson", person.id)
   if (!managers.some((m) => m.condominiumId === ctx.condominiumId)) return null

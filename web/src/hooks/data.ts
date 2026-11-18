@@ -313,3 +313,64 @@ export function useInboundMessages() {
     refetchInterval: 3_000,
   })
 }
+
+// ---------- Spec 005: segurança ----------
+
+/** Alerta do próprio apartamento e histórico; atualiza a cada 3 s para o morador ver o "Estou indo". */
+export function useMyEmergency() {
+  return useQuery({
+    queryKey: ["emergency", "mine"],
+    queryFn: () => getServices().emergency.mine(ctx()),
+    refetchInterval: 3_000,
+  })
+}
+
+/** Alertas de apartamento em aberto: a cada 1 s na portaria para caber nos 5 s do CS-001 (research R2). */
+export function useOpenEmergencies(enabled = true, interval = 1_000) {
+  return useQuery({
+    queryKey: ["emergency", "open"],
+    queryFn: () => getServices().emergency.open(ctx()),
+    refetchInterval: interval,
+    enabled,
+  })
+}
+
+export function useEmergencyHistory(enabled = true) {
+  return useQuery({
+    queryKey: ["emergency", "history"],
+    queryFn: () => getServices().emergency.history(ctx()),
+    enabled,
+  })
+}
+
+/** Alerta geral em aberto, para todos os perfis (a cada 3 s). */
+export function useGeneralAlert(enabled = true) {
+  return useQuery({
+    queryKey: ["general-alert", "current"],
+    queryFn: () => getServices().generalAlert.current(ctx()),
+    refetchInterval: 3_000,
+    enabled,
+  })
+}
+
+export function useGeneralAlertHistory() {
+  return useQuery({
+    queryKey: ["general-alert", "history"],
+    queryFn: () => getServices().generalAlert.history(ctx()),
+  })
+}
+
+export function useContacts(search: string) {
+  return useQuery({
+    queryKey: ["contacts", search],
+    queryFn: () => getServices().contacts.list(ctx(), search),
+    placeholderData: (previous) => previous,
+  })
+}
+
+export function useManualContacts() {
+  return useQuery({
+    queryKey: ["contacts", "manual"],
+    queryFn: () => getServices().contacts.manual(ctx()),
+  })
+}

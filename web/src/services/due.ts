@@ -13,6 +13,7 @@ import {
   todayKey,
 } from "./front-desk-shared"
 import type { Meeting, Notice, Poll, PollVote } from "./schemas"
+import { KIND_LABEL, doormen, managerIds } from "./security-shared"
 
 const DAY = 86_400_000
 
@@ -166,6 +167,32 @@ async function runDueNow(deps: ServiceDeps, condominiumId: string) {
   }
 
   await runFrontDeskDue(deps, condominiumId)
+  await runSecurityDue(deps, condominiumId)
+}
+
+/** Segurança (spec 005, RF-009): alerta sem "Estou indo" em 2 minutos toca de novo e avisa o síndico, uma vez. */
+const REPEAT_AFTER = 2 * 60_000
+
+async function runSecurityDue(deps: ServiceDeps, condominiumId: string) {
+  const now = deps.now().getTime()
+  const alerts = await deps.repo.byIndex("emergencyAlerts", "byCondominium", condominiumId)
+  for (const alert of alerts) {
+    if (alert.status !== "open" || alert.repeatedAt) continue
+    if (now - new Date(alert.createdAt).getTime() < REPEAT_AFTER) continue
+    const saved = await save(deps, "emergencyAlerts", { ...alert, repeatedAt: nowIso(deps) })
+    const [apt, staff, managers] = await Promise.all([
+      deps.repo.get("apartments", alert.apartmentId),
+      doormen(deps, condominiumId),
+      managerIds(deps, condominiumId),
+    ])
+    await notify(deps, condominiumId, {
+      type: "emergency",
+      audience: { personIds: [...new Set([...staff.map((d) => d.personId), ...managers])] },
+      title: `🚨 Ainda sem resposta · apto ${apt?.number}`,
+      body: `${KIND_LABEL[saved.kind]} · ninguém tocou "Estou indo" há 2 minutos.`,
+      target: { kind: "emergency", id: saved.id },
+    })
+  }
 }
 
 /** Portaria (spec 004, research R2): lembrete de encomenda parada, código que não chegou, visitante que não veio. */

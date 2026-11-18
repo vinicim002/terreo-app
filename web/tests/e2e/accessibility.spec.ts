@@ -195,3 +195,88 @@ test("botões da portaria têm pelo menos 56 px (RF-025)", async ({ page, browse
     expect(box!.height, name).toBeGreaterThanOrEqual(56)
   }
 })
+
+// Spec 005: segurança (T046) — telas e as duas telas cheias, nas quatro aparências.
+const TELAS_005: { conta: AccountKey; papel?: "manager"; url: string }[] = [
+  { conta: "responsible", url: "/resident/" },
+  { conta: "responsible", url: "/resident/emergency/" },
+  { conta: "responsible", url: "/resident/contacts/" },
+  { conta: "front-desk", url: "/front-desk/general-alert/" },
+  { conta: "front-desk", url: "/front-desk/emergency-alert/" },
+  { conta: "front-desk", url: "/front-desk/contacts/" },
+  { conta: "front-desk", url: "/front-desk/profile/" },
+  { conta: "manager", papel: "manager", url: "/manager/contacts/" },
+  { conta: "manager", papel: "manager", url: "/manager/contacts/edit/" },
+  { conta: "manager", papel: "manager", url: "/manager/emergency-alert/" },
+]
+
+async function auditar(page: import("@playwright/test").Page, highContrast: boolean) {
+  const tags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]
+  if (highContrast) tags.push("wcag2aaa")
+  const result = await new AxeBuilder({ page }).withTags(tags).exclude("[vw]").analyze()
+  return result.violations
+    .filter((v) => v.impact === "serious" || v.impact === "critical")
+    .map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)
+}
+
+for (const aparencia of APARENCIAS) {
+  test.describe(`acessibilidade (spec 005) — ${aparencia.nome}`, () => {
+    test.skip(({ browserName }) => browserName !== "chromium", "auditoria só no Chromium")
+    for (const tela of TELAS_005) {
+      test(`${tela.conta} ${tela.url}`, async ({ page }) => {
+        await withPrefs(page, aparencia.prefs)
+        await signInAs(page, tela.conta, tela.papel)
+        await page.goto(tela.url)
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+        await page.waitForLoadState("networkidle")
+        expect(await auditar(page, aparencia.prefs.highContrast)).toEqual([])
+      })
+    }
+
+    test("telas cheias de emergência e de alerta geral", async ({ page }) => {
+      // Segunda às 10:00 em Brasília: Jonas, a conta da portaria, está de plantão.
+      await page.clock.setFixedTime(new Date("2026-11-16T13:00:00Z"))
+      await withPrefs(page, aparencia.prefs)
+      await signInAs(page, "responsible")
+      await page.goto("/resident/emergency/")
+      const botao = page.getByRole("button", { name: /^segure/i })
+      await botao.hover()
+      await page.mouse.down()
+      await page.waitForTimeout(3_400)
+      await page.mouse.up()
+      await expect(page.getByRole("heading", { name: "Alerta enviado!" })).toBeVisible()
+      expect(await auditar(page, aparencia.prefs.highContrast)).toEqual([])
+
+      await signInAs(page, "front-desk")
+      await page.goto("/front-desk/")
+      const alerta = page.getByRole("alertdialog")
+      await expect(alerta).toBeVisible()
+      expect(await auditar(page, aparencia.prefs.highContrast)).toEqual([])
+      // Botões da tela cheia com pelo menos 56 px (RF-021).
+      for (const name of ["Estou indo", "SAMU"]) {
+        const box = await alerta
+          .getByRole(name === "SAMU" ? "link" : "button", { name })
+          .boundingBox()
+        expect(box!.height, name).toBeGreaterThanOrEqual(56)
+      }
+      await alerta.getByRole("button", { name: "Estou indo" }).click()
+      await alerta.getByRole("button", { name: "Resolvido" }).click()
+      await expect(alerta).toBeHidden()
+
+      await page.goto("/front-desk/general-alert/")
+      await page.getByLabel("Mensagem").fill("Teste de alerta geral")
+      await page.getByRole("button", { name: "Enviar alerta geral" }).click()
+      await page.getByRole("button", { name: "Sim, enviar" }).click()
+      await expect(page.getByRole("button", { name: "Encerrar alerta" })).toBeVisible()
+      expect(await auditar(page, aparencia.prefs.highContrast)).toEqual([])
+
+      await signInAs(page, "responsible")
+      await page.goto("/resident/")
+      const geral = page.getByRole("alertdialog")
+      await expect(geral).toBeVisible()
+      expect(await auditar(page, aparencia.prefs.highContrast)).toEqual([])
+      const entendi = await geral.getByRole("button", { name: "Entendi" }).boundingBox()
+      expect(entendi!.height).toBeGreaterThanOrEqual(56)
+    })
+  })
+}

@@ -56,3 +56,51 @@ describe("mensagens recebidas no WhatsApp", () => {
     expect(setup("real").services.whatsappInbox).toBeUndefined()
   })
 })
+
+describe("pedido de ajuda pelo WhatsApp (spec 005, RF-007a, CS-006a)", () => {
+  for (const texto of ["SOS", "sos", "Socorro!", "SOCORRO", "socorro, caí no banheiro", "Sós"]) {
+    it(`"${texto}" cria o alerta e responde no privado`, async () => {
+      const r = await env.services.whatsappInbox!.receive(PHONE.family, texto)
+      expect(r.result).toBe("sos")
+      expect(r.reply).toContain("portaria foi avisada")
+      expect(r.reply).toContain("192")
+      const [alerta] = await env.services.emergency.open(env.frontDesk)
+      expect(alerta).toMatchObject({ apartment: "804", kind: "unknown", origin: "whatsapp" })
+      const resposta = (await outbox(env.services, "private")).filter(
+        (m) => m.toPhone === PHONE.family && m.body.includes("pedido de ajuda"),
+      )
+      expect(resposta).toHaveLength(1)
+    })
+  }
+
+  for (const texto of ["sossego", "socorrista chegou", "iFood 4821", "SOSA 12"]) {
+    it(`"${texto}" não cria alerta`, async () => {
+      await env.services.whatsappInbox!.receive(PHONE.family, texto)
+      expect(await env.services.emergency.open(env.frontDesk)).toHaveLength(0)
+    })
+  }
+
+  it("quem não pode cadastrar entregas também pede ajuda", async () => {
+    const repo = await repoOf(env)
+    const [res] = await repo.byIndex("residencies", "byPerson", env.ids.family)
+    await repo.put("residencies", { ...res, canRegisterDeliveries: false })
+    expect((await env.services.whatsappInbox!.receive(PHONE.family, "socorro")).result).toBe("sos")
+  })
+
+  it("celular desconhecido não cria alerta; segundo pedido avisa que já está com a portaria", async () => {
+    expect((await env.services.whatsappInbox!.receive("+5500999999999", "SOS")).result).toBe(
+      "unknown-phone",
+    )
+    expect(await env.services.emergency.open(env.frontDesk)).toHaveLength(0)
+    await env.services.whatsappInbox!.receive(PHONE.family, "SOS")
+    const segundo = await env.services.whatsappInbox!.receive(PHONE.responsible, "socorro")
+    expect(segundo.reply).toContain("já está com a portaria")
+    expect(await env.services.emergency.open(env.frontDesk)).toHaveLength(1)
+  })
+
+  it("códigos de entrega continuam funcionando", async () => {
+    expect((await env.services.whatsappInbox!.receive(PHONE.family, "Shopee BR123")).result).toBe(
+      "registered",
+    )
+  })
+})

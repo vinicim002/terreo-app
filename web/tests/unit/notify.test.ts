@@ -189,3 +189,68 @@ describe("notify — portaria (spec 004, research R7)", () => {
     }
   })
 })
+
+describe("notify — segurança (spec 005, research R3)", () => {
+  const desligar = async (ctx: typeof env.resident) =>
+    env.services.notifications.setPrefs(ctx, {
+      app: { notices: false, meetings: false, polls: false, deliveries: false, visitors: false },
+      whatsapp: { deliveries: false, visitors: false },
+    })
+
+  for (const type of ["general-alert", "general-alert-closed"] as const) {
+    it(`${type} chega a todos no app, no privado e uma vez no grupo, mesmo com preferências desligadas (CS-003)`, async () => {
+      await desligar(env.resident)
+      await desligar(env.family)
+      const antes = {
+        resident: await count(env.ids.resident),
+        family: await count(env.ids.family),
+        frontDesk: await count(env.ids.frontDesk),
+        manager: await count(env.ids.manager),
+      }
+      const grupoAntes = (await outbox(env.services, "group")).length
+      await notify(deps, TAQUARETINGA_ID, {
+        type,
+        audience: "everyone",
+        title: "Princípio de incêndio",
+        body: "Desçam pela escada",
+        target: null,
+        toGroup: true,
+        groupText: "🚨 Princípio de incêndio",
+      })
+      expect(await count(env.ids.resident)).toBe(antes.resident + 1)
+      expect(await count(env.ids.family)).toBe(antes.family + 1)
+      expect(await count(env.ids.frontDesk)).toBe(antes.frontDesk + 1)
+      expect(await count(env.ids.manager)).toBe(antes.manager + 1)
+      const grupo = (await outbox(env.services, "group")).slice(grupoAntes)
+      expect(grupo).toHaveLength(1)
+      expect(grupo[0].body).toBe("🚨 Princípio de incêndio")
+      const privados = (await outbox(env.services, "private")).filter((m) =>
+        m.body.includes("Princípio de incêndio"),
+      )
+      // Todas as pessoas ativas (moradores, 3 porteiros e a síndica, que também mora no prédio), uma vez cada.
+      const telefones = new Set(privados.map((m) => m.toPhone))
+      expect(telefones.size).toBe(privados.length)
+      expect(privados.length).toBeGreaterThan(90)
+    })
+  }
+
+  it("emergency-update ignora preferências e vai ao app e ao privado, nunca ao grupo", async () => {
+    await desligar(env.resident)
+    const antes = await count(env.ids.resident)
+    const grupoAntes = (await outbox(env.services, "group")).length
+    await notify(deps, TAQUARETINGA_ID, {
+      type: "emergency-update",
+      audience: { personIds: [env.ids.resident] },
+      title: "Jonas está a caminho",
+      body: "A portaria viu o alerta",
+      target: null,
+      toGroup: true,
+    })
+    expect(await count(env.ids.resident)).toBe(antes + 1)
+    expect((await outbox(env.services, "group")).length).toBe(grupoAntes)
+    const privado = (await outbox(env.services, "private")).filter((m) =>
+      m.body.includes("Jonas está a caminho"),
+    )
+    expect(privado).toHaveLength(1)
+  })
+})

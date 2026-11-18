@@ -46,12 +46,13 @@ test.describe("navegação por perfil", () => {
     })
   }
 
-  test("RF-007: Mais da portaria leva às telas vazias", async ({ page }) => {
+  // Desde a spec 005 todas as telas da portaria têm conteúdo; o "Mais" continua levando a elas e voltando.
+  test("RF-007: Mais da portaria leva às telas", async ({ page }) => {
     await signInProfile(page, "front-desk")
     await page.goto("/front-desk/more/")
     await page.getByRole("link", { name: "Alerta geral" }).click()
     await expect(page.getByRole("heading", { level: 1, name: "Alerta geral" })).toBeVisible()
-    await expect(page.getByText("Em construção")).toBeVisible()
+    await expect(page.getByRole("button", { name: "Enviar alerta geral" })).toBeVisible()
     await expect(page.getByRole("navigation", { name: "Navegação principal" })).toBeVisible()
     await page.getByRole("button", { name: "Voltar" }).click()
     await expect(page).toHaveURL(/\/front-desk\/more\/$/)

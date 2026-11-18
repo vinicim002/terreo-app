@@ -2,6 +2,9 @@
 // A implementação local (IndexedDB), a em memória e a futura HTTP seguem exatamente este contrato (RF-025 da 001).
 import type {
   AgendaEvent,
+  ContactGroup,
+  EmergencyKind,
+  GeneralAlertKind,
   DeliveryStatus,
   InboundMessage,
   OnArrival,
@@ -40,7 +43,7 @@ export interface ServiceContext {
 }
 
 export type ServiceErrorCode =
-  "not_found" | "forbidden" | "validation" | "unavailable" | "rate_limited"
+  "not_found" | "forbidden" | "validation" | "unavailable" | "rate_limited" | "conflict"
 
 export class ServiceError extends Error {
   constructor(
@@ -624,11 +627,123 @@ export interface ShiftView {
   endsAt: string
 }
 
-export type InboxResult = "registered" | "unknown-phone" | "no-permission" | "not-understood"
+export type InboxResult =
+  "registered" | "unknown-phone" | "no-permission" | "not-understood" | "sos"
 
 export interface WhatsappInboxService {
   receive(fromPhone: string, text: string): Promise<{ result: InboxResult; reply: string }>
   list(): Promise<InboundMessage[]>
+}
+
+// ---------- Segurança (spec 005, contracts/servicos.md) ----------
+
+export interface EmergencyView {
+  id: string
+  apartmentId: string
+  apartment: string
+  floor: number
+  kind: EmergencyKind
+  origin: "app" | "whatsapp"
+  createdBy: string
+  createdAt: string
+  status: "open" | "acknowledged" | "resolved" | "cancelled"
+  acknowledgedBy: string | null
+  acknowledgedAt: string | null
+  resolvedAt: string | null
+  resolutionNote: string | null
+  cancelledAt: string | null
+  /** Cancelado por alguém do apartamento (sempre, nesta etapa). */
+  cancelledBy: string | null
+  repeated: boolean
+  /** Só para portaria e síndico. */
+  emergencyContact: { name: string; relationship: string; phone: string } | null
+  noDoormanOnDuty: boolean
+  /** Porteiro de plantão, ou qualquer porteiro se ninguém está na escala (RF-003). */
+  fullScreenForMe: boolean
+  canCancel: boolean
+}
+
+export interface EmergencyService {
+  /** Morador; se já há um em aberto no apartamento, devolve ele (RF-008). */
+  raise(ctx: ServiceContext, kind: EmergencyKind): Promise<EmergencyView>
+  /** Alerta em andamento e histórico (90 dias) do próprio apartamento. */
+  mine(ctx: ServiceContext): Promise<{ current: EmergencyView | null; history: EmergencyView[] }>
+  cancel(ctx: ServiceContext, id: string): Promise<EmergencyView>
+  /** Portaria e síndico: em aberto e atendidos (não resolvidos nem cancelados). */
+  open(ctx: ServiceContext): Promise<EmergencyView[]>
+  /** Portaria; o primeiro vale. */
+  acknowledge(ctx: ServiceContext, id: string): Promise<EmergencyView>
+  resolve(ctx: ServiceContext, id: string, note: string | null): Promise<EmergencyView>
+  /** Portaria e síndico: 90 dias. */
+  history(ctx: ServiceContext): Promise<EmergencyView[]>
+}
+
+export interface GeneralAlertView {
+  id: string
+  kind: GeneralAlertKind
+  message: string
+  createdBy: string
+  createdAt: string
+  status: "open" | "closed"
+  closedAt: string | null
+  closedBy: string | null
+  closingMessage: string | null
+  seenByMe: boolean
+  canClose: boolean
+}
+
+export interface GeneralAlertService {
+  current(ctx: ServiceContext): Promise<GeneralAlertView | null>
+  /** Portaria e síndico; com um em aberto, `conflict`. */
+  send(
+    ctx: ServiceContext,
+    input: { kind: GeneralAlertKind; message: string },
+  ): Promise<GeneralAlertView>
+  close(ctx: ServiceContext, id: string, message: string | null): Promise<GeneralAlertView>
+  markSeen(ctx: ServiceContext, id: string): Promise<void>
+  /** Todos os perfis: 90 dias. */
+  history(ctx: ServiceContext): Promise<GeneralAlertView[]>
+}
+
+export interface ContactView {
+  /** null nos que vêm do cadastro (síndico, porteiro-chefe). */
+  id: string | null
+  group: ContactGroup
+  name: string
+  description: string | null
+  /** Número discável (`tel:`); null quando a pessoa não autorizou mostrar. */
+  phone: string | null
+  /** Número para exibir. */
+  display: string | null
+  isMobile: boolean
+  frontDesk: boolean
+  fromRegistry: boolean
+  /** Papel de quem vem do cadastro. */
+  role: "manager" | "head-doorman" | null
+}
+
+export interface ContactInput {
+  id?: string
+  group: ContactGroup
+  name: string
+  description: string | null
+  phone: string
+  frontDesk?: boolean
+}
+
+export interface ContactService {
+  list(
+    ctx: ServiceContext,
+    search?: string,
+  ): Promise<{ building: ContactView[]; emergency: ContactView[] }>
+  /** Só síndico: os contatos cadastrados à mão, na ordem. */
+  manual(ctx: ServiceContext): Promise<ContactView[]>
+  save(ctx: ServiceContext, input: ContactInput): Promise<ContactView>
+  remove(ctx: ServiceContext, id: string): Promise<void>
+  reorder(ctx: ServiceContext, group: ContactGroup, ids: string[]): Promise<void>
+  /** Síndico ou porteiro-chefe. */
+  showMyPhone(ctx: ServiceContext): Promise<boolean>
+  setShowMyPhone(ctx: ServiceContext, show: boolean): Promise<void>
 }
 
 export interface Services {
@@ -656,6 +771,9 @@ export interface Services {
   desk: FrontDeskService
   memos: MemoService
   lostFound: LostFoundService
+  emergency: EmergencyService
+  generalAlert: GeneralAlertService
+  contacts: ContactService
   /** Só existe nos modos dev e demo (mensagens recebidas simuladas; na Etapa 3, o webhook). */
   whatsappInbox?: WhatsappInboxService
   /** Só existe nos modos dev e demo. */

@@ -15,7 +15,7 @@ import { authorize } from "./permissions"
 import type { ShiftAssignment } from "./schemas"
 
 /** Dia da semana (0 = domingo) e minutos do dia no fuso de Brasília. */
-function brasiliaClock(at: Date) {
+export function brasiliaClock(at: Date) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: TIME_ZONE,
     weekday: "short",
@@ -169,6 +169,9 @@ export function devService(deps: ServiceDeps): DevDataService {
       guard()
       for (const r of await deps.repo.byIndex("otpRequests", "byPhone", phone))
         await deps.repo.remove("otpRequests", r.id)
+      // E as mensagens de código antigas, para o atalho de testes ler só o código novo.
+      for (const m of await deps.repo.byIndex("outbox", "byPhone", phone))
+        if (m.kind === "otp") await deps.repo.remove("outbox", m.id)
     },
     async counts(ctx) {
       guard()

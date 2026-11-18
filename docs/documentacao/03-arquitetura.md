@@ -84,6 +84,27 @@ Celular (PWA Next.js) ──HTTPS──> Caddy ──> /       Next.js (telas)
   digita. **Fotos** de comprovante são reduzidas no aparelho (até 1024 px); na Etapa 3 vão para o R2.
 - **Plantão.** Calculado pela escala semanal (`staff.board`), com o turno que passa da meia-noite.
 
+## Segurança (spec 005)
+
+- **Dois tipos de alerta.** `EmergencyAlert` é o pedido de ajuda de um apartamento (em aberto → atendido → resolvido;
+  ou cancelado), no máximo um em aberto por apartamento. `GeneralAlert` é o aviso ao prédio inteiro (em aberto →
+  encerrado), no máximo um em aberto.
+- **Segurar 3 segundos.** O botão só envia depois de 3 s contínuos (dedo, mouse ou teclado); soltar antes cancela. O
+  tempo vem do próprio quadro de animação do navegador.
+- **"Na hora" sem servidor.** O `EmergencyWatcher`, montado em todos os perfis, consulta os alertas de apartamento a
+  cada 1 s na portaria e o alerta geral a cada 3 s em todos os perfis, e abre a tela cheia com som e vibração quando o
+  aparelho deixa. A tela cheia do alerta de apartamento vai para os porteiros de plantão pela escala (ou para todos,
+  se ninguém estiver na escala); os outros veem o cartão no painel. Na Etapa 3, push e tempo real substituem a consulta.
+- **Canais.** O alerta geral é a única exceção à regra "geral só no grupo": vai ao app e ao privado de todas as pessoas
+  ativas, ignorando as preferências, e uma vez ao grupo. O pedido de ajuda avisa porteiros, síndico e a casa (app e
+  privado) e manda mensagem direta ao contato de emergência do apartamento, que não tem cadastro no app.
+- **Repetição.** O `runDue` repete o alerta sem "Estou indo" depois de 2 minutos, uma vez, avisando de novo a portaria e
+  o síndico.
+- **SOS pelo WhatsApp.** A caixa de entrada simulada (spec 004) reconhece "SOS" ou "socorro" antes dos códigos de
+  entrega e cria o mesmo alerta, com resposta no privado.
+- **Contatos.** Os do síndico ficam numa loja própria (número discável: 190–199, 0800 ou telefone brasileiro); síndico e
+  porteiro-chefe vêm do cadastro, com o celular só se ligarem "Mostrar meu celular nos contatos".
+
 ## Login e sessão
 
 **Hoje (Etapa 2, provisório):** o código e a sessão são simulados no próprio aparelho, com as mesmas regras que o
@@ -136,8 +157,8 @@ Interface 3100, API 8100, PostgreSQL 5440, Redis 6390 (sem colidir com os outros
 | `CLAUDE.md` | Orientações para o Claude Code trabalhar no repositório. |
 | `web/app/` | Rotas da interface: escolha de perfil, `/resident`, `/front-desk`, `/manager`, `/settings` e o painel `/dev`. |
 | `web/src/navigation/screens.ts` | Catálogo único de telas: gera rotas, barra de baixo, "Mais" e "Todos os serviços". |
-| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), avisos (`notices.ts`), enquetes (`polls.ts`), reuniões e agenda (`meetings.ts`), notificações (`notifications.ts`, `notify.ts`), tarefas com horário (`due.ts`), portaria (`deliveries.ts`, `front-desk.ts`, `front-desk-shared.ts`, `parse-delivery.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`, `local/seed-communication.ts`, `local/seed-front-desk.ts`). |
-| `web/src/components/` | Telas e peças: `notices/`, `polls/`, `agenda/`, `meetings/`, `notifications/` e `comm/` (comunicação); `deliveries/`, `desk/`, `visitors/`, `travel/`, `staff/`, `memos/`, `lostfound/` (portaria), além das de cadastro, perfil, síndico e portaria. |
+| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), avisos (`notices.ts`), enquetes (`polls.ts`), reuniões e agenda (`meetings.ts`), notificações (`notifications.ts`, `notify.ts`), tarefas com horário (`due.ts`), portaria (`deliveries.ts`, `front-desk.ts`, `front-desk-shared.ts`, `parse-delivery.ts`), segurança (`emergency.ts`, `general-alert.ts`, `contacts.ts`, `security-shared.ts`, `dialable.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`, `local/seed-communication.ts`, `local/seed-front-desk.ts`, `local/seed-security.ts`). |
+| `web/src/components/` | Telas e peças: `notices/`, `polls/`, `agenda/`, `meetings/`, `notifications/` e `comm/` (comunicação); `deliveries/`, `desk/`, `visitors/`, `travel/`, `staff/`, `memos/`, `lostfound/` (portaria); `security/` e `contacts/` (segurança), além das de cadastro, perfil, síndico e portaria. |
 | `web/src/auth/` | Sessão do aparelho, guarda de acesso e o atalho de testes (só em desenvolvimento e demonstração). |
 | `web/src/voice/` | Ditar: reconhecimento de fala do aparelho e o botão de microfone. |
 | `web/src/phone/` · `web/src/photo/` · `web/src/lib/crypto.ts` | Celular por país, redução da foto e criptografia que funciona também fora de HTTPS. |

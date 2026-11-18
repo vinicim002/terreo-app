@@ -567,7 +567,10 @@
         "delivery-reminder": "Package waiting",
         "mail": "Mail",
         "lost-found": "Lost and found",
-        "memo": "Front desk message"
+        "memo": "Front desk message",
+        "emergency-update": "Emergency update",
+        "general-alert": "Building-wide alert",
+        "general-alert-closed": "Alert closed"
       }
     },
     "prefs": {
@@ -852,6 +855,184 @@
     "home": {
       "atDesk": "{count, plural, one {# package at the front desk} other {# packages at the front desk}}",
       "nextVisitor": "Visitor expected today: {name}, from {from}"
+    }
+  },
+  "security": {
+    "loading": "Loading…",
+    "error": "That didn't work. Try again.",
+    "hold": {
+      "label": "HOLD",
+      "hint": "Hold for 3 seconds to ask for help. Letting go earlier cancels.",
+      "holding": "Keep holding…"
+    },
+    "raise": {
+      "title": "Need help?",
+      "hint": "Hold the button for 3 seconds. The front desk gets an alert with your apartment right away.",
+      "what": "What is happening? (optional)"
+    },
+    "kind": {
+      "health": "Health",
+      "fire": "Fire",
+      "intrusion": "Break-in",
+      "leak": "Leak",
+      "other": "Other",
+      "unknown": "Not given"
+    },
+    "generalKind": {
+      "fire": "Fire",
+      "gas": "Gas leak",
+      "power": "Power outage",
+      "security": "Security",
+      "other": "Alert"
+    },
+    "call": {
+      "title": "Call directly",
+      "samu": "Ambulance {tel}",
+      "firefighters": "Fire dept. {tel}",
+      "police": "Police {tel}"
+    },
+    "sent": {
+      "title": "Alert sent!",
+      "at": "The front desk was told at {time}. Stay calm.",
+      "seen": "{name} saw the alert",
+      "onTheWay": "Front desk · on the way",
+      "waiting": "Waiting for the front desk to see the alert…",
+      "noDoorman": "No doorman on duty now — the building manager was also told.",
+      "callDesk": "Call the front desk",
+      "callSamu": "Call an ambulance (192)",
+      "cancel": "Cancel alert",
+      "confirmCancel": "Cancel the request for help?",
+      "keep": "Keep",
+      "yesCancel": "Yes, cancel"
+    },
+    "history": {
+      "title": "Alert history",
+      "empty": "No alerts in the last 90 days.",
+      "apartment": "Apt {n}",
+      "general": "Building-wide",
+      "byWhatsapp": "via WhatsApp",
+      "answered": "{name} answered in {time}",
+      "closedIn": "Closed in {time}",
+      "status": {
+        "open": "Open",
+        "acknowledged": "Answered",
+        "resolved": "Resolved",
+        "cancelled": "Cancelled by the resident"
+      }
+    },
+    "desk": {
+      "label": "Emergency",
+      "dialog": "Emergency in apartment {n}",
+      "apartment": "Apt {n}",
+      "floor": "Floor {floor}",
+      "since": "sent {time} ago",
+      "byWhatsapp": "via WhatsApp",
+      "repeated": "Still unanswered — the building manager was told again.",
+      "going": "I'm on my way",
+      "goingBy": "{name} is on the way",
+      "samu": "Ambulance",
+      "firefighters": "Fire dept.",
+      "callContact": "Contact",
+      "contact": "Emergency contact: {name} ({relationship}) · {phone}",
+      "noContact": "No emergency contact on file.",
+      "note": "How did it end? (optional)",
+      "resolve": "Resolved",
+      "minimize": "Back to the panel"
+    },
+    "general": {
+      "label": "Building-wide alert",
+      "by": "{name} · {time}",
+      "understood": "Got it",
+      "banner": "Building-wide alert: {kind}",
+      "manage": "View and close",
+      "open": "View alert",
+      "openTitle": "Open: {kind}",
+      "closingLabel": "Closing message (optional)",
+      "closingPlaceholder": "Situation under control.",
+      "close": "Close alert",
+      "onlySender": "Only the sender or the building manager can close this alert.",
+      "hint": "Tells every resident at once: in the app, in the group and in private WhatsApp, even those who turned notifications off.",
+      "sent": "Alert sent to everyone.",
+      "kindLabel": "What is happening?",
+      "readyLabel": "Ready messages",
+      "messageLabel": "Message",
+      "confirm": "Send to every resident?",
+      "back": "Back",
+      "sendNow": "Yes, send",
+      "send": "Send building-wide alert",
+      "ready": {
+        "fire": {
+          "1": "Small fire. Take the stairs down and don't use the elevator.",
+          "2": "Smoke in the building. Stay calm and wait for front desk instructions."
+        },
+        "gas": {
+          "1": "Gas smell. Don't light fires or switch lights and open the windows."
+        },
+        "power": {
+          "1": "Power outage in the building. Avoid the elevator until power is back."
+        },
+        "security": {
+          "1": "Suspicious person in the building. Don't open the door to strangers."
+        },
+        "other": {
+          "1": "Urgent situation in the building. Wait for front desk instructions."
+        }
+      }
+    },
+    "alerts": {
+      "open": "Open",
+      "none": "No open alerts."
+    },
+    "contacts": {
+      "search": "Search contacts",
+      "edit": "Edit contacts",
+      "editPage": "Edit contacts",
+      "none": "No contacts.",
+      "groups": {
+        "building": "Building",
+        "emergency": "Emergency and services"
+      },
+      "roles": {
+        "manager": "Building manager",
+        "head-doorman": "Head doorman"
+      },
+      "noPhone": "reach via the front desk",
+      "whatsapp": "WhatsApp {name}",
+      "call": "Call {name}",
+      "add": "Add contact",
+      "addTitle": "New contact",
+      "editTitle": "Edit contact",
+      "frontDeskBadge": "front desk number",
+      "up": "Move {name} up",
+      "down": "Move {name} down",
+      "editOne": "Edit {name}",
+      "remove": "Remove {name}",
+      "confirmRemove": "Remove {name} from the list?",
+      "keep": "Keep",
+      "yesRemove": "Yes, remove",
+      "error": "That didn't work. Try again.",
+      "group": "Group",
+      "name": "Name",
+      "description": "Description (optional)",
+      "phone": "Number",
+      "phoneHint": "E.g. 192, 0800 021 0196 or (21) 98765-4321",
+      "isFrontDesk": "This is the front desk number",
+      "invalid": {
+        "name": "The name must have 2 to 60 characters.",
+        "description": "The description can have up to 60 characters.",
+        "phone": "Invalid number. Use 192, 0800 or a phone with area code."
+      },
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "showPhone": {
+      "label": "Show my phone in contacts",
+      "hint": "Residents see your phone and can call or WhatsApp you. Off, only your name shows."
+    },
+    "home": {
+      "emergency": "Emergency",
+      "contacts": "Contacts",
+      "deskCard": "Emergency · apt {n}"
     }
   }
 }

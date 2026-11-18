@@ -45,7 +45,8 @@ Ordem sugerida, uma spec por grupo:
 - [x] Segurança (spec 005): botão de emergência (segurar 3 s, tela cheia na portaria de plantão, "Estou indo",
   cancelar, resolver, repetição em 2 min, contato de emergência avisado, "SOS" pelo WhatsApp simulado), alerta geral
   (tela cheia, grupo e privado de todos, encerrar), contatos importantes e histórico de 90 dias.
-- [ ] Participação: sugestões, melhorias, avisar problema, barulho, prestadores, comércio, pesquisa de satisfação.
+- [ ] Participação (spec 006, especificada, plano e tarefas prontos; implementar): sugestões, melhorias, avisar
+  problema, barulho anônimo, prestadores, comércio, pesquisa de satisfação.
 - [ ] Administração: mudanças e obras, edição da escala e rodízio de folgas (depende do síndico), controle ou chave, advertências, prestação de contas, resumo do mês, lembretes,
   perguntas frequentes, apartamento disponível.
 - [ ] Acessibilidade: tamanho de letra, contraste, leitura em voz alta, legendas, VLibras.

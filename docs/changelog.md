@@ -27,12 +27,25 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
     acrescenta, edita, reordena e remove; síndico e porteiro-chefe escolhem mostrar o celular.
   - Histórico de alertas de 90 dias com quem atendeu e em quanto tempo; o morador vê os do apartamento e os gerais.
   - Dados de exemplo v5: contatos, um alerta resolvido e um alerta geral encerrado; contato de emergência no 804.
+- Especificação completa da spec 006 pelo Spec Kit (`specs/006-participacao/`): sugestões que viram melhorias, avisar
+  problema com fotos e apoio, aviso de barulho anônimo, prestadores e comércio do bairro, pesquisa de satisfação por
+  trimestre e melhorias com fotos de antes e depois. Spec com 4 esclarecimentos (barulho de equipamento separado do
+  barulho de vizinho, todos os perfis indicam prestadores, cada morador responde a pesquisa, o síndico vê o autor de
+  sugestão "sem apto"), plano, pesquisa, modelo de dados, contratos, 55 tarefas e análise com 6 achados corrigidos
+  (em problema público, os vizinhos veem "Morador" e não o apartamento). A implementação fica para o próximo dia.
 
 ### Alterado
 
 - O atalho de testes lê o código de entrada pelo tipo da mensagem, e "esquecer códigos" também apaga as mensagens de
   código antigas (com o relógio parado nos testes, os avisos empatavam na hora).
 - Notificações ganham os tipos de atualização de emergência e de alerta geral, com destino nas telas novas.
+- Os códigos de entrega de exemplo do 804 ficam sempre no dia de hoje, mesmo logo depois da meia-noite (o aviso de
+  código repetido falhava entre 0h e 1h).
+
+### Removido
+
+- A rota genérica de telas da portaria (`/front-desk/[screen]`): todas as telas da portaria agora têm página própria, e
+  um teste garante que tela nova da portaria venha com a sua página.
 
 ## 2026-11-17
 

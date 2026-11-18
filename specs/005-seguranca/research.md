@@ -10,10 +10,13 @@ permissões, `notify`, `runDue`, `staff.board`, `whatsappInbox`, `DictateButton`
 
 ## R2. "Na hora" sem servidor
 
-- **Decisão**: um componente `EmergencyWatcher`, montado no `ProfileShell` de todos os perfis, consulta a cada 3 s:
-  - portaria: alertas de apartamento em aberto → **tela cheia** por cima de tudo, com som e vibração
+- **Decisão**: um componente `EmergencyWatcher`, montado no `ProfileShell` de todos os perfis:
+  - portaria: consulta os alertas de apartamento **a cada 1 s** (para caber nos 5 s do CS-001, contando os 3 s
+    segurando) e o alerta criado no mesmo aparelho invalida a consulta na hora; os porteiros de plantão (ou todos, se
+    ninguém estiver na escala) veem a **tela cheia** por cima de tudo, com som e vibração
     (`navigator.vibrate`, `AudioContext` com bipes curtos) quando o aparelho deixar;
-  - todos: alerta geral em aberto ainda não visto por mim → **tela cheia**; depois de "Entendi", faixa no topo.
+  - todos: consulta o alerta geral a cada 3 s; em aberto e ainda não visto por mim → **tela cheia**; depois de
+    "Entendi", faixa no topo.
 - **Etapa 3**: push (Web Push) e atualização em tempo real substituem a consulta; o componente continua o mesmo.
 - **Por quê**: a demonstração roda num aparelho só (dados locais); a consulta curta é simples e testável.
 
@@ -24,11 +27,13 @@ permissões, `notify`, `runDue`, `staff.board`, `whatsappInbox`, `DictateButton`
   **uma** mensagem ao **grupo** — a única exceção à regra "geral só no grupo" (RF-019).
 - Tipos `emergency-update` (atendido, cancelado, resolvido) para o apartamento.
 - Contato de emergência (pessoa de fora, sem cadastro): mensagem direta na caixa de saída `private` para o celular do
-  contato, fora do `notify` (não tem pessoa nem preferências).
+  contato, fora do `notify` (não tem pessoa nem preferências), no pedido de ajuda, no cancelamento e na resolução.
 
 ## R4. Quem recebe o alerta de apartamento
 
-- Tela cheia: porteiros com turno agora (`staff.board`); sem ninguém na escala, todos os porteiros.
+- Tela cheia: porteiros com turno agora (`staff.board`); sem ninguém na escala, todos os porteiros. Os outros
+  porteiros veem o alerta como cartão no painel e na notificação, sem a tela cheia. `EmergencyView.fullScreenForMe`
+  diz a cada porteiro se é com ele.
 - Notificação `emergency`: todos os porteiros, os síndicos e as outras pessoas ativas do apartamento.
 - WhatsApp ao contato de emergência do apartamento (esclarecimento 1).
 - Repetição: sem "Estou indo" em 2 minutos, o `runDue` marca `repeatedAt`, avisa de novo porteiros e síndicos
@@ -71,5 +76,6 @@ permissões, `notify`, `runDue`, `staff.board`, `whatsappInbox`, `DictateButton`
 ## R9. Dados de exemplo v5
 
 - `SEED_VERSION = 5`: contatos (portaria, SAMU 192, Bombeiros 193, Polícia Militar 190, Defesa Civil 199, Light
-  0800 021 0196, Naturgy 0800 024 0197, Águas do Rio 0800 195 0195 — **a conferir com o síndico**), um alerta de
+  0800 021 0196, Naturgy 0800 024 0197, Águas do Rio 0800 195 0195 — **exemplos a conferir com o síndico antes do
+  lançamento**, registrado no backlog e no changelog), um alerta de
   apartamento resolvido (há 3 dias, atendido em 1 min) e um alerta geral encerrado (há 10 dias).

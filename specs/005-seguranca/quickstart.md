@@ -30,7 +30,7 @@ desligadas (CS-003); SOS pelo WhatsApp (CS-006a); contatos com busca e celular s
 | 9 | Portaria → Alerta geral (incêndio, ditar) → confirmar | Tela cheia em todos; grupo e privado no `/dev` | H2 |
 | 10 | Morador → "Entendi" | Fecha; faixa no início | H2-4 |
 | 11 | Portaria → Encerrar | "Alerta encerrado" para todos | H2-5 |
-| 12 | Contatos → buscar "luz" → ligar | Light com `tel:` | H3, CS-005 |
+| 12 | Início → atalho Contatos → buscar "luz" → ligar | Light com `tel:` | H3, CS-005 |
 | 13 | Síndico → Editar contatos → acrescentar "Chaveiro 24h" | Aparece para todos | H3-4 |
 | 14 | Síndico → Perfil → "Mostrar meu celular" | Celular aparece nos contatos | Esclarecimento 2 |
 | 15 | Trocar idioma | Telas novas em inglês e espanhol | RF-021 |

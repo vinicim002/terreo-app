@@ -56,7 +56,7 @@ Continua os modelos das specs 001 a 004 (`id` UUID, `condominiumId`, datas ISO e
 ## Mudanças em entidades existentes
 
 - `Person.showPhoneInContacts`: booleano, padrão `false` (síndico e porteiro-chefe; esclarecimento 2).
-- `Staff.isHead`: booleano, padrão `false` — marca o porteiro-chefe (no seed, Jonas).
+- `Staff.isHead` **já existe** (spec 001; no seed, Jonas Siqueira) e passa a marcar o porteiro-chefe nos contatos.
 - `Notification.type` ganha `emergency-update`, `general-alert`, `general-alert-closed`; `target.kind` ganha
   `emergency`, `general-alert`.
 

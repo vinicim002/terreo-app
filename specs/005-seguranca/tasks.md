@@ -35,9 +35,9 @@ relógio controlado e as contas de exemplo). Todo texto novo nos três idiomas (
 
 ### Esquemas, contratos e banco
 
-- [ ] T003 Acrescentar a `web/src/services/schemas.ts` os esquemas `EmergencyAlert`, `GeneralAlert`, `GeneralAlertSeen` e `Contact` exatamente como `data-model.md` (`kind` de emergência `health|fire|intrusion|leak|other|unknown`; `origin` `app|whatsapp`; `status` `open|acknowledged|resolved|cancelled`; `resolutionNote` até 300; `kind` geral `fire|gas|power|security|other`; `message` 5–280; `closingMessage` até 280; contato `name` 2–60, `description` até 60, `group` `building|emergency`, `frontDesk` no máximo um); `Person.showPhoneInContacts` (padrão `false`); `Staff.isHead` (porteiro-chefe, padrão `false`); `Notification.type` ganha `emergency-update`, `general-alert`, `general-alert-closed` e `target.kind` ganha `emergency`, `general-alert`
+- [ ] T003 Acrescentar a `web/src/services/schemas.ts` os esquemas `EmergencyAlert`, `GeneralAlert`, `GeneralAlertSeen` e `Contact` exatamente como `data-model.md` (`kind` de emergência `health|fire|intrusion|leak|other|unknown`; `origin` `app|whatsapp`; `status` `open|acknowledged|resolved|cancelled`; `resolutionNote` até 300; `kind` geral `fire|gas|power|security|other`; `message` 5–280; `closingMessage` até 280; contato `name` 2–60, `description` até 60, `group` `building|emergency`, `frontDesk` no máximo um); `Person.showPhoneInContacts` (padrão `false`; `Staff.isHead` já existe e marca o porteiro-chefe); `Notification.type` ganha `emergency-update`, `general-alert`, `general-alert-closed` e `target.kind` ganha `emergency`, `general-alert`
 - [ ] T004 Acrescentar a `web/src/services/contracts.ts` as interfaces de `contracts/servicos.md` (`EmergencyService`, `GeneralAlertService`, `ContactService`) e incluí-las em `Services`
-- [ ] T005 Subir `DB_VERSION` para 5 em `web/src/services/local/db.ts` com as lojas `emergencyAlerts` (`byCondominium`, `byApartment`), `generalAlerts`, `generalAlertSeen` e `contacts` (todas com `byCondominium`) em `web/src/services/base.ts`; `SEED_VERSION` 5 com `buildSecuritySeed(base, now)` vazio em `web/src/services/local/seed-security.ts` (cada história acrescenta o seu conteúdo); marcar Jonas como porteiro-chefe (`isHead`); renomear `web/tests/unit/seed-v4.test.ts` para `seed-v5.test.ts`
+- [ ] T005 Subir `DB_VERSION` para 5 em `web/src/services/local/db.ts` com as lojas `emergencyAlerts` (`byCondominium`, `byApartment`), `generalAlerts`, `generalAlertSeen` e `contacts` (todas com `byCondominium`) em `web/src/services/base.ts`; `SEED_VERSION` 5 com `buildSecuritySeed(base, now)` vazio em `web/src/services/local/seed-security.ts` (cada história acrescenta o seu conteúdo); renomear `web/tests/unit/seed-v4.test.ts` para `seed-v5.test.ts`
 
 ### Permissões
 
@@ -65,20 +65,20 @@ emergência; "Estou indo"; o morador vê o nome do porteiro.
 
 ### Testes
 
-- [ ] T012 [P] [US1] Escrever `web/tests/unit/emergency.test.ts`: `raise` cria `open` com apartamento, autor, hora e tipo; segundo `raise` do mesmo apartamento devolve o em aberto (RF-008); avisa porteiros, síndicos e as outras pessoas do apartamento (`emergency`) e manda mensagem direta ao contato de emergência na caixa de saída, sem mensagem quando não há contato (RF-003a); `noDoormanOnDuty` quando ninguém tem turno agora; `acknowledge` só o primeiro vale; `resolve` com nota até 300; `cancel` com confirmação no serviço (estado) e avisos `emergency-update`; `emergencyContact` só aparece para portaria e síndico
+- [ ] T012 [P] [US1] Escrever `web/tests/unit/emergency.test.ts`: `raise` cria `open` com apartamento, autor, hora e tipo; segundo `raise` do mesmo apartamento devolve o em aberto (RF-008); avisa porteiros, síndicos e as outras pessoas do apartamento (`emergency`) e manda mensagem direta ao contato de emergência na caixa de saída no pedido, no cancelamento e na resolução, sem mensagem quando não há contato (RF-003a); `noDoormanOnDuty` quando ninguém tem turno agora; `fullScreenForMe` verdadeiro só para os porteiros de plantão e para todos os porteiros quando ninguém está na escala (RF-003); `acknowledge` só o primeiro vale; `resolve` com nota até 300; `cancel` com confirmação no serviço (estado) e avisos `emergency-update`; `emergencyContact` só aparece para portaria e síndico
 - [ ] T013 [P] [US1] Ampliar `web/tests/unit/inbox.test.ts` (CS-006a): "SOS", "sos", "Socorro!", "SOCORRO" de um celular de pessoa ativa criam alerta `unknown` com `origin: "whatsapp"` e resposta no privado; "sossego", "socorrista" e celular desconhecido não criam; mensagens de código de entrega continuam funcionando
-- [ ] T014 [P] [US1] Escrever `web/tests/e2e/emergency.spec.ts`: toque rápido no botão não envia (CS-002); segurar 3 s com "Saúde" mostra "Alerta enviado"; `switchTo` portaria → tela cheia com apartamento, andar, tipo e contato de emergência → "Estou indo" → `switchTo` morador vê o nome do porteiro "a caminho"; morador cancela outro alerta → portaria vê "Cancelado pelo morador"; ligar direto tem `tel:192`, `tel:193`, `tel:190`
+- [ ] T014 [P] [US1] Escrever `web/tests/e2e/emergency.spec.ts`: toque rápido no botão não envia (CS-002); a tela cheia aparece na portaria em menos de 5 s depois de começar a segurar (CS-001); segurar 3 s com "Saúde" mostra "Alerta enviado"; `switchTo` portaria → tela cheia com apartamento, andar, tipo e contato de emergência → "Estou indo" → `switchTo` morador vê o nome do porteiro "a caminho"; morador cancela outro alerta → portaria vê "Cancelado pelo morador"; ligar direto tem `tel:192`, `tel:193`, `tel:190`
 
 ### Implementação
 
-- [ ] T015 [US1] Implementar `web/src/services/emergency.ts` (`raise`, `mine`, `cancel`, `open`, `acknowledge`, `resolve`; `history` fica para a US4) com destinatários do research R4 e a mensagem ao contato de emergência ("<Nome> pediu ajuda no apartamento <N> do <Condomínio> às HH:MM. A portaria foi avisada."); registrar em `web/src/services/core.ts`
+- [ ] T015 [US1] Implementar `web/src/services/emergency.ts` (`raise`, `mine`, `cancel`, `open`, `acknowledge`, `resolve`; `history` fica para a US4) com destinatários do research R4, `fullScreenForMe` pela escala (`staff.board`) e as mensagens ao contato de emergência no pedido ("<Nome> pediu ajuda no apartamento <N> do <Condomínio> às HH:MM. A portaria foi avisada."), no cancelamento e na resolução; registrar em `web/src/services/core.ts`
 - [ ] T016 [US1] Reconhecer "SOS"/"socorro" (palavra inteira, sem acento e maiúsculas) em `whatsappInboxService.receive` de `web/src/services/front-desk.ts` antes dos códigos (research R6)
 - [ ] T017 [P] [US1] Criar `web/src/components/security/HoldButton.tsx`: botão redondo grande (mockup 12, "SEGURE 3s"), anel de progresso, `pointerdown`/`pointerup`/`pointerleave` e Espaço/Enter seguro, `HOLD_MS = 3000`, anúncio para leitor de tela ao concluir
 - [ ] T018 [US1] Criar `web/src/components/security/EmergencyScreen.tsx`: sem alerta, "Precisa de ajuda?" com o apartamento, `HoldButton`, tipos opcionais (Saúde, Incêndio, Invasão, Vazamento, Outro) e "Ligar direto" (SAMU 192, Bombeiros 193, Polícia 190); com alerta em aberto, tela de acompanhamento vermelha (mockup 13) com hora, quem viu, "Ligar para a portaria" (número `frontDesk` dos contatos), "Ligar para o SAMU (192)" e "Cancelar alerta" com confirmação; aviso "Sem porteiro de plantão agora — o síndico também foi avisado"
 - [ ] T019 [US1] Página `web/app/resident/emergency/page.tsx`; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
 - [ ] T020 [P] [US1] Criar `web/src/components/security/DeskEmergencyOverlay.tsx` (mockup 34): tela cheia vermelha por cima de tudo com "EMERGÊNCIA", "Apto N" grande, andar, tipo, quem enviou, "enviado há Xs", "Estou indo" (≥ 56 px), "Interfone" e "SAMU", contato de emergência ou "Sem contato de emergência cadastrado"; depois do "Estou indo", "Resolvido" com nota opcional (`DictateButton`); os outros porteiros veem quem foi; som (bipes com `AudioContext`) e `navigator.vibrate` quando o aparelho deixar, tocando de novo quando `repeated`
-- [ ] T021 [US1] Criar `web/src/components/security/EmergencyWatcher.tsx` e montá-lo em `web/src/components/layout/ProfileShell.tsx`: na portaria, consulta `emergency.open` a cada 3 s (TanStack Query `refetchInterval`) e mostra o `DeskEmergencyOverlay` com o alerta mais antigo não resolvido (research R2)
-- [ ] T022 [US1] Atalho de emergência no início do morador (botão vermelho no topo, levando a `/resident/emergency/`) e cartão "Emergência · apto N" no painel da portaria em `web/src/components/desk/DeskHome.tsx`
+- [ ] T021 [US1] Criar `web/src/components/security/EmergencyWatcher.tsx` e montá-lo em `web/src/components/layout/ProfileShell.tsx`: na portaria, consulta `emergency.open` a cada 1 s (TanStack Query `refetchInterval`; o `raise` no mesmo aparelho invalida a consulta na hora) e mostra o `DeskEmergencyOverlay` com o alerta mais antigo não resolvido em que `fullScreenForMe`; os demais aparecem como cartão (research R2, CS-001)
+- [ ] T022 [US1] Atalhos no início do morador: botão vermelho de emergência no topo (leva a `/resident/emergency/`) e, ao lado, "Contatos" (leva a `/resident/contacts/`, CS-005); cartão "Emergência · apto N" no painel da portaria em `web/src/components/desk/DeskHome.tsx`
 - [ ] T023 [US1] Painel `/dev`: botão para simular "SOS" pelo WhatsApp do celular escolhido, junto da simulação de códigos (`web/app/dev/`)
 
 **Ponto de controle**: a História 1 funciona sozinha (MVP).
@@ -95,7 +95,7 @@ privado de todos; a portaria encerra e todos recebem "Situação controlada".
 
 ### Testes
 
-- [ ] T024 [P] [US2] Escrever `web/tests/unit/general-alert.test.ts`: `send` só portaria e síndico, `message` 5–280; segundo `send` com um em aberto é recusado (`conflict`); avisa todas as pessoas ativas com `general-alert` (app, privado e uma no grupo) mesmo com preferências desligadas (CS-003); `current` devolve o em aberto com `seenByMe`; `markSeen` por pessoa; `close` só quem enviou ou o síndico, `closingMessage` até 280, avisa com `general-alert-closed`
+- [ ] T024 [P] [US2] Escrever `web/tests/unit/general-alert.test.ts`: `send` só portaria e síndico, `message` 5–280; segundo `send` com um em aberto é recusado (`conflict`) e o formulário mostra o aberto com "Encerrar"; avisa todas as pessoas ativas com `general-alert` (app, privado e uma no grupo) mesmo com preferências desligadas (CS-003); `current` devolve o em aberto com `seenByMe`; `markSeen` por pessoa; `close` só quem enviou ou o síndico, `closingMessage` até 280, avisa com `general-alert-closed`
 - [ ] T025 [P] [US2] Escrever `web/tests/e2e/general-alert.spec.ts`: portaria → Alerta geral → incêndio + mensagem pronta → confirmar → `switchTo` morador vê a tela cheia → "Entendi" → faixa no início → `switchTo` portaria → Encerrar → morador vê "Alerta encerrado"; morador não tem a opção
 
 ### Implementação
@@ -120,7 +120,7 @@ para todos.
 ### Testes
 
 - [ ] T031 [P] [US3] Escrever `web/tests/unit/contacts.test.ts`: `list` em dois grupos, com portaria (`frontDesk`), síndico e porteiro-chefe do cadastro; celular do síndico e do porteiro-chefe só com `showPhoneInContacts` (sem ele, `phone: null`); busca sem acento por nome e descrição; `save` valida nome 2–60, descrição até 60 e número por `normalizeDialable`; no máximo um `frontDesk`; `remove` e `reorder` só síndico; `setShowMyPhone` só síndico e porteiro-chefe
-- [ ] T032 [P] [US3] Escrever `web/tests/e2e/contacts.spec.ts`: morador busca "luz" → Light com `tel:`; contato celular tem botão de WhatsApp; síndico → Editar contatos → acrescenta "Chaveiro 24h" → `switchTo` morador vê; síndico liga "Mostrar meu celular" no perfil → morador vê o celular dele
+- [ ] T032 [P] [US3] Escrever `web/tests/e2e/contacts.spec.ts`: morador no início toca "Contatos" e chega ao botão de ligar do SAMU em 2 toques (CS-005); busca "luz" → Light com `tel:`; contato celular tem botão de WhatsApp; síndico → Editar contatos → acrescenta "Chaveiro 24h" → `switchTo` morador vê; síndico liga "Mostrar meu celular" no perfil → morador vê o celular dele
 
 ### Implementação
 
@@ -144,14 +144,14 @@ até o "Estou indo".
 
 ### Testes
 
-- [ ] T039 [P] [US4] Ampliar `web/tests/unit/emergency.test.ts` e `general-alert.test.ts`: `history` dos últimos 90 dias, do mais novo para o mais antigo; portaria e síndico veem todos; morador vê só os do próprio apartamento (em `mine`) e os gerais; tempo até o atendimento
-- [ ] T040 [P] [US4] Ampliar `web/tests/e2e/emergency.spec.ts`: síndico → Alertas de emergência → vê o alerta do seed resolvido e o geral encerrado com tempo até o atendimento
+- [ ] T039 [P] [US4] Ampliar `web/tests/unit/emergency.test.ts` e `general-alert.test.ts`: `history` dos últimos 90 dias, do mais novo para o mais antigo; portaria e síndico veem todos; morador vê só os do próprio apartamento (em `mine`) e os gerais (`generalAlert.history` aberto a todos); tempo até o atendimento
+- [ ] T040 [P] [US4] Ampliar `web/tests/e2e/emergency.spec.ts`: síndico → Alertas de emergência → vê o alerta do seed resolvido e o geral encerrado com tempo até o atendimento; morador → Emergência → histórico mostra o geral encerrado e nenhum alerta de outro apartamento
 
 ### Implementação
 
 - [ ] T041 [US4] Implementar `history` em `web/src/services/emergency.ts` e `web/src/services/general-alert.ts`
 - [ ] T042 [P] [US4] Criar `web/src/components/security/AlertHistory.tsx`: em aberto no topo e lista com tipo, apartamento ou "Geral", quem enviou, quem atendeu, tempo até o atendimento e situação
-- [ ] T043 [US4] Páginas `web/app/front-desk/emergency-alert/page.tsx` e `web/app/manager/emergency-alert/page.tsx`; histórico do apartamento na tela de emergência do morador; `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
+- [ ] T043 [US4] Páginas `web/app/front-desk/emergency-alert/page.tsx` e `web/app/manager/emergency-alert/page.tsx`; histórico na tela de emergência do morador (alertas do próprio apartamento e alertas gerais, com `AlertHistory`); `OWN_PAGES`; `npx next typegen`; textos nos três idiomas
 - [ ] T044 [US4] Seed v5 — alerta resolvido do 501 ("Saúde", há 3 dias, atendido em 1 min por Jonas, nota) e alerta geral encerrado ("Vazamento de gás no 2º andar", há 10 dias, encerrado em 25 min); asserções em `seed-v5.test.ts`
 
 **Ponto de controle**: as 4 histórias passam juntas.
@@ -165,7 +165,7 @@ até o "Estou indo".
 - [ ] T047 [P] Conferir `web/tests/unit/messages.test.ts` (chaves iguais e parâmetros ICU) e ajustar `IGUAIS_EM_ESPANHOL` se preciso (RF-021)
 - [ ] T048 Conferir o seed v5 completo contra `data-model.md` e RF-022 e que "Restaurar dados de exemplo" recria tudo relativo ao dia
 - [ ] T049 Rodar `npx vitest run`, `npm run lint`, `npx tsc --noEmit`, o e2e completo, `make e2e-build` e `make e2e-build-real` (sem simulação de SOS no real) e `make perf`
-- [ ] T050 Documentação: `docs/documentacao/02-funcionalidades.md` (Segurança → "Em construção"), `docs/documentacao/03-arquitetura.md` (watcher, canais do alerta geral, SOS), `docs/backlog.md` (Etapa 3: push e tempo real para emergências, pytest das regras de segurança, conferir com o síndico os números das concessionárias) e `docs/changelog.md`
+- [ ] T050 Documentação: `docs/documentacao/02-funcionalidades.md` (Segurança → "Em construção"), `docs/documentacao/03-arquitetura.md` (watcher, canais do alerta geral, SOS), `docs/backlog.md` (Etapa 3: push e tempo real para emergências, pytest das regras de segurança, conferir com o síndico os números das concessionárias antes do lançamento) e `docs/changelog.md` (com o aviso de que os números das concessionárias são exemplos)
 - [ ] T051 Validar os 15 cenários de `specs/005-seguranca/quickstart.md` (automáticos onde houver teste; o resto no ambiente ligado; som e vibração no celular de verdade ficam no backlog)
 
 ---

@@ -159,7 +159,8 @@ os dois, com o tempo até o "Estou indo".
 1. **Dado** o síndico ou a portaria, **quando** abre o histórico, **então** vê os alertas dos últimos 90 dias, do mais
    novo para o mais antigo, com tipo, apartamento (ou "Geral"), quem enviou, quem atendeu, tempo até o atendimento e
    situação (em aberto, atendido, resolvido, cancelado, encerrado).
-2. **Dado** um morador, **quando** abre o histórico, **então** vê só os alertas do próprio apartamento e os gerais.
+2. **Dado** um morador, **quando** abre o histórico na tela de Emergência, **então** vê só os alertas do próprio
+   apartamento e os alertas gerais.
 
 ---
 
@@ -173,8 +174,8 @@ os dois, com o tempo até o "Estou indo".
 - O morador perde a internet depois de segurar o botão: nesta etapa os dados estão no aparelho; quando houver
   servidor, o app avisa que não conseguiu enviar e oferece ligar para a portaria.
 - Dois porteiros tocam "Estou indo" quase juntos: vale o primeiro; o segundo vê quem já foi.
-- Alerta geral com outro alerta geral em aberto: o app mostra o que está em aberto e pede para encerrar antes ou
-  enviar como atualização.
+- Alerta geral com outro alerta geral em aberto: o app mostra o que está em aberto e pede para encerrar antes de
+  enviar outro (atualizar um alerta aberto fica para depois).
 - Contato sem número válido: o síndico não consegue salvar.
 - Fuso: todas as datas e horas no fuso de Brasília.
 
@@ -267,7 +268,8 @@ os dois, com o tempo até o "Estou indo".
 - **CS-003**: 100% das pessoas ativas recebem o alerta geral no app e no WhatsApp (grupo e privado), mesmo com todas as
   preferências desligadas, conferido por teste.
 - **CS-004**: O porteiro responde "Estou indo" com 1 toque a partir do alerta em tela cheia.
-- **CS-005**: O morador encontra e liga para um contato de emergência em no máximo 2 toques a partir do início.
+- **CS-005**: O morador encontra e liga para um contato de emergência em no máximo 2 toques a partir do início (atalho
+  "Contatos" no início → ligar).
 - **CS-006a**: "SOS", "sos", "Socorro!" e "SOCORRO" criam o alerta; mensagens sem essas palavras não criam,
   conferido por teste.
 - **CS-006**: 100% das tentativas de enviar alerta geral, cancelar alerta de outro apartamento ou editar contatos sem

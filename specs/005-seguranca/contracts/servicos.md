@@ -14,12 +14,13 @@ interface EmergencyView {
   repeated: boolean
   emergencyContact: { name: string; relationship: string; phone: string } | null   // só para portaria e síndico
   noDoormanOnDuty: boolean
+  fullScreenForMe: boolean         // porteiro de plantão, ou qualquer porteiro se ninguém está na escala
   canCancel: boolean
 }
 
 interface EmergencyService {
   raise(ctx, kind: EmergencyKind): Promise<EmergencyView>          // morador; se já há um em aberto, devolve ele
-  mine(ctx): Promise<{ current: EmergencyView | null; history: EmergencyView[] }>
+  mine(ctx): Promise<{ current: EmergencyView | null; history: EmergencyView[] }>   // history: só do próprio apto
   cancel(ctx, id: string): Promise<EmergencyView>
   // Portaria e síndico
   open(ctx): Promise<EmergencyView[]>                              // em aberto e atendidos (não resolvidos)
@@ -62,7 +63,9 @@ interface ContactService {
 ## Regras comuns
 
 - `raise` e `send` passam por `notify` com os tipos novos (research R3); o contato de emergência recebe mensagem direta
-  na caixa de saída.
+  na caixa de saída no pedido, no cancelamento e na resolução.
+- `generalAlert.history` está aberto a todos os perfis (o morador vê os gerais no histórico da tela de emergência).
+- `generalAlert.send` com um alerta geral em aberto devolve `conflict`.
 - `whatsappInbox.receive` (spec 004) trata "SOS"/"socorro" antes dos códigos (research R6).
 - Números: `normalizeDialable(text)` aceita serviços públicos (190–199, 3 a 4 dígitos), 0800 e telefones brasileiros;
   devolve o número para `tel:` e se é celular.

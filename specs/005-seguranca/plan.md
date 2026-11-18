@@ -7,8 +7,8 @@
 ## Resumo
 
 Botão de emergência, alerta geral, contatos importantes e histórico, com dados no aparelho, sobre as specs 001 a 004.
-Duas entidades de alerta (de apartamento e geral). Um `EmergencyWatcher` em todos os perfis consulta a cada 3 s e abre a
-tela cheia (portaria: alertas de apartamento; todos: alerta geral); na Etapa 3, push e tempo real substituem a consulta.
+Duas entidades de alerta (de apartamento e geral). Um `EmergencyWatcher` em todos os perfis abre a tela cheia (portaria
+de plantão: alertas de apartamento, consultados a cada 1 s; todos: alerta geral, a cada 3 s); na Etapa 3, push e tempo real substituem a consulta.
 O `notify` ganha o alerta geral, a única exceção que vai ao grupo **e** ao privado de todos; o contato de emergência
 recebe mensagem direta. O `runDue` repete o alerta sem atendimento em 2 min. "SOS"/"socorro" pelo WhatsApp entra no
 `whatsappInbox` da spec 004. Decisões em [research.md](research.md).
@@ -75,4 +75,4 @@ tempo real para emergências; pytest; números das concessionárias com o síndi
 
 ## Acompanhamento de complexidade
 
-Sem violações: nenhuma dependência nova; a consulta a cada 3 s é provisória e documentada para a Etapa 3.
+Sem violações: nenhuma dependência nova; as consultas a cada 1 s e 3 s são provisórias e documentadas para a Etapa 3.

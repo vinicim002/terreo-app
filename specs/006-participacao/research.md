@@ -54,8 +54,9 @@ permissões, `notify`, fotos reduzidas no aparelho, `DictateButton`, `dialable.t
 
 - Tipos novos: `suggestion-status` (para quem sugeriu), `suggestion-approved` e `improvement-done` (para os "gostei"),
   `issue-new` e `noise` (para o síndico), `issue-update` (autor e apoiadores), `listing-removed` (quem indicou).
-- Canais (RF-023): `suggestion-status`, `issue-update` seguem a preferência "Avisos" no app e vão ao privado só se a
-  pessoa ligou; os demais ficam **só no app** (`APP_ONLY`). Nada vai ao grupo.
+- Canais (RF-023): `suggestion-status` e `issue-update` aparecem no app conforme a preferência "Avisos" (spec 003), sem
+  WhatsApp nesta etapa; os demais ficam **só no app**, sempre (`APP_ONLY`). Nada vai ao grupo. Respostas pelo WhatsApp
+  privado ficam para a Etapa 3, junto com uma preferência própria.
 
 ## R8. Permissões novas
 

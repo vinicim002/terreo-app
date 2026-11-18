@@ -43,7 +43,7 @@ spec vai ao grupo do WhatsApp
 | II. Documentação | `02-funcionalidades.md` (Participação → "Em construção"), `03-arquitetura.md`, backlog, changelog | ✔ |
 | III. Segurança e dados | Barulho anônimo de verdade (sem autor gravado); sugestão sem apto escondida dos vizinhos; problema privado só para autor, casa e síndico; permissões nos serviços | ✔ |
 | IV. Para qualquer pessoa | Botões grandes de escolha (onde, o que houve), estrelas grandes, ditar descrições, fotos pela câmera | ✔ |
-| V. WhatsApp junto | Respostas a quem sugeriu e atualizações de problema seguem a preferência "Avisos" (privado só se ligado); o resto só no app; envios pela fila na Etapa 3 | ✔ |
+| V. WhatsApp junto | Nesta spec os avisos ficam no app (respostas e atualizações pela preferência "Avisos"); o privado do WhatsApp para respostas e atualizações entra na Etapa 3 com preferência própria, pela fila (backlog) | ✔ |
 | VI. Stack combinada | Nenhuma dependência nova | ✔ |
 | VII. Pronto é verificado | Testes de cada regra; `quickstart.md`; pytest na Etapa 3 (backlog) | ✔ |
 | Restrições | Multi-condomínio; unidade = apartamento; front-end primeiro | ✔ |

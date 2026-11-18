@@ -1,0 +1,101 @@
+# Produção do Térreo na VPS (compartilhada com outro projeto por enquanto). Roteiro: docs/documentacao/05-publicacao.md.
+#
+#   Pasta na VPS: ~/terreo (separada de tudo o mais; apagar o Térreo = `docker compose down -v` + apagar a pasta).
+#   Variáveis:    infra/.env (copie de infra/prod.env.example; chmod 600; nunca versionar).
+#   Publicar:     infra/deploy.sh
+#
+# Nenhuma porta é publicada (nem em 127.0.0.1): o Docker passa por cima do firewall, e o público chega só pelo
+# Cloudflare Tunnel do próprio Térreo (serviço `cloudflared`), que sai da VPS até a Cloudflare e fala com a API pela
+# rede interna deste projeto.
+name: terreo-prod
+
+x-logging: &logging
+  driver: json-file
+  options: { max-size: "10m", max-file: "3" }
+
+x-api-env: &api-env
+  APP_ENV: production
+  APP_VERSION: ${APP_VERSION:-0.1.0}
+  DATABASE_URL: postgresql+asyncpg://terreo:${DB_PASSWORD:?defina DB_PASSWORD no infra/.env}@db:5432/terreo
+  REDIS_URL: redis://redis:6379/0
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: terreo
+      POSTGRES_USER: terreo
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?defina DB_PASSWORD no infra/.env}
+    volumes:
+      - db-data:/var/lib/postgresql
+      # Cópias do banco (infra/backup.sh) ficam aqui antes de irem para fora da VPS.
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U terreo -d terreo"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 512m
+    shm_size: 128mb
+    logging: *logging
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    command: redis-server --save 60 1 --maxmemory 96mb --maxmemory-policy noeviction
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 20
+    mem_limit: 128m
+    logging: *logging
+
+  api:
+    build: ../api
+    image: terreo-api:latest
+    restart: unless-stopped
+    environment: *api-env
+    # Migrações antes de subir (Alembic; migração aplicada nunca é editada — constituição).
+    command: >
+      sh -c "uv run --no-sync alembic upgrade head &&
+             uv run --no-sync uvicorn app.main:app --host 0.0.0.0 --port 8100 --workers 2 --proxy-headers --forwarded-allow-ips='*'"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8100/api/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    mem_limit: 512m
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    logging: *logging
+
+  worker:
+    image: terreo-api:latest
+    restart: unless-stopped
+    environment: *api-env
+    command: uv run --no-sync arq app.worker.WorkerSettings
+    mem_limit: 256m
+    depends_on:
+      api: { condition: service_healthy }
+    logging: *logging
+
+  cloudflared:
+    # Versão fixa para não mudar sozinha; atualize de propósito.
+    image: cloudflare/cloudflared:${CLOUDFLARED_TAG:-2026.11.0}
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?defina TUNNEL_TOKEN no infra/.env}
+    mem_limit: 128m
+    depends_on:
+      api: { condition: service_healthy }
+    logging: *logging
+
+volumes:
+  db-data:
+  redis-data:

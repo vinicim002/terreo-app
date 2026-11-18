@@ -94,12 +94,9 @@ cd api && uv run pytest tests/test_health.py::test_health_ok
 `npm run build:demo` (em `web/`) gera a demonstração em `web/out/`: arquivos estáticos com o service worker, que
 guarda todas as telas para uso sem internet.
 
-## Publicar a demonstração no Cloudflare Pages
+## Publicar
 
-1. No painel do Cloudflare: Workers & Pages → Create → Pages → conectar ao repositório do GitHub.
-2. Configuração do build: diretório raiz `web`, comando `npm run build:demo`, pasta de saída `out`.
-3. Variáveis: `NODE_VERSION=22` (o Next.js 16 exige Node 20.9 ou mais novo; a 22 é suportada pelo Cloudflare).
-4. Cada push na `main` publica uma versão nova; o app instalado a recebe na abertura seguinte.
+Demonstração no Cloudflare Pages e API na VPS: passo a passo no capítulo **Publicação** (`05-publicacao.md`).
 
 ## Painel de desenvolvimento
 

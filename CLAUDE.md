@@ -46,6 +46,13 @@ leia antes de especificar, planejar ou implementar.
 - Build da versão real: `cd web && npm run build:real` (`out-real/`) + `make e2e-build-real` (testes `@build-real`).
 - Testes unitários dos serviços: `tests/unit/auth-helpers.ts` (`setup()` com relógio controlado, `signIn()`).
 
+## Publicação
+
+Demonstração no Cloudflare Pages (`terreo.v2n.tech`, raiz `web`, `npm run build:demo`, saída `out`, função
+`web/functions/api/[[path]].js` repassa `/api/*` para `API_ORIGIN`) e API numa VPS compartilhada, em `~/terreo`
+(projeto Compose `terreo-prod`, `infra/compose.prod.yaml`, sem portas publicadas, Cloudflare Tunnel próprio
+`terreo-api.v2n.tech`). Nunca mexer em nada fora de `~/terreo` na VPS. Passo a passo: `docs/documentacao/05-publicacao.md`.
+
 ## Next.js 16 (leia `web/AGENTS.md`)
 
 Esta versão difere do que você conhece: consulte `web/node_modules/next/dist/docs/` antes de usar APIs do Next.

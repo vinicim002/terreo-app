@@ -53,3 +53,7 @@ api/.venv/
 .pytest_cache/
 .ruff_cache/
 web/out-real/
+
+# Produção (VPS): segredos e cópias do banco nunca vão para o git.
+infra/.env
+infra/backups/

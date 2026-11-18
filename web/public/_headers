@@ -1,0 +1,14 @@
+# Cabeçalhos do Cloudflare Pages (web/public/_headers vai para web/out/).
+# X-Robots-Tag: o piloto fica fora dos buscadores por enquanto.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(self), microphone=(self), geolocation=()
+  X-Robots-Tag: noindex, nofollow
+
+/sw.js
+  Cache-Control: no-cache
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -138,7 +138,7 @@ export function CalendarScreen({ profile }: { profile: Profile }) {
           >
             <ChevronLeft aria-hidden className="size-5" />
           </button>
-          <h2 className="flex-1 text-center text-lg capitalize" aria-live="polite">
+          <h2 className="flex-1 text-center text-lg first-letter:uppercase" aria-live="polite">
             {formatMonthYear(ym.y, ym.m, dates.locale)}
           </h2>
           <button

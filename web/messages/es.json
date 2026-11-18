@@ -100,7 +100,11 @@
     "meeting": "Reunión del consejo",
     "meetingNew": "Nueva reunión",
     "meetingEdit": "Editar reunión",
-    "eventNew": "Nuevo evento"
+    "eventNew": "Nuevo evento",
+    "memos": "Mensajes de la portería",
+    "deliveryNew": "Nuevo código",
+    "visitorNew": "Avisar visita",
+    "apartmentDesk": "Apartamento {number}"
   },
   "settings": {
     "title": "Configuración",
@@ -128,7 +132,8 @@
     "libras": "Libras (lengua de señas brasileña)",
     "librasHint": "Usa el botón de VLibras al costado de la pantalla para traducir los textos a Libras.",
     "librasOffline": "La traducción a Libras no está disponible sin internet.",
-    "storageWarning": "Este navegador no permite guardar datos. Tus elecciones no se recordarán la próxima vez."
+    "storageWarning": "Este navegador no permite guardar datos. Tus elecciones no se recordarán la próxima vez.",
+    "credits": "Banderas: Twemoji, © Twitter, licencia CC BY 4.0."
   },
   "errors": {
     "notFoundTitle": "Página no encontrada",
@@ -143,7 +148,9 @@
     "country": "País",
     "invalid": "Número no válido. Revísalo e inténtalo de nuevo.",
     "missing-area": "Escribe el número con el código de área.",
-    "in_use": "Este número ya está registrado en el edificio."
+    "in_use": "Este número ya está registrado en el edificio.",
+    "search": "Buscar país",
+    "noResults": "Ningún país encontrado."
   },
   "auth": {
     "title": "Entrar en Térreo",
@@ -354,7 +361,8 @@
       "elevator": "Ascensor",
       "power": "Electricidad",
       "meeting": "Reunión",
-      "general": "Aviso general"
+      "general": "Aviso general",
+      "other": "Otro"
     },
     "notices": {
       "all": "Todos los avisos",
@@ -417,7 +425,10 @@
       "past": "La hora elegida ya pasó.",
       "publishNow": "Publicar ahora",
       "needReference": "Indica la fecha del asunto para el recordatorio.",
-      "invalid": "Revisa el título (de 3 a 120 letras) y el mensaje (hasta 2.000 letras)."
+      "invalid": "Revisa el título (de 3 a 120 letras) y el mensaje (hasta 2.000 letras).",
+      "customKind": "¿Qué tipo?",
+      "customKindPlaceholder": "Ej.: Obras, Seguridad, Fiesta",
+      "needCustomKind": "Indica el tipo de aviso."
     },
     "polls": {
       "open": "Abiertas",
@@ -550,7 +561,11 @@
         "poll-closed": "Encuesta cerrada",
         "delivery": "Entrega",
         "visitor": "Visita",
-        "emergency": "Emergencia"
+        "emergency": "Emergencia",
+        "delivery-reminder": "Paquete esperando",
+        "mail": "Correspondencia",
+        "lost-found": "Objetos perdidos",
+        "memo": "Mensaje de la portería"
       }
     },
     "prefs": {
@@ -561,7 +576,6 @@
       "private": "En tu WhatsApp",
       "alwaysOn": "Siempre activa",
       "emergencyHint": "Las alertas de emergencia llegan siempre a todos, en la app y por WhatsApp.",
-      "laterHint": "Las entregas y visitas empezarán a avisarse en las próximas etapas de Térreo.",
       "saved": "Preferencias guardadas.",
       "types": {
         "notices": "Avisos",
@@ -581,6 +595,261 @@
       "newNotice": "Nuevo aviso",
       "newPoll": "Nueva encuesta",
       "newMeeting": "Nueva reunión"
+    },
+    "date": {
+      "choose": "Elegir fecha",
+      "today": "Hoy",
+      "clear": "Borrar",
+      "prev": "Mes anterior",
+      "next": "Mes siguiente"
+    }
+  },
+  "fd": {
+    "loading": "Cargando…",
+    "error": "No se pudo guardar. Inténtalo de nuevo.",
+    "notFound": "No encontrado.",
+    "stores": {
+      "ifood": "iFood",
+      "mercado-livre": "Mercado Livre",
+      "shopee": "Shopee",
+      "amazon": "Amazon",
+      "correios": "Correo",
+      "other": "Otra tienda"
+    },
+    "sizes": {
+      "envelope": "Sobre",
+      "small": "Pequeña",
+      "medium": "Mediana",
+      "large": "Grande"
+    },
+    "arrival": {
+      "elevator": "Subir por el ascensor",
+      "front-desk": "Dejar en la portería",
+      "call": "Llamarme"
+    },
+    "status": {
+      "awaiting": "Esperando",
+      "at-desk": "En la portería",
+      "delivered": "Entregado",
+      "picked-up": "Retirado",
+      "not-arrived": "No llegó"
+    },
+    "deliveries": {
+      "new": "Registrar código de entrega",
+      "whatsappHint": "El portero ve tu código y se lo pasa al repartidor. También puedes enviarlo al WhatsApp del edificio: la tienda y el código, como \"iFood 4821\".",
+      "awaiting": "Esperando",
+      "atDesk": "En la portería",
+      "done": "Retirados y entregados",
+      "empty": "No hay entregas por aquí.",
+      "registeredAt": "Registrado a las {time} por {name}",
+      "byWhatsapp": "por WhatsApp",
+      "cancel": "Cancelar código",
+      "cancelConfirm": "¿Cancelar este código? La portería ya no lo verá.",
+      "yes": "Sí, cancelar",
+      "no": "No, volver",
+      "receivedBy": "Recibido por {name} · {time}",
+      "days": "{count, plural, =0 {Llegó hoy} one {# día en la portería} other {# días en la portería}}",
+      "pickedUp": "Ya lo retiré",
+      "pickedUpBy": "Retirado por {name} · {date}",
+      "photo": "Foto del paquete",
+      "mail": "Correspondencia",
+      "noPermission": "Solo quien tiene permiso para registrar entregas registra códigos. Habla con el responsable."
+    },
+    "codeForm": {
+      "store": "¿De dónde viene?",
+      "storeName": "Nombre de la tienda",
+      "code": "Código de entrega",
+      "hints": {
+        "ifood": "En iFood, el código son los 4 últimos dígitos de tu celular.",
+        "mercado-livre": "En Mercado Livre, el código aparece en el detalle de la compra.",
+        "shopee": "En Shopee, el código está en la app, en \"Mis pedidos\".",
+        "amazon": "En Amazon, el código llega por correo o en la app el día de la entrega.",
+        "correios": "En el correo, usa el código de seguimiento.",
+        "other": "Usa el código que la tienda pidió mostrar al repartidor."
+      },
+      "note": "Observación (opcional)",
+      "notePlaceholder": "Ej.: puede dejarlo en el ascensor",
+      "onArrival": "Cuando llegue el pedido",
+      "save": "Guardar código",
+      "duplicate": "Ya registraste un código de esta tienda hoy.",
+      "duplicateYes": "Es otro pedido, guardar",
+      "invalid": "Revisa el código: de 1 a 30 letras, números o guiones, sin espacios."
+    },
+    "desk": {
+      "search": "Buscar apartamento",
+      "receive": "Recibir paquete",
+      "mail": "Correspondencia",
+      "visitor": "Llegó una visita",
+      "dictate": "Dictar mensaje",
+      "lost": "Objetos hallados",
+      "today": "Hoy",
+      "awaiting": "Códigos esperando",
+      "atDesk": "En portería",
+      "visitors": "Visitas esperadas",
+      "expected": "Visitas esperadas hoy",
+      "noExpected": "No hay visitas esperadas hoy.",
+      "grid": "Apartamentos",
+      "travel": "De viaje hasta el {date}",
+      "codes": "{count, plural, one {# código} other {# códigos}}",
+      "packages": "{count, plural, one {# en portería} other {# en portería}}",
+      "actions": {
+        "receive": "Recibir paquete",
+        "mail": "Correspondencia",
+        "visitor": "Llegó una visita",
+        "dictate": "Dictar mensaje",
+        "lost": "Objetos hallados",
+        "travel": "De viaje"
+      }
+    },
+    "apartment": {
+      "people": "Quién vive aquí",
+      "noPeople": "Nadie registrado.",
+      "codes": "Códigos esperando",
+      "noCodes": "Ningún código esperando.",
+      "atDesk": "En la portería",
+      "arrived": "Llegó",
+      "callFirst": "Llamar al vecino",
+      "elevator": "Subir por el ascensor",
+      "pickup": "Retirado",
+      "whoPicked": "¿Quién lo retiró?",
+      "confirm": "Confirmar retiro",
+      "cancel": "Cancelar acción",
+      "mailSent": "Aviso de correspondencia enviado.",
+      "arrivedDone": "Llegada registrada."
+    },
+    "receive": {
+      "photo": "Foto del paquete (comprobante)",
+      "takePhoto": "Tomar foto",
+      "retake": "Tomar otra",
+      "removePhoto": "Sin foto",
+      "apartment": "Apartamento",
+      "size": "Tamaño",
+      "store": "Tienda",
+      "storeName": "Nombre de la tienda",
+      "notify": "Avisar al vecino por WhatsApp",
+      "notifyHint": "Con la foto, en privado",
+      "nobody": "Nadie del apartamento será avisado: no hay vecinos con acceso.",
+      "save": "Registrar paquete",
+      "done": "Paquete registrado.",
+      "notFound": "Apartamento no encontrado."
+    },
+    "mail": {
+      "hint": "Elige el apartamento. El vecino recibe un aviso simple, sin decir qué llegó.",
+      "send": "Avisar correspondencia"
+    },
+    "visitors": {
+      "new": "Avisar visita",
+      "expected": "Esperadas",
+      "history": "Historial",
+      "arrivedToday": "Ya entraron",
+      "empty": "No hay visitas esperadas.",
+      "emptyHistory": "Nada por aquí todavía.",
+      "visit": "Visita",
+      "provider": "Proveedor de servicio",
+      "people": "{count, plural, one {# persona} other {# personas}}",
+      "today": "Hoy",
+      "tomorrow": "Mañana",
+      "between": "de {from} a {to}",
+      "arrivedAt": "Llegó {date} · autorizado por {name}",
+      "noShow": "No vino",
+      "cancelled": "Cancelada",
+      "walkInMark": "Sin aviso",
+      "cancel": "Cancelar",
+      "checkIn": "Llegó",
+      "intercom": "Llamar por el interfono antes de dejar entrar",
+      "walkIn": "Visita sin aviso",
+      "walkInHint": "Llama al apartamento por el interfono antes de dejar entrar.",
+      "walkInName": "Nombre de la visita",
+      "walkInApartment": "Apartamento",
+      "walkInSave": "Registrar entrada",
+      "for": "Para el {number}"
+    },
+    "visitorForm": {
+      "kind": "¿Quién viene?",
+      "name": "Nombre",
+      "providerName": "Nombre o empresa",
+      "day": "Día",
+      "from": "Desde",
+      "to": "Hasta",
+      "people": "Cuántas personas",
+      "save": "Avisar a la portería",
+      "invalid": "Revisa el nombre, el día (hoy hasta 30 días) y el horario."
+    },
+    "travel": {
+      "hint": "Avisa que vas a viajar. La portería vigila el apartamento y guarda los paquetes hasta tu regreso.",
+      "from": "Salida",
+      "to": "Regreso",
+      "start": "Activar modo viaje",
+      "active": "Modo viaje activo: del {from} al {to}",
+      "end": "Terminar modo viaje",
+      "invalid": "Revisa las fechas: el regreso después de la salida, como máximo 120 días.",
+      "noPermission": "Solo quien puede registrar entregas activa el modo viaje.",
+      "watchEmpty": "Ningún apartamento de viaje.",
+      "until": "Hasta el {date}"
+    },
+    "onDuty": {
+      "now": "Ahora",
+      "next": "Próximos turnos",
+      "onDuty": "De guardia",
+      "at": "A las {time}",
+      "tomorrow": "Mañana a las {time}",
+      "doorman": "Portería",
+      "cleaner": "Limpieza",
+      "range": "{from}–{to}",
+      "nobody": "Nadie de guardia en este momento.",
+      "note": "El administrador arma el turno. Quien está de guardia aparece aquí solo, sin marcar entrada."
+    },
+    "voice": {
+      "dictate": "Dictar",
+      "listening": "Escuchando… toca para parar",
+      "unavailable": "Dictar no está disponible en este dispositivo. Escribe el texto.",
+      "denied": "No se permitió el micrófono. Escribe el texto o permite el micrófono en los ajustes del celular."
+    },
+    "dictate": {
+      "hint": "Habla con normalidad. La app escribe por ti.",
+      "text": "Mensaje",
+      "send": "Enviar al administrador",
+      "sent": "Mensaje enviado al administrador."
+    },
+    "memos": {
+      "empty": "No hay mensajes de la portería.",
+      "by": "{name} · {date}",
+      "seen": "Visto",
+      "markSeen": "Marcar como visto",
+      "toNotice": "Convertir en aviso",
+      "hasNotice": "Se convirtió en aviso",
+      "new": "Nuevo"
+    },
+    "lost": {
+      "found": "Hallados ({count})",
+      "lost": "Perdidos ({count})",
+      "returned": "Devueltos",
+      "emptyFound": "No hay objetos hallados.",
+      "emptyLost": "No hay objetos perdidos.",
+      "emptyReturned": "Nada devuelto todavía.",
+      "itsMine": "Es mío",
+      "claimed": "El {number} dijo que es suyo",
+      "claimedMine": "Dijiste que es tuyo. Búscalo en la portería.",
+      "returnedTo": "Devuelto al {number}",
+      "foundIt": "Lo encontré",
+      "foundDone": "Encontrado — avisado el {number}",
+      "markReturned": "Devuelto",
+      "returnTo": "¿Devuelto a qué apartamento?",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "lostBy": "Perdido por el {number}",
+      "registerFound": "Registrar objeto hallado",
+      "reportLost": "Avisar objeto perdido",
+      "description": "Qué es",
+      "place": "Dónde se halló (opcional)",
+      "lostPlace": "Dónde pudo ser (opcional)",
+      "photo": "Foto (opcional)",
+      "save": "Guardar",
+      "atDesk": "en la portería"
+    },
+    "home": {
+      "atDesk": "{count, plural, one {# paquete en la portería} other {# paquetes en la portería}}",
+      "nextVisitor": "Visita esperada hoy: {name}, desde las {from}"
     }
   }
 }

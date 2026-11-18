@@ -132,7 +132,7 @@ toca "Chegou"; o morador recebe o aviso e vê no histórico "Chegou às 19:05, l
 ### História 4: Tela da portaria simples e falar em vez de escrever (Prioridade: P4)
 
 O início da portaria mostra o essencial em botões grandes: buscar apartamento, Receber encomenda, Correspondência,
-Visitante chegou, Ditar recado e Achados; e os números do dia (códigos aguardando, encomendas na portaria, visitas esperadas).
+Visitante chegou, Ditar recado, Achados e Em viagem; e os números do dia (códigos aguardando, encomendas na portaria, visitas esperadas).
 Em todo campo de texto da portaria há um microfone: o porteiro fala e o app escreve. Com "Ditar recado", o porteiro
 fala um recado para o síndico (ex.: "o elevador social está parado"), confere o texto e envia; o síndico recebe e pode
 transformar o recado num aviso.
@@ -145,7 +145,7 @@ a notificação, abre o recado e toca "Transformar em aviso", com o texto já pr
 
 **Cenários de aceite**:
 
-1. **Dado** o porteiro no início, **então** vê no máximo 5 botões de ação, cada um com ícone e uma ou duas palavras, e
+1. **Dado** o porteiro no início, **então** vê no máximo 6 botões de ação do mesmo tamanho, cada um com ícone e uma ou duas palavras, e
    os três números do dia; tocar num número leva à lista correspondente.
 2. **Dado** um campo de texto da portaria, **quando** o porteiro toca no microfone e fala, **então** o texto aparece no
    campo para conferir e corrigir antes de salvar.
@@ -271,7 +271,7 @@ pode avisar que perdeu algo; se a portaria encontrar, marca "Encontrei" e o mora
 
 **Portaria e voz**
 
-- **RF-016**: O início da portaria DEVE ter busca por apartamento, até 5 botões grandes de ação com ícone e os números
+- **RF-016**: O início da portaria DEVE ter busca por apartamento, até 6 botões grandes de ação do mesmo tamanho, com ícone e os números
   do dia (códigos aguardando, encomendas na portaria, visitas esperadas).
 - **RF-017**: Todo campo de texto livre da portaria DEVE ter a opção de ditar; sem suporte, o app avisa e permite
   digitar.

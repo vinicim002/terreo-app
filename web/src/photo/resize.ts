@@ -1,4 +1,5 @@
-// Foto do perfil reduzida no aparelho antes de guardar (RF-025, research R7).
+// Fotos reduzidas no aparelho antes de guardar: perfil (spec 002, RF-025) e comprovantes de encomendas e achados
+// (spec 004, research R4), com tamanho configurável.
 export const MAX_PHOTO_SIZE = 512
 const QUALITY = 0.8
 
@@ -29,11 +30,18 @@ const browserDeps: ResizeDeps = {
   },
 }
 
-export async function resizePhoto(file: Blob, deps: ResizeDeps = browserDeps): Promise<string> {
+/** Tamanho dos comprovantes de encomendas e achados (spec 004). */
+export const PROOF_PHOTO = { max: 1024, quality: 0.7 }
+
+export async function resizePhoto(
+  file: Blob,
+  deps: ResizeDeps = browserDeps,
+  options: { max?: number; quality?: number } = {},
+): Promise<string> {
   const img = await deps.decode(file)
   try {
-    const { width, height } = targetSize(img.width, img.height)
-    return deps.draw(img, width, height, "image/jpeg", QUALITY)
+    const { width, height } = targetSize(img.width, img.height, options.max ?? MAX_PHOTO_SIZE)
+    return deps.draw(img, width, height, "image/jpeg", options.quality ?? QUALITY)
   } finally {
     img.close?.()
   }

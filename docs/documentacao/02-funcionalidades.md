@@ -17,7 +17,7 @@ com dados no aparelho, ainda sem servidor) ou **Pronta** (com servidor e WhatsAp
 
 | Funcionalidade | Descrição | Situação |
 |---|---|---|
-| Avisos do prédio | O síndico publica avisos (falta d'água, elevador, energia, reunião, geral) na hora ou agendados, com marca de importante, confirmação de leitura, lembrete na véspera e "resolvido". O aviso aparece para moradores e portaria e vai uma vez ao grupo do WhatsApp (nunca ao privado). O síndico vê "Lido por N de M apartamentos" e quem confirmou; editar um aviso publicado o devolve a não lido para todos. | Em construção |
+| Avisos do prédio | O síndico publica avisos (falta d'água, elevador, energia, reunião, geral ou outro tipo com nome livre) na hora ou agendados, com marca de importante, confirmação de leitura, lembrete na véspera e "resolvido". O aviso aparece para moradores e portaria e vai uma vez ao grupo do WhatsApp (nunca ao privado). O síndico vê "Lido por N de M apartamentos" e quem confirmou; editar um aviso publicado o devolve a não lido para todos. | Em construção |
 | Calendário | Agenda do mês com marcas nos dias e lista "Próximos": reuniões, manutenções e rotinas que se repetem (toda semana, todo mês, semestral, todo ano) e avisos com data. Só o síndico cadastra. | Em construção |
 | Reuniões do conselho | Data, horário, local e pauta; os moradores são avisados na hora e na véspera. Depois da reunião, o síndico registra o resumo do que foi decidido. | Em construção |
 | Enquetes | Pergunta com 2 a 6 opções, encerramento e resultado parcial opcional; voto com um toque e troca de voto enquanto aberta. Nas oficiais, o voto do apartamento é do responsável e as outras pessoas com permissão deixam sugestões. Encerrada, mostra a vencedora ou o empate. A portaria não vê enquetes. | Em construção |
@@ -27,13 +27,13 @@ com dados no aparelho, ainda sem servidor) ou **Pronta** (com servidor e WhatsAp
 
 | Funcionalidade | Descrição | Situação |
 |---|---|---|
-| Entregas e códigos | O morador informa a entrega e o código (pelo app ou WhatsApp); o porteiro encontra pelo apartamento, registra a chegada com foto e o morador é avisado no privado. Lembrete se a encomenda ficar muitos dias na portaria; retirada confirmada no app. | Planejada |
-| Correspondência | O porteiro aperta um botão e o morador recebe um aviso simples. | Planejada |
-| Visitantes e prestadores | O morador avisa nome, dia e faixa de horário; o porteiro confirma a entrada. Sem guardar documento. | Planejada |
-| Modo viagem | A portaria fica atenta ao apartamento e guarda as encomendas. | Planejada |
-| Funcionários de plantão | Quem está trabalhando agora, calculado pela escala de turnos (6h–14h, 14h–22h, 22h–6h) e pelo rodízio de folgas. | Planejada |
-| Falar em vez de escrever | Todo registro da portaria pode ser feito por voz. | Planejada |
-| Achados e perdidos | O porteiro fotografa e descreve o objeto; ele aparece para todos os moradores. | Planejada |
+| Entregas e códigos | O morador cadastra a loja, o código e o que fazer na chegada (subir pelo elevador, deixar na portaria, me ligar), pelo app ou mandando "iFood 4821" ao WhatsApp do condomínio. O porteiro toca no apartamento e vê o código; registra a chegada ou recebe a encomenda sem código com foto. Avisa quem cadastrou e o responsável (sem código: todos do apartamento), só no privado. Lembrete no 3º dia e depois diário; retirada com um toque no app ou registrada pela portaria. | Em construção |
+| Correspondência | O porteiro aperta um botão no apartamento e todos recebem "Chegou correspondência para você na portaria", sem dizer o que é. | Em construção |
+| Visitantes e prestadores | Qualquer pessoa do apartamento avisa nome, dia e faixa de horário; a portaria vê os esperados do dia, toca "Chegou" e, para prestador, é lembrada de interfonar. Visitante sem cadastro registrado pela portaria. Sem documento, CPF ou foto da visita. | Em construção |
+| Modo viagem | O morador avisa ida e volta (até 120 dias); a portaria vê "Em viagem até" e as encomendas ficam guardadas sem lembretes. | Em construção |
+| Funcionários de plantão | Quem está trabalhando agora (portaria e limpeza) e os próximos turnos, calculados pela escala semanal, inclusive a virada da meia-noite. O rodízio de folgas ainda será definido com o síndico. | Em construção |
+| Falar em vez de escrever | Microfone nos campos de texto da portaria (reconhecimento de fala do celular); "Ditar recado" manda um recado ao síndico, que pode transformá-lo em aviso. Sem suporte no aparelho, o porteiro digita. | Em construção |
+| Achados e perdidos | O porteiro registra o objeto com foto e descrição falada; todos veem por 60 dias. "É meu" avisa a portaria, que marca "Devolvido". O morador avisa objeto perdido e é avisado quando a portaria encontra. | Em construção |
 
 ## Participação dos moradores
 

@@ -100,3 +100,18 @@ export async function switchTo(page: Page, account: AccountKey, path: string) {
   await signInAs(page, account)
   await page.goto(path)
 }
+
+/** Escolhe um dia no calendário do Térreo (`DateField`), avançando os meses se preciso. */
+export async function pickDate(page: Page, label: string, day: string) {
+  await page.getByRole("button", { name: new RegExp(`^${label}\\b`) }).click()
+  const panel = page.getByRole("group", { name: label })
+  for (let i = 0; i < 24; i++) {
+    const button = panel.locator(`[data-day="${day}"]`)
+    if (await button.count()) {
+      await button.click()
+      return
+    }
+    await panel.getByRole("button", { name: "Próximo mês" }).click()
+  }
+  throw new Error(`dia ${day} não encontrado`)
+}

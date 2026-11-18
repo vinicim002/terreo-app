@@ -178,13 +178,22 @@ export const OutboxMessageSchema = z.object({
 
 const dayKey = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Data no formato AAAA-MM-DD")
 
-export const NoticeKindSchema = z.enum(["water", "elevator", "power", "meeting", "general"])
+export const NoticeKindSchema = z.enum([
+  "water",
+  "elevator",
+  "power",
+  "meeting",
+  "general",
+  "other",
+])
 
 export const NoticeSchema = z.object({
   id: uuid,
   condominiumId: uuid,
   authorId: uuid,
   kind: NoticeKindSchema,
+  /** Nome do tipo quando `kind = other` (ex.: "Obras"), 2–30 caracteres. */
+  customKind: z.string().trim().min(2).max(30).nullable(),
   title: z.string().trim().min(3).max(120),
   body: z.string().trim().min(1).max(2000),
   important: z.boolean(),
@@ -291,12 +300,16 @@ export const NotificationTypeSchema = z.enum([
   "poll",
   "poll-closed",
   "delivery",
+  "delivery-reminder",
+  "mail",
   "visitor",
+  "lost-found",
+  "memo",
   "emergency",
 ])
 
 export const NotificationTargetSchema = z.object({
-  kind: z.enum(["notice", "poll", "meeting"]),
+  kind: z.enum(["notice", "poll", "meeting", "delivery", "visitor", "lost-item", "memo"]),
   id: uuid,
 })
 
@@ -325,6 +338,145 @@ export const NotificationPrefsSchema = z.object({
   }),
   // Só tipos pessoais: assuntos gerais vão ao grupo, nunca ao privado (esclarecimento 2).
   whatsapp: z.object({ deliveries: z.boolean(), visitors: z.boolean() }).strict(),
+})
+
+// ---------- Spec 004: portaria (data-model.md) ----------
+
+const photo = z
+  .string()
+  .regex(/^data:image\/jpeg;base64,/)
+  .nullable()
+const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable()
+
+export const StoreSchema = z.enum([
+  "ifood",
+  "mercado-livre",
+  "shopee",
+  "amazon",
+  "correios",
+  "other",
+])
+export const OnArrivalSchema = z.enum(["elevator", "front-desk", "call"])
+export const PackageSizeSchema = z.enum(["envelope", "small", "medium", "large"])
+export const DeliveryStatusSchema = z.enum([
+  "awaiting",
+  "at-desk",
+  "delivered",
+  "picked-up",
+  "not-arrived",
+])
+
+export const DeliverySchema = z
+  .object({
+    id: uuid,
+    condominiumId: uuid,
+    apartmentId: uuid,
+    origin: z.enum(["app", "whatsapp", "front-desk", "mail"]),
+    store: StoreSchema.nullable(),
+    storeName: z.string().trim().min(2).max(40).nullable(),
+    code: z
+      .string()
+      .regex(/^[A-Za-z0-9-]{1,30}$/)
+      .nullable(),
+    note: optionalText(140),
+    onArrival: OnArrivalSchema.nullable(),
+    size: PackageSizeSchema.nullable(),
+    photo,
+    status: DeliveryStatusSchema,
+    notifyResident: z.boolean(),
+    createdById: uuid,
+    createdAt: isoDateTime,
+    arrivedAt: nullableDate,
+    receivedById: uuid.nullable(),
+    pickedUpAt: nullableDate,
+    pickedUpById: uuid.nullable(),
+    pickupRegisteredById: uuid.nullable(),
+    lastReminderDay: dayKey.nullable(),
+    deletedAt: nullableDate,
+  })
+  .refine((d) => d.store !== "other" || !!d.storeName, {
+    path: ["storeName"],
+    message: "Informe a loja",
+  })
+  .refine((d) => d.store === "other" || d.storeName === null, { path: ["storeName"] })
+  .refine((d) => !["app", "whatsapp"].includes(d.origin) || (!!d.code && !!d.onArrival), {
+    path: ["code"],
+  })
+
+export const VisitorSchema = z
+  .object({
+    id: uuid,
+    condominiumId: uuid,
+    apartmentId: uuid,
+    kind: z.enum(["visit", "provider"]),
+    name: z.string().trim().min(2).max(80),
+    day: dayKey,
+    fromTime: hhmm,
+    toTime: hhmm,
+    people: z.int().min(1).max(20),
+    status: z.enum(["expected", "arrived", "no-show", "cancelled"]),
+    walkIn: z.boolean(),
+    createdById: uuid,
+    createdAt: isoDateTime,
+    arrivedAt: nullableDate,
+    releasedById: uuid.nullable(),
+  })
+  .refine((v) => v.fromTime < v.toTime, {
+    path: ["toTime"],
+    message: "Horário final antes do inicial",
+  })
+
+export const TravelModeSchema = z
+  .object({
+    id: uuid,
+    condominiumId: uuid,
+    apartmentId: uuid,
+    from: dayKey,
+    to: dayKey,
+    createdById: uuid,
+    createdAt: isoDateTime,
+    endedAt: nullableDate,
+  })
+  .refine((v) => v.from <= v.to, { path: ["to"], message: "Volta antes da ida" })
+  .refine(
+    (v) =>
+      (Date.parse(`${v.to}T12:00:00Z`) - Date.parse(`${v.from}T12:00:00Z`)) / 86_400_000 <= 120,
+    { path: ["to"], message: "No máximo 120 dias" },
+  )
+
+export const FrontDeskMemoSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  authorId: uuid,
+  text: z.string().trim().min(2).max(1000),
+  createdAt: isoDateTime,
+  seenAt: nullableDate,
+  noticeId: uuid.nullable(),
+})
+
+export const LostItemSchema = z.object({
+  id: uuid,
+  condominiumId: uuid,
+  kind: z.enum(["found", "lost"]),
+  description: z.string().trim().min(3).max(200),
+  place: optionalText(80),
+  photo,
+  status: z.enum(["open", "claimed", "returned", "found"]),
+  apartmentId: uuid.nullable(),
+  createdById: uuid,
+  createdAt: isoDateTime,
+  claimedAt: nullableDate,
+  closedAt: nullableDate,
+})
+
+export const InboundMessageSchema = z.object({
+  id: uuid,
+  condominiumId: uuid.nullable(),
+  fromPhone: E164,
+  text: z.string().max(500),
+  receivedAt: isoDateTime,
+  result: z.enum(["registered", "unknown-phone", "no-permission", "not-understood"]),
+  deliveryId: uuid.nullable(),
 })
 
 export const SeedMetaSchema = z.object({
@@ -365,3 +517,13 @@ export type NotificationType = z.infer<typeof NotificationTypeSchema>
 export type NotificationTarget = z.infer<typeof NotificationTargetSchema>
 export type Notification = z.infer<typeof NotificationSchema>
 export type NotificationPrefs = z.infer<typeof NotificationPrefsSchema>
+export type Store = z.infer<typeof StoreSchema>
+export type OnArrival = z.infer<typeof OnArrivalSchema>
+export type PackageSize = z.infer<typeof PackageSizeSchema>
+export type DeliveryStatus = z.infer<typeof DeliveryStatusSchema>
+export type Delivery = z.infer<typeof DeliverySchema>
+export type Visitor = z.infer<typeof VisitorSchema>
+export type TravelMode = z.infer<typeof TravelModeSchema>
+export type FrontDeskMemo = z.infer<typeof FrontDeskMemoSchema>
+export type LostItem = z.infer<typeof LostItemSchema>
+export type InboundMessage = z.infer<typeof InboundMessageSchema>

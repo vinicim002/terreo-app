@@ -73,7 +73,7 @@ export function NoticeList({ profile }: { profile: Profile }) {
                   <span className="block text-xs text-muted-foreground">
                     {n.status === "scheduled"
                       ? t("scheduledFor", { date: dates.short(n.publishAt) })
-                      : `${tk(n.kind)} · ${dates.short(n.publishedAt!)}`}
+                      : `${n.kind === "other" ? (n.customKind ?? tk("other")) : tk(n.kind)} · ${dates.short(n.publishedAt!)}`}
                   </span>
                 </span>
                 <ChevronRight aria-hidden className="mt-3 size-5 shrink-0" />

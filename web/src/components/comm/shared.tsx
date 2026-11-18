@@ -1,7 +1,7 @@
 "use client"
 
 // Peças comuns das telas de comunicação (spec 003): abas, ícones dos tipos, datas e campos.
-import { ArrowUpDown, Droplet, Megaphone, Users, Zap, type LucideIcon } from "lucide-react"
+import { ArrowUpDown, Droplet, Megaphone, Tag, Users, Zap, type LucideIcon } from "lucide-react"
 import { useLocale } from "next-intl"
 import { useId, type ReactNode } from "react"
 import { formatLongDate, formatShortDateTime, timeBrasilia } from "@/i18n/datetime"
@@ -14,6 +14,7 @@ export const NOTICE_ICON: Record<NoticeKind, LucideIcon> = {
   power: Zap,
   meeting: Users,
   general: Megaphone,
+  other: Tag,
 }
 
 export function KindIcon({

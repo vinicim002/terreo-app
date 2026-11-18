@@ -24,6 +24,18 @@ import {
   AgendaEventSchema,
   NotificationSchema,
   NotificationPrefsSchema,
+  DeliverySchema,
+  VisitorSchema,
+  TravelModeSchema,
+  FrontDeskMemoSchema,
+  LostItemSchema,
+  InboundMessageSchema,
+  type Delivery,
+  type Visitor,
+  type TravelMode,
+  type FrontDeskMemo,
+  type LostItem,
+  type InboundMessage,
   type Notice,
   type NoticeRead,
   type Poll,
@@ -74,6 +86,12 @@ export interface StoreMap {
   agendaEvents: AgendaEvent
   notifications: Notification
   notificationPrefs: NotificationPrefs
+  deliveries: Delivery
+  visitors: Visitor
+  travelModes: TravelMode
+  memos: FrontDeskMemo
+  lostItems: LostItem
+  inboundMessages: InboundMessage
 }
 export type StoreName = keyof StoreMap
 export const STORES = [
@@ -100,6 +118,12 @@ export const STORES = [
   "agendaEvents",
   "notifications",
   "notificationPrefs",
+  "deliveries",
+  "visitors",
+  "travelModes",
+  "memos",
+  "lostItems",
+  "inboundMessages",
 ] as const satisfies readonly StoreName[]
 
 /** Índices por loja: nome do índice → campo. */
@@ -127,6 +151,12 @@ export const INDEXES: { [S in StoreName]: Partial<Record<IndexName, string>> } =
   agendaEvents: { byCondominium: "condominiumId" },
   notifications: { byCondominium: "condominiumId", byPerson: "personId" },
   notificationPrefs: { byCondominium: "condominiumId", byPerson: "personId" },
+  deliveries: { byCondominium: "condominiumId", byApartment: "apartmentId" },
+  visitors: { byCondominium: "condominiumId", byApartment: "apartmentId" },
+  travelModes: { byCondominium: "condominiumId", byApartment: "apartmentId" },
+  memos: { byCondominium: "condominiumId" },
+  lostItems: { byCondominium: "condominiumId" },
+  inboundMessages: { byCondominium: "condominiumId", byPhone: "fromPhone" },
 }
 export type IndexName =
   "byCondominium" | "byPhone" | "byPerson" | "byApartment" | "byDevice" | "byNotice" | "byPoll"
@@ -173,6 +203,12 @@ const SCHEMAS = {
   agendaEvents: AgendaEventSchema,
   notifications: NotificationSchema,
   notificationPrefs: NotificationPrefsSchema,
+  deliveries: DeliverySchema,
+  visitors: VisitorSchema,
+  travelModes: TravelModeSchema,
+  memos: FrontDeskMemoSchema,
+  lostItems: LostItemSchema,
+  inboundMessages: InboundMessageSchema,
 } as const
 
 export function validate<S extends StoreName>(store: S, value: unknown): StoreMap[S] {

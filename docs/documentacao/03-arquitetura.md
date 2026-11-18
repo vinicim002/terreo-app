@@ -68,6 +68,22 @@ Celular (PWA Next.js) ──HTTPS──> Caddy ──> /       Next.js (telas)
 - **Enquetes oficiais.** O voto do apartamento é do responsável; quem mais tem permissão deixa uma sugestão, que só o
   responsável vê. O resultado é calculado na leitura.
 
+## Portaria (spec 004)
+
+- **Entregas numa entidade só.** Código cadastrado, encomenda sem código e correspondência são uma `Delivery` com
+  estados (aguardando → entregue ou na portaria → retirada; ou "não chegou" após 7 dias). Listas, contagens e lembretes
+  tratam tudo do mesmo jeito.
+- **Código pelo WhatsApp.** `parseDeliveryMessage` reconhece mensagens como "iFood 4821" ou "Mercado Livre MLB-73"
+  (função pura, testada). Hoje a mensagem é simulada no painel `/dev`; na Etapa 3, o webhook do WhatsApp chama a mesma
+  função no servidor.
+- **Quem é avisado.** Entrega com código: quem cadastrou e o responsável; sem código e correspondência: todos do
+  apartamento; sempre no app e no privado, nunca no grupo. Recados da portaria e achados e perdidos ficam só no app.
+- **Horários.** O `runDue` da spec 003 também manda o lembrete de encomenda parada (3º dia, depois diário, pulando o modo
+  viagem), marca códigos que não chegaram e visitantes que não vieram.
+- **Ditar.** O reconhecimento de fala do próprio celular escreve no campo para o porteiro conferir; onde não existe, ele
+  digita. **Fotos** de comprovante são reduzidas no aparelho (até 1024 px); na Etapa 3 vão para o R2.
+- **Plantão.** Calculado pela escala semanal (`staff.board`), com o turno que passa da meia-noite.
+
 ## Login e sessão
 
 **Hoje (Etapa 2, provisório):** o código e a sessão são simulados no próprio aparelho, com as mesmas regras que o
@@ -80,6 +96,12 @@ Na versão real, a entrada mostra "Entrada em breve" até a Etapa 3.
 protegido (httpOnly e, em produção, Secure) com um token aleatório. O banco guarda só o hash desse token. A sessão
 expira após 6 meses sem uso e pode ser encerrada pelo responsável do apartamento ou pelo síndico, por exemplo quando
 alguém se muda ou troca de celular.
+
+## Bandeiras
+
+Bandeiras são emojis (`web/src/phone/Flag.tsx`). No Windows, que não os desenha, o `country-flag-emoji-polyfill`
+carrega a fonte "Twemoji Country Flags" de `web/public/fonts/` (78 KB, sem site externo, guardada para uso sem
+internet). Arte do Twemoji sob CC BY 4.0, com crédito nos Ajustes e no README.
 
 ## Identidade visual
 
@@ -114,9 +136,10 @@ Interface 3100, API 8100, PostgreSQL 5440, Redis 6390 (sem colidir com os outros
 | `CLAUDE.md` | Orientações para o Claude Code trabalhar no repositório. |
 | `web/app/` | Rotas da interface: escolha de perfil, `/resident`, `/front-desk`, `/manager`, `/settings` e o painel `/dev`. |
 | `web/src/navigation/screens.ts` | Catálogo único de telas: gera rotas, barra de baixo, "Mais" e "Todos os serviços". |
-| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), avisos (`notices.ts`), enquetes (`polls.ts`), reuniões e agenda (`meetings.ts`), notificações (`notifications.ts`, `notify.ts`), tarefas com horário (`due.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`, `local/seed-communication.ts`). |
-| `web/src/components/` | Telas e peças: `notices/`, `polls/`, `agenda/`, `meetings/`, `notifications/` e `comm/` (comunicação), além das de cadastro, perfil, síndico e portaria. |
+| `web/src/services/` | Serviços de dados: contratos, esquemas, permissões (`permissions.ts`), entrada (`auth.ts`), pessoas e apartamentos (`household.ts`), avisos (`notices.ts`), enquetes (`polls.ts`), reuniões e agenda (`meetings.ts`), notificações (`notifications.ts`, `notify.ts`), tarefas com horário (`due.ts`), portaria (`deliveries.ts`, `front-desk.ts`, `front-desk-shared.ts`, `parse-delivery.ts`), IndexedDB, memória e dados de exemplo (`local/seed.ts`, `local/seed-communication.ts`, `local/seed-front-desk.ts`). |
+| `web/src/components/` | Telas e peças: `notices/`, `polls/`, `agenda/`, `meetings/`, `notifications/` e `comm/` (comunicação); `deliveries/`, `desk/`, `visitors/`, `travel/`, `staff/`, `memos/`, `lostfound/` (portaria), além das de cadastro, perfil, síndico e portaria. |
 | `web/src/auth/` | Sessão do aparelho, guarda de acesso e o atalho de testes (só em desenvolvimento e demonstração). |
+| `web/src/voice/` | Ditar: reconhecimento de fala do aparelho e o botão de microfone. |
 | `web/src/phone/` · `web/src/photo/` · `web/src/lib/crypto.ts` | Celular por país, redução da foto e criptografia que funciona também fora de HTTPS. |
 | `web/app/login/` · `welcome/` · `rules-accept/` · `choose-role/` | Entrada, primeiro acesso e escolha de papel. |
 | `web/src/preferences/` | Idioma, tema, alto contraste e tamanho de letra, aplicados antes da primeira pintura. |

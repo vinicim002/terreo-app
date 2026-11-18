@@ -1,6 +1,6 @@
 // Serviços da spec 001 (condomínio, apartamentos, funcionários, escala, painel), agora exigindo
 // alguém conectado (RF-030 da spec 002). O painel de desenvolvimento não exige, fora do modo real.
-import { TIME_ZONE } from "@/i18n/datetime"
+import { brasiliaToIso, dayKeyBrasilia, TIME_ZONE } from "@/i18n/datetime"
 import { getIn, listIn, notFound, STORES, type ServiceDeps } from "./base"
 import {
   ServiceError,
@@ -8,6 +8,7 @@ import {
   type CondominiumService,
   type DevDataService,
   type ScheduleService,
+  type ShiftView,
   type StaffService,
 } from "./contracts"
 import { authorize } from "./permissions"
@@ -93,6 +94,51 @@ export function staffService(deps: ServiceDeps): StaffService {
           .map((s) => s.staffId),
       )
       return (await listIn(deps, "staff", ctx.condominiumId)).filter((s) => onDuty.has(s.id))
+    },
+    async board(ctx, at) {
+      await authorize(deps, ctx, "staff.board")
+      const [shifts, staff] = await Promise.all([
+        listIn(deps, "shifts", ctx.condominiumId),
+        listIn(deps, "staff", ctx.condominiumId),
+      ])
+      const byId = new Map(staff.map((s) => [s.id, s]))
+      // Turnos de ontem (os da madrugada), hoje e amanhã, com início e fim reais (spec 004, research R6).
+      const day = (offset: number) => dayKeyBrasilia(new Date(at.getTime() + offset * 86_400_000))
+      const instances: ShiftView[] = []
+      for (const offset of [-1, 0, 1]) {
+        const key = day(offset)
+        const weekday = new Date(`${key}T12:00:00Z`).getUTCDay()
+        for (const s of shifts.filter((x) => x.weekday === weekday)) {
+          const person = byId.get(s.staffId)
+          if (!person) continue
+          const start = new Date(brasiliaToIso(key, s.startTime))
+          let end = new Date(brasiliaToIso(key, s.endTime))
+          if (end <= start) end = new Date(end.getTime() + 86_400_000)
+          instances.push({
+            staffId: person.id,
+            name: person.name,
+            role: person.role,
+            photoUrl: person.photoUrl,
+            startsAt: start.toISOString(),
+            endsAt: end.toISOString(),
+          })
+        }
+      }
+      const t = at.getTime()
+      const endOfTomorrow = new Date(brasiliaToIso(day(2), "00:00")).getTime()
+      const byStart = (a: ShiftView, b: ShiftView) =>
+        a.startsAt.localeCompare(b.startsAt) || a.name.localeCompare(b.name)
+      return {
+        now: instances
+          .filter((s) => new Date(s.startsAt).getTime() <= t && t < new Date(s.endsAt).getTime())
+          .sort((a, b) => (a.role === b.role ? byStart(a, b) : a.role === "doorman" ? -1 : 1)),
+        next: instances
+          .filter((s) => {
+            const start = new Date(s.startsAt).getTime()
+            return start > t && start < endOfTomorrow
+          })
+          .sort(byStart),
+      }
     },
   }
 }

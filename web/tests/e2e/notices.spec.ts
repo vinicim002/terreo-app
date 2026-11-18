@@ -1,4 +1,4 @@
-import { expect, signInAs, switchTo, test } from "./helpers"
+import { expect, pickDate, signInAs, switchTo, test } from "./helpers"
 
 // Spec 003, Histórias 1 e 2: avisos.
 test.describe("avisos", () => {
@@ -99,4 +99,22 @@ test.describe("avisos", () => {
     await expect(page.getByRole("link", { name: /Dedetização/ })).toBeHidden()
     await expect(page.getByRole("button", { name: "Agendados" })).toBeHidden()
   })
+})
+
+test("aviso de outro tipo, com data do assunto pelo calendário do app", async ({ page }) => {
+  await signInAs(page, "manager")
+  await page.goto("/manager/notice/edit/")
+  await page.getByText("Outro", { exact: true }).click()
+  await page.getByLabel("Qual tipo?").fill("Obras")
+  await page.getByLabel("Título", { exact: true }).fill("Obra na fachada")
+  await page.getByLabel("Mensagem", { exact: true }).fill("Andaimes na frente do prédio.")
+  const dia = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo" }).format(
+    new Date(Date.now() + 3 * 86_400_000),
+  )
+  await pickDate(page, "Data do assunto", dia)
+  await expect(page.getByRole("button", { name: /^Data do assunto/ })).not.toContainText(
+    "Escolher data",
+  )
+  await page.getByRole("button", { name: "Publicar", exact: true }).click()
+  await expect(page.getByText("Obras").first()).toBeVisible()
 })

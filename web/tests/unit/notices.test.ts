@@ -243,3 +243,23 @@ describe("avisos — História 2", () => {
     expect(items.some((n) => n.id === aviso.id)).toBe(true)
   })
 })
+
+describe("avisos — outro tipo", () => {
+  it('aceita um tipo livre quando "Outro" e exige o nome', async () => {
+    const aviso = await env.services.notices.create(
+      env.manager,
+      noticeInput({ kind: "other", customKind: "Obras" }),
+    )
+    expect(aviso).toMatchObject({ kind: "other", customKind: "Obras" })
+    const e = await env.services.notices
+      .create(env.manager, noticeInput({ kind: "other", customKind: " " }))
+      .catch((x) => x)
+    expect(e.details).toEqual({ customKind: "required" })
+    // Em outro tipo, o nome livre é descartado.
+    const agua = await env.services.notices.create(
+      env.manager,
+      noticeInput({ customKind: "Ignorado" }),
+    )
+    expect(agua.customKind).toBeNull()
+  })
+})

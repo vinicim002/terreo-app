@@ -1,5 +1,5 @@
 /**
- * Dados de exemplo do Edifício Taquaretinga (data-model.md das specs 001, 002 e 003).
+ * Dados de exemplo do Edifício Taquaretinga (data-model.md das specs 001 a 004).
  * TUDO É FICTÍCIO: nomes inventados e celulares com DDD inexistente (00).
  * Os números do prédio (48 apartamentos, 12 andares) são provisórios — mude só aqui.
  */
@@ -19,9 +19,10 @@ import type {
   Vehicle,
 } from "../schemas"
 import { buildCommunicationSeed, type CommunicationSeed } from "./seed-communication"
+import { buildFrontDeskSeed, type FrontDeskSeed } from "./seed-front-desk"
 
 /** Mude ao alterar os dados: aparelhos com versão diferente recriam os dados de exemplo. */
-export const SEED_VERSION = 3
+export const SEED_VERSION = 4
 
 export const FLOORS = 12
 export const UNITS_PER_FLOOR = 4
@@ -85,7 +86,7 @@ const LAST_NAMES = [
   "Queiroz",
 ]
 
-export interface SeedData extends CommunicationSeed {
+export interface SeedData extends CommunicationSeed, FrontDeskSeed {
   condominium: Condominium
   apartments: Apartment[]
   people: Person[]
@@ -400,8 +401,22 @@ export function buildSeed(now: Date = new Date()): SeedData {
     now,
   )
 
+  const frontDesk = buildFrontDeskSeed(
+    {
+      condominiumId,
+      apartments,
+      people,
+      residencies,
+      managerPersonId: managerPerson,
+      doormanPersonIds: staff.filter((s) => s.role === "doorman").map((s) => s.personId!),
+      id,
+    },
+    now,
+  )
+
   return {
     ...communication,
+    ...frontDesk,
     condominium,
     apartments,
     people,

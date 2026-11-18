@@ -7,7 +7,7 @@ import { PROFILES } from "@/preferences/types"
 
 const NAV_ESPERADA = {
   resident: ["", "deliveries", "suggestions", "profile"],
-  "front-desk": ["", "deliveries", "visitors", "more"],
+  "front-desk": ["", "deliveries", "visitors", "profile", "more"],
   manager: ["", "notices", "residents", "more"],
 }
 

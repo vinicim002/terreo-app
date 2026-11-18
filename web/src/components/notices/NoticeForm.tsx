@@ -1,11 +1,12 @@
 "use client"
 
+import { DateField } from "@/components/comm/DateField"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
 import { Choices, TextField, Toggle } from "@/components/forms/fields"
 import { DateTimeField, ErrorText, TextArea } from "@/components/comm/shared"
-import { serviceContext, useNotice, useServiceMutation } from "@/hooks/data"
+import { serviceContext, useMemoById, useNotice, useServiceMutation } from "@/hooks/data"
 import { brasiliaToIso, dayKeyBrasilia, timeBrasilia } from "@/i18n/datetime"
 import { getServices, ServiceError } from "@/services"
 import type { NoticeInput, NoticeView } from "@/services/contracts"
@@ -13,22 +14,44 @@ import { NoticeKindSchema, type NoticeKind } from "@/services/schemas"
 
 const KINDS = NoticeKindSchema.options
 
-/** Novo aviso ou edição (mockup 37). Sem `id` na URL, cria. */
+/**
+ * Novo aviso ou edição (mockup 37). Sem `id` na URL, cria. Com `?memo=`, nasce do recado da portaria
+ * (spec 004, RF-018): o texto vem preenchido e, ao publicar, o recado fica ligado ao aviso.
+ */
 export function NoticeForm() {
-  const id = useSearchParams().get("id")
+  const params = useSearchParams()
+  const id = params.get("id")
+  const memoId = params.get("memo")
   const { data: existing } = useNotice(id)
+  const { data: memo } = useMemoById(memoId)
   if (id && !existing) return null
-  return <NoticeFormFields id={id} existing={existing} />
+  if (memoId && !memo) return null
+  return (
+    <NoticeFormFields
+      id={id}
+      existing={existing}
+      memo={memo ? { id: memo.id, text: memo.text } : null}
+    />
+  )
 }
 
-function NoticeFormFields({ id, existing }: { id: string | null; existing?: NoticeView }) {
+function NoticeFormFields({
+  id,
+  existing,
+  memo,
+}: {
+  id: string | null
+  existing?: NoticeView
+  memo: { id: string; text: string } | null
+}) {
   const t = useTranslations("comm.form")
   const tk = useTranslations("comm.kinds")
   const router = useRouter()
   const scheduled = existing?.status === "scheduled"
   const [kind, setKind] = useState<NoticeKind>(existing?.kind ?? "general")
+  const [customKind, setCustomKind] = useState(existing?.customKind ?? "")
   const [title, setTitle] = useState(existing?.title ?? "")
-  const [body, setBody] = useState(existing?.body ?? "")
+  const [body, setBody] = useState(existing?.body ?? memo?.text ?? "")
   const [important, setImportant] = useState(existing?.important ?? false)
   const [requireConfirmation, setRequireConfirmation] = useState(
     existing?.requireConfirmation ?? false,
@@ -40,6 +63,7 @@ function NoticeFormFields({ id, existing }: { id: string | null; existing?: Noti
       ? dayKeyBrasilia(existing.publishAt)
       : dayKeyBrasilia(new Date(Date.now() + 86_400_000)),
   )
+  const [today] = useState(() => dayKeyBrasilia(new Date()))
   const [time, setTime] = useState(scheduled ? timeBrasilia(existing.publishAt) : "08:00")
   const [referenceDate, setReferenceDate] = useState(existing?.referenceDate ?? "")
   const [remind, setRemind] = useState(existing?.remindDayBefore ?? false)
@@ -47,6 +71,7 @@ function NoticeFormFields({ id, existing }: { id: string | null; existing?: Noti
   const published = !!existing && existing.status !== "scheduled"
   const input = (publishNow = false): NoticeInput => ({
     kind,
+    customKind: kind === "other" ? customKind : null,
     title,
     body,
     important,
@@ -56,11 +81,12 @@ function NoticeFormFields({ id, existing }: { id: string | null; existing?: Noti
     remindDayBefore: remind && !!referenceDate,
     publishAt: published || publishNow || when === "now" ? null : brasiliaToIso(date, time),
   })
-  const save = useServiceMutation((publishNow: boolean) =>
-    id
-      ? getServices().notices.update(serviceContext(), id, input(publishNow))
-      : getServices().notices.create(serviceContext(), input(publishNow)),
-  )
+  const save = useServiceMutation(async (publishNow: boolean) => {
+    if (id) return getServices().notices.update(serviceContext(), id, input(publishNow))
+    const notice = await getServices().notices.create(serviceContext(), input(publishNow))
+    if (memo) await getServices().memos.linkNotice(serviceContext(), memo.id, notice.id)
+    return notice
+  })
   const submit = (publishNow = false) =>
     save.mutate(publishNow, {
       onSuccess: (n) => router.replace(`/manager/notice/?id=${n.id}`),
@@ -73,9 +99,11 @@ function NoticeFormFields({ id, existing }: { id: string | null; existing?: Noti
       ? "past"
       : details?.referenceDate
         ? "needReference"
-        : save.error instanceof ServiceError && save.error.code === "validation"
-          ? "invalid"
-          : null
+        : details?.customKind
+          ? "needCustomKind"
+          : save.error instanceof ServiceError && save.error.code === "validation"
+            ? "invalid"
+            : null
 
   return (
     <form
@@ -92,6 +120,15 @@ function NoticeFormFields({ id, existing }: { id: string | null; existing?: Noti
         onChange={setKind}
         labelOf={(k) => tk(k)}
       />
+      {kind === "other" && (
+        <TextField
+          label={t("customKind")}
+          value={customKind}
+          onChange={setCustomKind}
+          maxLength={30}
+          placeholder={t("customKindPlaceholder")}
+        />
+      )}
       <TextField label={t("title")} value={title} onChange={setTitle} maxLength={120} />
       <TextArea
         label={t("body")}
@@ -128,20 +165,20 @@ function NoticeFormFields({ id, existing }: { id: string | null; existing?: Noti
             labelOf={(w) => t(w)}
           />
           {when === "schedule" && (
-            <div className="grid grid-cols-2 gap-2">
-              <DateTimeField label={t("date")} type="date" value={date} onChange={setDate} />
+            <>
+              <DateField label={t("date")} value={date} onChange={setDate} min={today} />
               <DateTimeField label={t("time")} type="time" value={time} onChange={setTime} />
-            </div>
+            </>
           )}
         </>
       )}
-      <DateTimeField
+      <DateField
         label={t("reference")}
-        type="date"
         value={referenceDate}
         onChange={setReferenceDate}
+        clearable
+        hint={t("referenceHint")}
       />
-      <p className="-mt-3 text-sm text-muted-foreground">{t("referenceHint")}</p>
       {referenceDate && (
         <Toggle label={t("remind")} hint={t("remindHint")} checked={remind} onChange={setRemind} />
       )}

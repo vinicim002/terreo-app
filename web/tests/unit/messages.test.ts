@@ -55,6 +55,28 @@ const IGUAIS_EM_ESPANHOL = [
   "comm.notifications.types.delivery",
   "comm.prefs.types.notices",
   "comm.prefs.types.deliveries",
+  // Spec 004
+  "screens.apartmentDesk",
+  "fd.sizes.large",
+  "fd.deliveries.cancel",
+  "fd.codeForm.code",
+  "fd.desk.search",
+  "fd.desk.visitors",
+  "fd.desk.grid",
+  "fd.desk.codes",
+  "fd.receive.apartment",
+  "fd.visitors.visit",
+  "fd.visitors.cancel",
+  "fd.visitors.walkInApartment",
+  "fd.visitors.walkInSave",
+  "fd.onDuty.next",
+  "fd.memos.seen",
+  "fd.memos.markSeen",
+  "fd.lost.lost",
+  "fd.lost.confirm",
+  "fd.lost.cancel",
+  "fd.lost.reportLost",
+  "fd.lost.photo",
 ]
 
 describe.each([
@@ -88,7 +110,16 @@ describe.each([
       "settings.languages.es",
       "settings.libras",
       "phone.country", // "País" é igual em português e espanhol
+      ...(_nome === "espanhol" ? ["phone.search"] : []), // "Buscar país"
       "profile.color", // "Color" é igual em inglês e espanhol
+      // Spec 004: nomes de lojas, "Envelope" e textos só com parâmetros.
+      "fd.stores.ifood",
+      "fd.stores.mercado-livre",
+      "fd.stores.shopee",
+      "fd.stores.amazon",
+      "fd.sizes.envelope",
+      "fd.onDuty.range",
+      "fd.memos.by",
       // Palavras que se escrevem igual em português e espanhol:
       ...(_nome === "espanhol" ? IGUAIS_EM_ESPANHOL : []),
     ])

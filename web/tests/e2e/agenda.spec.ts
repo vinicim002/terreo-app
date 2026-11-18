@@ -1,4 +1,4 @@
-import { dayFromNow, expect, signInAs, switchTo, test } from "./helpers"
+import { dayFromNow, expect, pickDate, signInAs, switchTo, test } from "./helpers"
 
 // Spec 003, História 4: agenda e reuniões.
 const MESES = [
@@ -20,7 +20,7 @@ test("H4: reunião marcada aparece no calendário e em Próximos", async ({ page
   const dia = dayFromNow(4)
   await signInAs(page, "manager")
   await page.goto("/manager/meeting/edit/")
-  await page.getByLabel("Data", { exact: true }).fill(dia)
+  await pickDate(page, "Data", dia)
   await page.getByLabel("Horário", { exact: true }).fill("20:00")
   await page.getByLabel("Local").fill("Garagem do subsolo")
   await page.getByLabel("Assunto 1").fill("Vagas de visitantes")

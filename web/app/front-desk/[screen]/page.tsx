@@ -2,7 +2,23 @@ import { ScreenPage } from "@/components/layout/ScreenPage"
 import { dynamicSlugs } from "@/navigation/screens"
 
 // Telas vazias geradas do catálogo (contracts/rotas.md). Telas com página própria ficam fora.
-const OWN_PAGES = ["more", "residents", "rules", "notices", "calendar", "notifications"]
+const OWN_PAGES = [
+  "more",
+  "profile",
+  "residents",
+  "rules",
+  "notices",
+  "calendar",
+  "notifications",
+  "deliveries",
+  "receive-delivery",
+  "mail",
+  "visitors",
+  "dictate",
+  "lost-and-found",
+  "on-duty",
+  "travel-watch",
+]
 
 export const dynamicParams = false
 

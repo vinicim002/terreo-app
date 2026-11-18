@@ -102,6 +102,12 @@ test.describe("letra no máximo em tela de 320 px (H2-5)", () => {
       "/front-desk/",
       "/front-desk/more/",
       "/front-desk/receive-delivery/",
+      // Spec 004: telas da portaria com letra no máximo.
+      "/front-desk/deliveries/",
+      "/front-desk/apartment/?n=804",
+      "/front-desk/visitors/",
+      "/front-desk/dictate/",
+      "/front-desk/lost-and-found/",
       "/settings/",
     ]) {
       await page.goto(url)
@@ -114,7 +120,7 @@ test.describe("letra no máximo em tela de 320 px (H2-5)", () => {
     }
     await page.goto("/front-desk/")
     const itens = page.getByRole("navigation", { name: "Navegación principal" }).getByRole("link")
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < (await itens.count()); i++) {
       const box = await itens.nth(i).boundingBox()
       expect(box!.height).toBeGreaterThanOrEqual(44)
       expect(box!.width).toBeGreaterThanOrEqual(44)
@@ -139,4 +145,19 @@ test("H2-6: escolhas mantidas ao reabrir, aplicadas antes da primeira pintura", 
   await page.reload()
   await expect(page.getByRole("heading", { level: 1, name: "Manager dashboard" })).toBeVisible()
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark")
+})
+
+test("bandeiras na troca de idioma, com a fonte do próprio app (sem site externo)", async ({
+  page,
+}) => {
+  const externos: string[] = []
+  page.on("request", (r) => {
+    if (/jsdelivr|twemoji/i.test(r.url()) && !r.url().includes("/fonts/")) externos.push(r.url())
+  })
+  await page.goto("/settings/")
+  const idioma = page.getByRole("group", { name: "Idioma" })
+  await expect(idioma.locator(".flag-emoji")).toHaveCount(3)
+  await expect(idioma.locator(".flag-emoji").first()).toHaveText("🇧🇷")
+  await expect(page.getByText("Bandeiras: Twemoji")).toBeVisible()
+  expect(externos).toEqual([])
 })

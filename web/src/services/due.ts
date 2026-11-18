@@ -5,6 +5,13 @@
 import { formatShortDateTime, fromDayKey, startOfDayBrasilia } from "@/i18n/datetime"
 import { nowIso, save, type ServiceDeps } from "./base"
 import { notify } from "./notify"
+import {
+  activeTravel,
+  daysBetween,
+  deliveryRecipients,
+  storeLabel,
+  todayKey,
+} from "./front-desk-shared"
 import type { Meeting, Notice, Poll, PollVote } from "./schemas"
 
 const DAY = 86_400_000
@@ -157,6 +164,39 @@ async function runDueNow(deps: ServiceDeps, condominiumId: string) {
       await closePoll(deps, poll, poll.closesAt)
     }
   }
+
+  await runFrontDeskDue(deps, condominiumId)
+}
+
+/** Portaria (spec 004, research R2): lembrete de encomenda parada, código que não chegou, visitante que não veio. */
+async function runFrontDeskDue(deps: ServiceDeps, condominiumId: string) {
+  const now = deps.now()
+  const today = todayKey(deps)
+  const deliveries = await deps.repo.byIndex("deliveries", "byCondominium", condominiumId)
+  for (const d of deliveries) {
+    if (d.deletedAt) continue
+    if (d.status === "awaiting" && now.getTime() - new Date(d.createdAt).getTime() > 7 * DAY) {
+      await save(deps, "deliveries", { ...d, status: "not-arrived" })
+      continue
+    }
+    if (d.status !== "at-desk" || d.lastReminderDay === today) continue
+    const days = daysBetween(d.arrivedAt ?? d.createdAt, now)
+    if (days < 3 || (await activeTravel(deps, d.apartmentId, today))) continue
+    const updated = await save(deps, "deliveries", { ...d, lastReminderDay: today })
+    const what = d.origin === "mail" ? "Correspondência" : (storeLabel(d) ?? "Encomenda")
+    await notify(deps, condominiumId, {
+      type: "delivery-reminder",
+      audience: { personIds: await deliveryRecipients(deps, updated) },
+      title: "Encomenda esperando na portaria",
+      body: `${what} está na portaria há ${days} dias. Passe para buscar.`,
+      target: { kind: "delivery", id: d.id },
+    })
+  }
+
+  const visitors = await deps.repo.byIndex("visitors", "byCondominium", condominiumId)
+  for (const v of visitors)
+    if (v.status === "expected" && v.day < today)
+      await save(deps, "visitors", { ...v, status: "no-show" })
 }
 
 // Uma execução por vez em cada conjunto de serviços: leituras simultâneas não duplicam envios.

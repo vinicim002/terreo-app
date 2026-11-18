@@ -1,6 +1,7 @@
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { useSession } from "@/auth/session"
 import { IntlProvider } from "@/i18n/IntlProvider"
@@ -9,6 +10,11 @@ import { useTrackNavigation } from "@/navigation/history"
 
 export function AppProviders({ children }: { children: ReactNode }) {
   useTrackNavigation()
+  // Bandeiras no Windows, que não desenha bandeiras com emoji: carrega a fonte do próprio app (sem site externo),
+  // só onde faltam. Nos outros aparelhos não faz nada.
+  useEffect(() => {
+    polyfillCountryFlagEmojis("Twemoji Country Flags", "/fonts/TwemojiCountryFlags.woff2")
+  }, [])
   const [queryClient] = useState(
     () => new QueryClient({ defaultOptions: { queries: { staleTime: 60_000, retry: 1 } } }),
   )

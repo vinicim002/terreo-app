@@ -3,50 +3,51 @@
  * "Todos os serviços" e as chaves de tradução esperadas (`screens.<slug>`).
  */
 import {
+  Accessibility,
   AlarmClock,
   BadgeAlert,
   Bell,
   BellRing,
   Building2,
+  CalendarClock,
   CalendarDays,
   ChartColumn,
   ClipboardList,
   Contact,
   FileText,
+  Gavel,
   Hammer,
   HandCoins,
+  Handshake,
   HelpCircle,
   Home,
   KeyRound,
+  LayoutGrid,
   Lightbulb,
   ListChecks,
   Mail,
   Megaphone,
   Menu,
+  MessageSquareText,
   Mic,
   Package,
   PackagePlus,
   Plane,
-  Accessibility,
+  Search,
   ShieldAlert,
   ShoppingBag,
   Siren,
+  Smile,
   Sparkles,
   Star,
+  Store,
   Truck,
   UserPlus,
   UserRound,
   Users,
-  Vote,
   Volume2,
+  Vote,
   Wrench,
-  LayoutGrid,
-  Search,
-  Handshake,
-  Gavel,
-  Store,
-  CalendarClock,
-  Smile,
   type LucideIcon,
 } from "lucide-react"
 import type { Profile } from "@/preferences/types"
@@ -64,8 +65,8 @@ export interface ScreenDef {
 export interface ProfileDef {
   profile: Profile
   basePath: `/${string}`
-  /** Slugs da barra de baixo, na ordem (o primeiro é sempre o início ""). */
-  nav: [string, string, string, string]
+  /** Slugs da barra de baixo, na ordem (o primeiro é sempre o início ""); 4 ou 5 itens. */
+  nav: string[]
   /** Tela que lista as demais funcionalidades ("more" ou "services"). */
   hub: string
   /** Ordem dos grupos no hub. */
@@ -120,7 +121,7 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
   "front-desk": {
     profile: "front-desk",
     basePath: "/front-desk",
-    nav: ["", "deliveries", "visitors", "more"],
+    nav: ["", "deliveries", "visitors", "profile", "more"],
     hub: "more",
     groups: ["actions", "communication", "building"],
     screens: [
@@ -128,6 +129,7 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
       { slug: "deliveries", icon: Package },
       { slug: "visitors", icon: Users },
       { slug: "more", icon: Menu },
+      { slug: "profile", icon: UserRound },
       { slug: "notifications", icon: Bell },
       { slug: "accessibility", icon: Accessibility, href: settings },
       { slug: "receive-delivery", icon: PackagePlus, group: "actions" },
@@ -165,6 +167,7 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
       { slug: "improvements", icon: Hammer, group: "communication" },
       { slug: "general-alert", icon: BellRing, group: "communication" },
       { slug: "reminders", icon: CalendarClock, group: "communication" },
+      { slug: "memos", icon: MessageSquareText, group: "communication" },
       { slug: "schedule", icon: ClipboardList, group: "management" },
       { slug: "finances", icon: HandCoins, group: "management" },
       { slug: "issues", icon: BadgeAlert, group: "management" },
@@ -175,10 +178,12 @@ export const PROFILES_DEF: Record<Profile, ProfileDef> = {
       { slug: "monthly-report", icon: ListChecks, group: "management" },
       { slug: "listings", icon: Building2, group: "management" },
       { slug: "satisfaction", icon: Star, group: "management" },
+      { slug: "on-duty", icon: AlarmClock, group: "management" },
       { slug: "faq", icon: HelpCircle, group: "info" },
       { slug: "rules", icon: FileText, group: "info" },
       { slug: "contacts", icon: Contact, group: "info" },
       { slug: "local-shops", icon: ShoppingBag, group: "info" },
+      { slug: "lost-and-found", icon: Search, group: "info" },
     ],
   },
 }

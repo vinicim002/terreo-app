@@ -28,6 +28,7 @@ function view(n: Notice, authorName: string, read?: NoticeRead): NoticeView {
   return {
     id: n.id,
     kind: n.kind,
+    customKind: n.customKind,
     title: n.title,
     body: n.body,
     important: n.important,
@@ -79,6 +80,8 @@ export function noticeService(deps: ServiceDeps): NoticeService {
   }
 
   function checkInput(input: NoticeInput) {
+    if (input.kind === "other" && !input.customKind?.trim())
+      throw invalid("customKind", "required", "Informe o tipo do aviso.")
     if (input.remindDayBefore && !input.referenceDate)
       throw invalid("referenceDate", "required", "Informe a data do assunto para o lembrete.")
     if (input.publishAt && new Date(input.publishAt).getTime() < deps.now().getTime())
@@ -87,6 +90,7 @@ export function noticeService(deps: ServiceDeps): NoticeService {
 
   const fields = (input: NoticeInput) => ({
     kind: input.kind,
+    customKind: input.kind === "other" ? (input.customKind?.trim() ?? null) : null,
     title: input.title.trim(),
     body: input.body.trim(),
     important: input.important,
@@ -207,6 +211,8 @@ export function noticeService(deps: ServiceDeps): NoticeService {
       }
       if (input.remindDayBefore && !input.referenceDate)
         throw invalid("referenceDate", "required", "Informe a data do assunto para o lembrete.")
+      if (input.kind === "other" && !input.customKind?.trim())
+        throw invalid("customKind", "required", "Informe o tipo do aviso.")
       const updated = await save(deps, "notices", {
         ...notice,
         ...fields(input),

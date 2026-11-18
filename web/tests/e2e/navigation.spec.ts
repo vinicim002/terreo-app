@@ -13,7 +13,7 @@ test.describe("navegação por perfil", () => {
     {
       perfil: "front-desk",
       inicio: "Portaria",
-      barra: ["Portaria", "Entregas", "Visitantes", "Mais"],
+      barra: ["Portaria", "Entregas", "Visitantes", "Perfil", "Mais"],
     },
     {
       perfil: "manager",
@@ -29,7 +29,7 @@ test.describe("navegação por perfil", () => {
       await expect(page.getByRole("heading", { level: 1, name: inicio })).toBeVisible()
 
       const nav = page.getByRole("navigation", { name: "Navegação principal" })
-      await expect(nav.getByRole("link")).toHaveCount(4)
+      await expect(nav.getByRole("link")).toHaveCount(barra.length)
       await expect(nav.getByRole("link").first()).toHaveAttribute("aria-current", "page")
 
       await page.evaluate(
@@ -49,8 +49,8 @@ test.describe("navegação por perfil", () => {
   test("RF-007: Mais da portaria leva às telas vazias", async ({ page }) => {
     await signInProfile(page, "front-desk")
     await page.goto("/front-desk/more/")
-    await page.getByRole("link", { name: "Receber encomenda" }).click()
-    await expect(page.getByRole("heading", { level: 1, name: "Receber encomenda" })).toBeVisible()
+    await page.getByRole("link", { name: "Alerta geral" }).click()
+    await expect(page.getByRole("heading", { level: 1, name: "Alerta geral" })).toBeVisible()
     await expect(page.getByText("Em construção")).toBeVisible()
     await expect(page.getByRole("navigation", { name: "Navegação principal" })).toBeVisible()
     await page.getByRole("button", { name: "Voltar" }).click()

@@ -62,7 +62,7 @@ export function NoticeDetail({ profile }: { profile: Profile }) {
         />
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-            {tk(notice.kind)}
+            {notice.kind === "other" ? (notice.customKind ?? tk("other")) : tk(notice.kind)}
             {notice.important && <Badge tone="primary">{t("important")}</Badge>}
             {notice.status === "resolved" && <Badge tone="success">{t("resolved")}</Badge>}
           </p>

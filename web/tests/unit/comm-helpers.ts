@@ -47,3 +47,19 @@ export async function outbox(services: Services, kind?: "group" | "private") {
   const all = await services.outbox!.list()
   return kind ? all.filter((m) => m.kind === kind) : all
 }
+
+/** Repositório direto, para preparar casos (tirar permissão, mudar responsável). */
+export async function repoOf(env: { clock: { now: Date } }) {
+  const { createLocalRepository } = await import("@/services/local")
+  return createLocalRepository(undefined, () => env.clock.now)
+}
+
+export const code = async (p: Promise<unknown>) => {
+  try {
+    await p
+    return "ok"
+  } catch (e) {
+    const err = e as { code?: string; details?: Record<string, string> }
+    return err.code ?? String(e)
+  }
+}

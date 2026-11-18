@@ -26,6 +26,23 @@ export type Action =
   | "agenda.read" // agenda, reuniões e resumos
   | "agenda.manage"
   | "notification.own"
+  // Spec 004 (contracts/permissoes.md)
+  | "delivery.viewOwn"
+  | "delivery.register" // código, cancelar código
+  | "delivery.pickUp"
+  | "desk.operate" // a portaria em todos os apartamentos
+  | "visitor.viewOwn"
+  | "visitor.register"
+  | "visitor.cancel" // alvo.createdById
+  | "travel.viewOwn"
+  | "travel.set"
+  | "lostfound.view"
+  | "lostfound.claim"
+  | "lostfound.reportLost"
+  | "lostfound.manage"
+  | "memo.send"
+  | "memo.manage"
+  | "staff.board"
 
 /** Estado atual do ator, carregado do repositório (não confiar no que estava na sessão). */
 export interface ActorInfo {
@@ -34,6 +51,7 @@ export interface ActorInfo {
   apartmentId?: string
   isResponsible?: boolean
   canVotePolls?: boolean
+  canRegisterDeliveries?: boolean
 }
 
 export interface Target {
@@ -42,6 +60,8 @@ export interface Target {
   personId?: string
   /** Enquete oficial (um voto por apartamento). */
   official?: boolean
+  /** Quem criou o registro (cancelar visitante). */
+  createdById?: string
 }
 
 export type Decision = "ok" | "forbidden" | "not_found"
@@ -102,6 +122,34 @@ export function can(actor: ActorInfo | null, action: Action, target: Target = {}
     case "poll.suggest":
       if (actor.kind !== "resident" || !target.official) return "forbidden"
       return !actor.isResponsible && actor.canVotePolls ? "ok" : "forbidden"
+    case "delivery.viewOwn":
+    case "delivery.pickUp":
+    case "visitor.viewOwn":
+    case "visitor.register":
+    case "travel.viewOwn":
+      if (actor.kind !== "resident") return "forbidden"
+      return sameApartment ? "ok" : "not_found"
+    case "delivery.register":
+    case "travel.set":
+      if (actor.kind !== "resident") return "forbidden"
+      if (!sameApartment) return "not_found"
+      return actor.isResponsible || actor.canRegisterDeliveries ? "ok" : "forbidden"
+    case "visitor.cancel":
+      if (actor.kind !== "resident") return "forbidden"
+      if (!sameApartment) return "not_found"
+      return actor.isResponsible || target.createdById === actor.personId ? "ok" : "forbidden"
+    case "desk.operate":
+    case "lostfound.manage":
+    case "memo.send":
+      return actor.kind === "front-desk" ? "ok" : "forbidden"
+    case "memo.manage":
+      return actor.kind === "manager" ? "ok" : "forbidden"
+    case "lostfound.claim":
+    case "lostfound.reportLost":
+      return actor.kind === "resident" ? "ok" : "forbidden"
+    case "lostfound.view":
+    case "staff.board":
+      return "ok"
   }
 }
 
@@ -121,6 +169,7 @@ export async function loadActor(deps: ServiceDeps, ctx: ServiceContext): Promise
       apartmentId: residency.apartmentId,
       isResponsible: residency.isResponsible,
       canVotePolls: residency.canVotePolls,
+      canRegisterDeliveries: residency.canRegisterDeliveries,
     }
   }
   if (role.kind === "front-desk") {

@@ -117,3 +117,22 @@
     @apply border-l-4 border-border pl-3 text-muted-foreground;
   }
 }
+
+/*
+ * Sem barra de rolagem aparente em nenhuma parte do app (pedido do usuário): a página e as listas continuam rolando
+ * com o dedo, a roda do mouse e o teclado. Vale também para o painel /dev.
+ */
+@layer base {
+  * {
+    scrollbar-width: none;
+  }
+  *::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Bandeiras: a fonte de bandeiras (quando instalada) vem antes das de emoji do sistema (ver src/phone/Flag.tsx). */
+.flag-emoji {
+  font-family:
+    "Twemoji Country Flags", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+}

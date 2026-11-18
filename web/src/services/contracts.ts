@@ -2,6 +2,11 @@
 // A implementação local (IndexedDB), a em memória e a futura HTTP seguem exatamente este contrato (RF-025 da 001).
 import type {
   AgendaEvent,
+  DeliveryStatus,
+  InboundMessage,
+  OnArrival,
+  PackageSize,
+  Store,
   NoticeKind,
   NotificationPrefs,
   NotificationTarget,
@@ -117,6 +122,8 @@ export interface ApartmentService {
 export interface StaffService {
   list(ctx: ServiceContext): Promise<Staff[]>
   onDutyAt(ctx: ServiceContext, at: Date): Promise<Staff[]>
+  /** Quem trabalha agora e os próximos turnos de hoje e amanhã (spec 004, research R6). */
+  board(ctx: ServiceContext, at: Date): Promise<{ now: ShiftView[]; next: ShiftView[] }>
 }
 
 export interface ScheduleService {
@@ -246,6 +253,8 @@ export interface OutboxService {
 
 export interface NoticeInput {
   kind: NoticeKind
+  /** Obrigatório quando `kind = other`. */
+  customKind?: string | null
   title: string
   body: string
   important: boolean
@@ -261,6 +270,7 @@ export interface NoticeInput {
 export interface NoticeView {
   id: string
   kind: NoticeKind
+  customKind: string | null
   title: string
   body: string
   important: boolean
@@ -424,6 +434,203 @@ export interface NotificationService {
   setPrefs(ctx: ServiceContext, prefs: NotificationPrefsInput): Promise<NotificationPrefsInput>
 }
 
+// ---------- Serviços da spec 004 (contracts/servicos.md) ----------
+
+export interface DeliveryView {
+  id: string
+  apartment: string
+  origin: "app" | "whatsapp" | "front-desk" | "mail"
+  store: Store | null
+  storeName: string | null
+  code: string | null
+  note: string | null
+  onArrival: OnArrival | null
+  size: PackageSize | null
+  photo: string | null
+  status: DeliveryStatus
+  createdAt: string
+  createdBy: string
+  arrivedAt: string | null
+  receivedBy: string | null
+  pickedUpAt: string | null
+  pickedUpBy: string | null
+  /** Dias inteiros na portaria (só "Na portaria"). */
+  daysAtDesk: number | null
+}
+
+export interface CodeInput {
+  store: Store
+  storeName?: string | null
+  code: string
+  note?: string | null
+  onArrival: OnArrival
+  /** Confirma que é outro pedido quando já existe um igual aguardando no mesmo dia. */
+  confirmDuplicate?: boolean
+}
+
+export interface ReceiveInput {
+  apartmentNumber: string
+  size: PackageSize
+  store: Store
+  storeName?: string | null
+  photo: string | null
+  notifyResident: boolean
+}
+
+export interface DeliveryService {
+  mine(
+    ctx: ServiceContext,
+  ): Promise<{ awaiting: DeliveryView[]; atDesk: DeliveryView[]; done: DeliveryView[] }>
+  registerCode(ctx: ServiceContext, input: CodeInput): Promise<DeliveryView>
+  cancelCode(ctx: ServiceContext, id: string): Promise<void>
+  pickUp(ctx: ServiceContext, id: string): Promise<DeliveryView>
+  byApartment(ctx: ServiceContext, apartmentNumber: string): Promise<DeliveryView[]>
+  markArrived(ctx: ServiceContext, id: string): Promise<DeliveryView>
+  receive(ctx: ServiceContext, input: ReceiveInput): Promise<DeliveryView>
+  mail(ctx: ServiceContext, apartmentNumber: string): Promise<DeliveryView>
+  registerPickup(ctx: ServiceContext, id: string, personId: string): Promise<DeliveryView>
+}
+
+export interface VisitorView {
+  id: string
+  apartment: string
+  kind: "visit" | "provider"
+  name: string
+  day: string
+  fromTime: string
+  toTime: string
+  people: number
+  status: "expected" | "arrived" | "no-show" | "cancelled"
+  walkIn: boolean
+  createdBy: string
+  arrivedAt: string | null
+  releasedBy: string | null
+  canCancel: boolean
+}
+
+export interface VisitorInput {
+  kind: "visit" | "provider"
+  name: string
+  day: string
+  fromTime: string
+  toTime: string
+  people: number
+}
+
+export interface VisitorService {
+  mine(ctx: ServiceContext): Promise<{ expected: VisitorView[]; history: VisitorView[] }>
+  register(ctx: ServiceContext, input: VisitorInput): Promise<VisitorView>
+  cancel(ctx: ServiceContext, id: string): Promise<void>
+  today(ctx: ServiceContext): Promise<{ expected: VisitorView[]; arrived: VisitorView[] }>
+  checkIn(ctx: ServiceContext, id: string): Promise<VisitorView>
+  walkIn(
+    ctx: ServiceContext,
+    input: { apartmentNumber: string; name: string },
+  ): Promise<VisitorView>
+}
+
+export interface TravelView {
+  from: string
+  to: string
+  createdBy: string
+}
+
+export interface TravelService {
+  mine(ctx: ServiceContext): Promise<TravelView | null>
+  start(ctx: ServiceContext, input: { from: string; to: string }): Promise<TravelView>
+  end(ctx: ServiceContext): Promise<void>
+  /** Portaria: apartamentos em viagem agora. */
+  active(ctx: ServiceContext): Promise<{ apartment: string; from: string; to: string }[]>
+}
+
+export interface DeskApartment {
+  number: string
+  floor: number
+  awaiting: number
+  atDesk: number
+  travelUntil: string | null
+}
+
+export interface DeskApartmentDetail {
+  number: string
+  people: { personId: string; name: string; photo: string | null; kind: ResidentKind }[]
+  deliveries: DeliveryView[]
+  travelUntil: string | null
+}
+
+export interface FrontDeskService {
+  overview(ctx: ServiceContext): Promise<{
+    awaiting: number
+    atDesk: number
+    expectedVisitors: number
+    apartments: DeskApartment[]
+  }>
+  apartment(ctx: ServiceContext, number: string): Promise<DeskApartmentDetail>
+}
+
+export interface MemoView {
+  id: string
+  text: string
+  author: string
+  createdAt: string
+  seen: boolean
+  noticeId: string | null
+}
+
+export interface MemoService {
+  send(ctx: ServiceContext, text: string): Promise<MemoView>
+  list(ctx: ServiceContext): Promise<MemoView[]>
+  get(ctx: ServiceContext, id: string): Promise<MemoView>
+  markSeen(ctx: ServiceContext, id: string): Promise<void>
+  linkNotice(ctx: ServiceContext, id: string, noticeId: string): Promise<void>
+}
+
+export interface LostItemView {
+  id: string
+  kind: "found" | "lost"
+  description: string
+  place: string | null
+  photo: string | null
+  status: "open" | "claimed" | "returned" | "found"
+  apartment: string | null
+  createdAt: string
+  /** Perdido do meu apartamento, ou eu disse "é meu". */
+  mine: boolean
+}
+
+export interface LostFoundService {
+  list(
+    ctx: ServiceContext,
+  ): Promise<{ found: LostItemView[]; lost: LostItemView[]; returned: LostItemView[] }>
+  registerFound(
+    ctx: ServiceContext,
+    input: { description: string; place: string | null; photo: string | null },
+  ): Promise<LostItemView>
+  claim(ctx: ServiceContext, id: string): Promise<LostItemView>
+  markReturned(ctx: ServiceContext, id: string, apartmentNumber: string): Promise<LostItemView>
+  reportLost(
+    ctx: ServiceContext,
+    input: { description: string; place: string | null },
+  ): Promise<LostItemView>
+  markFound(ctx: ServiceContext, id: string): Promise<LostItemView>
+}
+
+export interface ShiftView {
+  staffId: string
+  name: string
+  role: "doorman" | "cleaner"
+  photoUrl: string | null
+  startsAt: string
+  endsAt: string
+}
+
+export type InboxResult = "registered" | "unknown-phone" | "no-permission" | "not-understood"
+
+export interface WhatsappInboxService {
+  receive(fromPhone: string, text: string): Promise<{ result: InboxResult; reply: string }>
+  list(): Promise<InboundMessage[]>
+}
+
 export interface Services {
   condominium: CondominiumService
   apartments: ApartmentService
@@ -443,6 +650,14 @@ export interface Services {
   meetings: MeetingService
   agenda: AgendaService
   notifications: NotificationService
+  deliveries: DeliveryService
+  visitors: VisitorService
+  travel: TravelService
+  desk: FrontDeskService
+  memos: MemoService
+  lostFound: LostFoundService
+  /** Só existe nos modos dev e demo (mensagens recebidas simuladas; na Etapa 3, o webhook). */
+  whatsappInbox?: WhatsappInboxService
   /** Só existe nos modos dev e demo. */
   outbox?: OutboxService
 }

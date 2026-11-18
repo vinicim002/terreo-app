@@ -100,7 +100,11 @@
     "meeting": "Board meeting",
     "meetingNew": "New meeting",
     "meetingEdit": "Edit meeting",
-    "eventNew": "New event"
+    "eventNew": "New event",
+    "memos": "Front desk messages",
+    "deliveryNew": "New code",
+    "visitorNew": "Expect a visitor",
+    "apartmentDesk": "Apartment {number}"
   },
   "settings": {
     "title": "Settings",
@@ -128,7 +132,8 @@
     "libras": "Libras (Brazilian Sign Language)",
     "librasHint": "Use the VLibras button on the side of the screen to translate texts into Libras.",
     "librasOffline": "Libras translation is unavailable without internet.",
-    "storageWarning": "This browser does not allow saving data. Your choices will not be remembered next time."
+    "storageWarning": "This browser does not allow saving data. Your choices will not be remembered next time.",
+    "credits": "Flags: Twemoji, © Twitter, CC BY 4.0 license."
   },
   "errors": {
     "notFoundTitle": "Page not found",
@@ -143,7 +148,9 @@
     "country": "Country",
     "invalid": "Invalid number. Check it and try again.",
     "missing-area": "Enter the number with the area code.",
-    "in_use": "This number is already registered in the building."
+    "in_use": "This number is already registered in the building.",
+    "search": "Search country",
+    "noResults": "No country found."
   },
   "auth": {
     "title": "Sign in to Térreo",
@@ -354,7 +361,8 @@
       "elevator": "Elevator",
       "power": "Power",
       "meeting": "Meeting",
-      "general": "General"
+      "general": "General",
+      "other": "Other"
     },
     "notices": {
       "all": "All",
@@ -417,7 +425,10 @@
       "past": "The chosen time has already passed.",
       "publishNow": "Publish now",
       "needReference": "Enter the subject date for the reminder.",
-      "invalid": "Check the title (3 to 120 characters) and the message (up to 2,000 characters)."
+      "invalid": "Check the title (3 to 120 characters) and the message (up to 2,000 characters).",
+      "customKind": "Which type?",
+      "customKindPlaceholder": "E.g.: Construction, Security, Party",
+      "needCustomKind": "Enter the notice type."
     },
     "polls": {
       "open": "Open",
@@ -550,7 +561,11 @@
         "poll-closed": "Poll closed",
         "delivery": "Delivery",
         "visitor": "Visitor",
-        "emergency": "Emergency"
+        "emergency": "Emergency",
+        "delivery-reminder": "Package waiting",
+        "mail": "Mail",
+        "lost-found": "Lost and found",
+        "memo": "Front desk message"
       }
     },
     "prefs": {
@@ -561,7 +576,6 @@
       "private": "On your WhatsApp",
       "alwaysOn": "Always on",
       "emergencyHint": "Emergency alerts always reach everyone, in the app and on WhatsApp.",
-      "laterHint": "Deliveries and visitors will start sending alerts in the next stages of Térreo.",
       "saved": "Preferences saved.",
       "types": {
         "notices": "Notices",
@@ -581,6 +595,261 @@
       "newNotice": "New notice",
       "newPoll": "New poll",
       "newMeeting": "New meeting"
+    },
+    "date": {
+      "choose": "Choose a date",
+      "today": "Today",
+      "clear": "Clear",
+      "prev": "Previous month",
+      "next": "Next month"
+    }
+  },
+  "fd": {
+    "loading": "Loading…",
+    "error": "Could not save. Please try again.",
+    "notFound": "Not found.",
+    "stores": {
+      "ifood": "iFood",
+      "mercado-livre": "Mercado Livre",
+      "shopee": "Shopee",
+      "amazon": "Amazon",
+      "correios": "Post office",
+      "other": "Other store"
+    },
+    "sizes": {
+      "envelope": "Envelope",
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "arrival": {
+      "elevator": "Send up in the elevator",
+      "front-desk": "Leave at the front desk",
+      "call": "Call me"
+    },
+    "status": {
+      "awaiting": "Waiting",
+      "at-desk": "At the front desk",
+      "delivered": "Delivered",
+      "picked-up": "Picked up",
+      "not-arrived": "Did not arrive"
+    },
+    "deliveries": {
+      "new": "Add a delivery code",
+      "whatsappHint": "The doorman sees your code and gives it to the courier. You can also send it to the building's WhatsApp: the store and the code, like \"iFood 4821\".",
+      "awaiting": "Waiting",
+      "atDesk": "At the front desk",
+      "done": "Picked up and delivered",
+      "empty": "No deliveries here.",
+      "registeredAt": "Added at {time} by {name}",
+      "byWhatsapp": "via WhatsApp",
+      "cancel": "Cancel code",
+      "cancelConfirm": "Cancel this code? The front desk will no longer see it.",
+      "yes": "Yes, cancel",
+      "no": "No",
+      "receivedBy": "Received by {name} · {time}",
+      "days": "{count, plural, =0 {Arrived today} one {# day at the front desk} other {# days at the front desk}}",
+      "pickedUp": "I picked it up",
+      "pickedUpBy": "Picked up by {name} · {date}",
+      "photo": "Package photo",
+      "mail": "Mail",
+      "noPermission": "Only people allowed to add deliveries can add codes. Talk to the person responsible."
+    },
+    "codeForm": {
+      "store": "Where is it from?",
+      "storeName": "Store name",
+      "code": "Delivery code",
+      "hints": {
+        "ifood": "On iFood, the code is the last 4 digits of your phone.",
+        "mercado-livre": "On Mercado Livre, the code is in the order details.",
+        "shopee": "On Shopee, the code is in the app under \"My orders\".",
+        "amazon": "On Amazon, the code arrives by email or in the app on delivery day.",
+        "correios": "For the post office, use the tracking code.",
+        "other": "Use the code the store asked you to show the courier."
+      },
+      "note": "Note (optional)",
+      "notePlaceholder": "E.g.: you can leave it in the elevator",
+      "onArrival": "When the order arrives",
+      "save": "Save code",
+      "duplicate": "You already added a code from this store today.",
+      "duplicateYes": "It is another order, save",
+      "invalid": "Check the code: 1 to 30 letters, numbers or hyphens, no spaces."
+    },
+    "desk": {
+      "search": "Search apartment",
+      "receive": "Receive package",
+      "mail": "Mail",
+      "visitor": "Visitor arrived",
+      "dictate": "Dictate message",
+      "lost": "Found items",
+      "today": "Today",
+      "awaiting": "Codes waiting",
+      "atDesk": "At the desk",
+      "visitors": "Expected visits",
+      "expected": "Expected visitors",
+      "noExpected": "No visitors expected today.",
+      "grid": "Apartments",
+      "travel": "Away until {date}",
+      "codes": "{count, plural, one {# code} other {# codes}}",
+      "packages": "{count, plural, one {# at the desk} other {# at the desk}}",
+      "actions": {
+        "receive": "Receive package",
+        "mail": "Mail",
+        "visitor": "Visitor arrived",
+        "dictate": "Dictate message",
+        "lost": "Found items",
+        "travel": "Away"
+      }
+    },
+    "apartment": {
+      "people": "Who lives here",
+      "noPeople": "Nobody registered.",
+      "codes": "Codes waiting",
+      "noCodes": "No codes waiting.",
+      "atDesk": "At the front desk",
+      "arrived": "Arrived",
+      "callFirst": "Call the resident",
+      "elevator": "Send up in the elevator",
+      "pickup": "Picked up",
+      "whoPicked": "Who picked it up?",
+      "confirm": "Confirm pickup",
+      "cancel": "Cancel",
+      "mailSent": "Mail notice sent.",
+      "arrivedDone": "Arrival recorded."
+    },
+    "receive": {
+      "photo": "Package photo (proof)",
+      "takePhoto": "Take photo",
+      "retake": "Take another",
+      "removePhoto": "No photo",
+      "apartment": "Apartment",
+      "size": "Size",
+      "store": "Store",
+      "storeName": "Store name",
+      "notify": "Notify resident on WhatsApp",
+      "notifyHint": "With the photo, privately",
+      "nobody": "Nobody in the apartment will be notified: there are no residents with access.",
+      "save": "Record",
+      "done": "Package recorded.",
+      "notFound": "Apartment not found."
+    },
+    "mail": {
+      "hint": "Choose the apartment. The resident gets a simple notice, without saying what arrived.",
+      "send": "Send mail notice"
+    },
+    "visitors": {
+      "new": "Expect a visitor",
+      "expected": "Expected",
+      "history": "History",
+      "arrivedToday": "Already in",
+      "empty": "No visitors expected.",
+      "emptyHistory": "Nothing here yet.",
+      "visit": "Visit",
+      "provider": "Service provider",
+      "people": "{count, plural, one {# person} other {# people}}",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "between": "from {from} to {to}",
+      "arrivedAt": "Arrived {date} · let in by {name}",
+      "noShow": "Did not come",
+      "cancelled": "Cancelled",
+      "walkInMark": "Not expected",
+      "cancel": "Cancel",
+      "checkIn": "Arrived",
+      "intercom": "Use the intercom before letting in",
+      "walkIn": "Unexpected visitor",
+      "walkInHint": "Call the apartment on the intercom before letting them in.",
+      "walkInName": "Visitor's name",
+      "walkInApartment": "Apartment",
+      "walkInSave": "Record entry",
+      "for": "To {number}"
+    },
+    "visitorForm": {
+      "kind": "Who is coming?",
+      "name": "Name",
+      "providerName": "Name or company",
+      "day": "Day",
+      "from": "From",
+      "to": "Until",
+      "people": "How many people",
+      "save": "Tell the front desk",
+      "invalid": "Check the name, the day (today up to 30 days) and the time."
+    },
+    "travel": {
+      "hint": "Tell the front desk you are traveling. They keep an eye on the apartment and hold packages until you return.",
+      "from": "Leaving",
+      "to": "Returning",
+      "start": "Turn on travel mode",
+      "active": "Travel mode on: from {from} to {to}",
+      "end": "Turn off travel mode",
+      "invalid": "Check the dates: return after leaving, at most 120 days.",
+      "noPermission": "Only people allowed to add deliveries can turn on travel mode.",
+      "watchEmpty": "No apartments away.",
+      "until": "Until {date}"
+    },
+    "onDuty": {
+      "now": "Now",
+      "next": "Next shifts",
+      "onDuty": "On duty",
+      "at": "At {time}",
+      "tomorrow": "Tomorrow at {time}",
+      "doorman": "Front desk",
+      "cleaner": "Cleaning",
+      "range": "{from}–{to}",
+      "nobody": "Nobody on the schedule right now.",
+      "note": "The building manager sets the schedule. Whoever is on duty shows up here automatically, with no clocking in."
+    },
+    "voice": {
+      "dictate": "Dictate",
+      "listening": "Listening… tap to stop",
+      "unavailable": "Dictation is not available on this device. Type the text.",
+      "denied": "The microphone was not allowed. Type the text or allow the microphone in your phone settings."
+    },
+    "dictate": {
+      "hint": "Just speak. The app writes it for you.",
+      "text": "Message",
+      "send": "Send to the manager",
+      "sent": "Message sent to the manager."
+    },
+    "memos": {
+      "empty": "No messages from the front desk.",
+      "by": "{name} · {date}",
+      "seen": "Seen",
+      "markSeen": "Mark as seen",
+      "toNotice": "Turn into a notice",
+      "hasNotice": "Became a notice",
+      "new": "New"
+    },
+    "lost": {
+      "found": "Found ({count})",
+      "lost": "Lost ({count})",
+      "returned": "Returned",
+      "emptyFound": "No found items.",
+      "emptyLost": "No lost items.",
+      "emptyReturned": "Nothing returned yet.",
+      "itsMine": "It is mine",
+      "claimed": "{number} said it is theirs",
+      "claimedMine": "You said it is yours. Pick it up at the front desk.",
+      "returnedTo": "Returned to {number}",
+      "foundIt": "Found it",
+      "foundDone": "Found — {number} was told",
+      "markReturned": "Returned",
+      "returnTo": "Returned to which apartment?",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "lostBy": "Lost by {number}",
+      "registerFound": "Record found item",
+      "reportLost": "Report a lost item",
+      "description": "What is it",
+      "place": "Where it was found (optional)",
+      "lostPlace": "Where it may have been (optional)",
+      "photo": "Photo (optional)",
+      "save": "Save",
+      "atDesk": "at the front desk"
+    },
+    "home": {
+      "atDesk": "{count, plural, one {# package at the front desk} other {# packages at the front desk}}",
+      "nextVisitor": "Visitor expected today: {name}, from {from}"
     }
   }
 }

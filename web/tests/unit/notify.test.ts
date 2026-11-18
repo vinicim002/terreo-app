@@ -129,3 +129,63 @@ describe("notify", () => {
     expect(await count(env.ids.resident)).toBe(antes)
   })
 })
+
+describe("notify — portaria (spec 004, research R7)", () => {
+  const privados = async (texto: string) =>
+    (await outbox(env.services, "private")).filter((m) => m.body.includes(texto))
+
+  it("entregas, lembretes e correspondência vão ao app e ao privado, nunca ao grupo (CS-004)", async () => {
+    const grupoAntes = (await outbox(env.services, "group")).length
+    for (const type of ["delivery", "delivery-reminder", "mail"] as const) {
+      const antes = await count(env.ids.resident)
+      await notify(deps, TAQUARETINGA_ID, {
+        type,
+        audience: { personIds: [env.ids.resident] },
+        title: `Teste ${type}`,
+        body: "x",
+        target: null,
+        toGroup: true,
+      })
+      expect(await count(env.ids.resident)).toBe(antes + 1)
+      expect(await privados(`Teste ${type}`)).toHaveLength(1)
+    }
+    expect((await outbox(env.services, "group")).length).toBe(grupoAntes)
+  })
+
+  it("visitante segue a preferência Visitantes", async () => {
+    await env.services.notifications.setPrefs(env.resident, {
+      app: { notices: true, meetings: true, polls: true, deliveries: true, visitors: false },
+      whatsapp: { deliveries: true, visitors: false },
+    })
+    const antes = await count(env.ids.resident)
+    await notify(deps, TAQUARETINGA_ID, {
+      type: "visitor",
+      audience: { personIds: [env.ids.resident] },
+      title: "Visita chegou",
+      body: "x",
+      target: null,
+    })
+    expect(await count(env.ids.resident)).toBe(antes)
+    expect(await privados("Visita chegou")).toHaveLength(0)
+  })
+
+  it("recados e achados só no app, mesmo com tudo desligado", async () => {
+    await env.services.notifications.setPrefs(env.resident, {
+      app: { notices: false, meetings: false, polls: false, deliveries: false, visitors: false },
+      whatsapp: { deliveries: false, visitors: false },
+    })
+    for (const type of ["lost-found", "memo"] as const) {
+      const antes = await count(env.ids.resident)
+      await notify(deps, TAQUARETINGA_ID, {
+        type,
+        audience: { personIds: [env.ids.resident] },
+        title: `Só app ${type}`,
+        body: "x",
+        target: null,
+        toGroup: true,
+      })
+      expect(await count(env.ids.resident)).toBe(antes + 1)
+      expect(await privados(`Só app ${type}`)).toHaveLength(0)
+    }
+  })
+})

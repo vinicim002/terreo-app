@@ -67,6 +67,7 @@ export function buildCommunicationSeed(base: Base, now: Date): CommunicationSeed
     id: id(12, n),
     condominiumId,
     authorId: author,
+    customKind: null,
     important: false,
     sendToGroup: true,
     requireConfirmation: false,

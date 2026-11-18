@@ -1,7 +1,8 @@
 // Despacho único de notificações (research R2 da spec 003). Decide quem recebe o quê e por qual canal:
 // - no app: uma Notification por pessoa, conforme as preferências (emergência ignora preferências — RF-025);
 // - grupo do WhatsApp: uma única mensagem, só para assuntos gerais (avisos, reuniões, enquetes);
-// - privado do WhatsApp: só assuntos pessoais (entregas, visitantes) e emergências, nunca os gerais (RF-026).
+// - privado do WhatsApp: só assuntos pessoais (entregas, visitantes) e emergências, nunca os gerais (RF-026);
+// - só no app: recados da portaria e achados e perdidos (spec 004, research R7), sem preferência e sem WhatsApp.
 // Nesta etapa as mensagens ficam na caixa de saída simulada; na Etapa 3 isto vira a entrada da fila (ARQ).
 import { nowIso, save, type ServiceDeps } from "./base"
 import type { NotificationPrefs, NotificationTarget, NotificationType } from "./schemas"
@@ -23,17 +24,19 @@ export interface Dispatch {
 
 type PrefKey = keyof NotificationPrefs["app"]
 
-/** Tipo de preferência de cada notificação; null = emergência (sempre ativa). */
+/** Tipo de preferência de cada notificação; null = sem preferência (emergência ou só no app). */
 export function prefKeyOf(type: NotificationType): PrefKey | null {
   if (type.startsWith("notice")) return "notices"
   if (type.startsWith("meeting")) return "meetings"
   if (type.startsWith("poll")) return "polls"
-  if (type === "delivery") return "deliveries"
+  if (type.startsWith("delivery") || type === "mail") return "deliveries"
   if (type === "visitor") return "visitors"
   return null
 }
 
-const PERSONAL = new Set<NotificationType>(["delivery", "visitor"])
+const PERSONAL = new Set<NotificationType>(["delivery", "delivery-reminder", "mail", "visitor"])
+/** Avisos entre morador, portaria e síndico: só no app, sempre (spec 004). */
+const APP_ONLY = new Set<NotificationType>(["lost-found", "memo"])
 const STAFF_TYPES = new Set<NotificationType>([
   "notice",
   "notice-updated",
@@ -92,6 +95,7 @@ export async function notify(deps: ServiceDeps, condominiumId: string, dispatch:
 
   for (const person of await audienceOf(deps, condominiumId, dispatch)) {
     const prefs = await prefsOf(deps, person.id)
+    const appOnly = APP_ONLY.has(dispatch.type)
     const inApp = key === null || prefs.app[key]
     if (inApp) {
       await save(deps, "notifications", {
@@ -108,7 +112,7 @@ export async function notify(deps: ServiceDeps, condominiumId: string, dispatch:
     }
     const personal = PERSONAL.has(dispatch.type)
     const whatsappOn =
-      key === null || (personal && prefs.whatsapp[key as "deliveries" | "visitors"])
+      !appOnly && (key === null || (personal && prefs.whatsapp[key as "deliveries" | "visitors"]))
     if (!general && whatsappOn) {
       await save(deps, "outbox", {
         id: deps.uuid(),

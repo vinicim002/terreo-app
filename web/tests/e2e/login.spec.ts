@@ -97,3 +97,15 @@ test.describe("entrada com celular e código", () => {
     await context.setOffline(false)
   })
 })
+
+test("o país do celular é escolhido no painel do app, com busca", async ({ page }) => {
+  await page.goto("/login/")
+  const pais = page.getByRole("button", { name: /^País:/ })
+  await expect(pais).toContainText("+55")
+  await pais.click()
+  await page.getByPlaceholder("Buscar país").fill("portu")
+  await page.getByRole("button", { name: /Portugal/ }).click()
+  await expect(page.getByRole("button", { name: /^País:/ })).toContainText("+351")
+  await expect(page.getByPlaceholder("Buscar país")).toBeHidden()
+  await expect(page.locator("select")).toHaveCount(0)
+})

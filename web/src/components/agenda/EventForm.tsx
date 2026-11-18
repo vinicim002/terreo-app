@@ -1,5 +1,6 @@
 "use client"
 
+import { DateField } from "@/components/comm/DateField"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
@@ -46,10 +47,8 @@ export function EventForm() {
         onChange={setKind}
         labelOf={(k) => ta(`kinds.${k}`)}
       />
-      <div className="grid grid-cols-2 gap-2">
-        <DateTimeField label={t("date")} type="date" value={date} onChange={setDate} />
-        <DateTimeField label={t("time")} type="time" value={time} onChange={setTime} />
-      </div>
+      <DateField label={t("date")} value={date} onChange={setDate} />
+      <DateTimeField label={t("time")} type="time" value={time} onChange={setTime} />
       <DateTimeField label={t("duration")} type="number" value={duration} onChange={setDuration} />
       <Choices
         label={t("recurrence")}

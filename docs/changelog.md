@@ -29,9 +29,47 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
     desenvolvimento, incluindo acessibilidade das telas novas nas quatro aparências; builds de demonstração e real e
     Lighthouse conferidos.
 
+- Especificação completa da spec 004 pelo Spec Kit (`specs/004-portaria/`): spec com 3 esclarecimentos (quem é avisado
+  de cada entrega; lembrete no 3º dia e depois diário; qualquer pessoa do apartamento avisa visitante), plano, pesquisa,
+  modelo de dados, contratos, 66 tarefas e análise com 10 achados corrigidos antes do código.
+- Portaria (spec 004), com dados no aparelho:
+  - Códigos de entrega pelo app (loja, código, observação e o que fazer na chegada) ou por mensagem ao WhatsApp do
+    condomínio ("iFood 4821"), simulada no painel `/dev`; aviso de código repetido no mesmo dia.
+  - Início da portaria com busca, 5 botões grandes e os números do dia; grade de apartamentos com marcas; painel do
+    apartamento com os códigos em letras grandes, "Chegou", "Ligar para o morador" e "Subir pelo elevador".
+  - Receber encomenda sem código com foto de comprovante (reduzida no celular); correspondência com um toque; retirada
+    pelo app ("Retirei") ou registrada pela portaria; lembrete de encomenda parada no 3º dia e depois diário.
+  - Avisos só no app e no privado, nunca no grupo: entrega com código avisa quem cadastrou e o responsável; sem código e
+    correspondência, todos do apartamento.
+  - Visitantes e prestadores avisados por qualquer pessoa do apartamento; a portaria vê os esperados do dia, toca
+    "Chegou", é lembrada de interfonar para prestador e registra visitante sem cadastro. Sem documento de visitante.
+  - Modo viagem (a portaria vê "Em viagem até" e não há lembretes) e equipe de plantão automática pela escala,
+    inclusive a virada da meia-noite.
+  - Ditar com o microfone do celular nos campos da portaria; "Ditar recado" ao síndico, que pode transformá-lo em aviso.
+  - Achados e perdidos com foto, "É meu", "Devolvido", objeto perdido avisado pelo morador e "Encontrei".
+  - Início do morador mostra encomendas na portaria e a visita esperada do dia.
+  - Testes: 636 unitários (incluindo 24 mensagens de exemplo do WhatsApp e lembretes com relógio controlado) e 350 de
+    ponta a ponta no desenvolvimento, com acessibilidade das telas novas nas quatro aparências e letra máxima em 320 px;
+    builds de demonstração e real e Lighthouse conferidos.
+
 ### Alterado
 
 - Portaria ganha "Avisos" e "Agenda do prédio" no "Mais".
+- O início da portaria deixa de ser "em construção"; o síndico ganha "Recados da portaria", "Equipe de plantão" e
+  "Achados e perdidos" (só leitura).
+- Banco do aparelho na versão 4 e dados de exemplo v4 (entregas, visitantes, viagem, recado, achados).
+- Fotos reduzidas no aparelho com tamanho configurável (perfil 512 px; comprovantes 1024 px).
+- Ajustes depois da revisão das telas:
+  - Calendário do Térreo no lugar do seletor de data do navegador, em todos os formulários (avisos, enquetes,
+    reuniões, eventos, visitantes e modo viagem), com mês, dias em botões grandes, "Hoje" e "Limpar".
+  - Aviso de "Outro" tipo, com nome livre (ex.: "Obras").
+  - Portaria com "Perfil" na barra de baixo (nome, foto, celular, editar e sair).
+  - Início da portaria com 6 botões do mesmo tamanho (novo: "Em viagem"), sem cortar palavras no meio.
+  - "Quem retirou?" em botões grandes no lugar da lista do navegador.
+  - País do celular escolhido num painel do app, com busca e bandeiras.
+  - Bandeiras também na troca de idioma (🇧🇷 🇺🇸 🇪🇸). No Windows, que não desenha bandeiras com emoji, o app carrega
+    uma fonte só de bandeiras (Twemoji, CC BY 4.0, crédito nos Ajustes e no README), guardada no próprio app.
+  - Sem barras de rolagem aparentes em todo o app (a rolagem continua com o dedo, a roda e o teclado).
 - O familiar de exemplo do 804 pode votar em enquetes (para sugerir nas oficiais).
 - Banco do aparelho na versão 3 (os dados de exemplo são recriados).
 - O atalho de testes troca de conta sem esperar o intervalo entre códigos (só em desenvolvimento e demonstração).

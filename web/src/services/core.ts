@@ -18,6 +18,15 @@ import { agendaService, meetingService } from "./meetings"
 import { noticeService } from "./notices"
 import { notificationService } from "./notifications"
 import { pollService } from "./polls"
+import { deliveryService } from "./deliveries"
+import {
+  frontDeskService,
+  lostFoundService,
+  memoService,
+  travelService,
+  visitorService,
+  whatsappInboxService,
+} from "./front-desk"
 import {
   apartmentService,
   condominiumService,
@@ -64,6 +73,14 @@ export function createServices(repo: Repository, options: ServiceOptions = {}): 
     meetings: meetingService(deps),
     agenda: agendaService(deps),
     notifications: notificationService(deps),
+    deliveries: deliveryService(deps),
+    visitors: visitorService(deps),
+    travel: travelService(deps),
+    desk: frontDeskService(deps),
+    memos: memoService(deps),
+    lostFound: lostFoundService(deps),
+    // Mensagens recebidas simuladas só em dev e demo; na Etapa 3, o webhook do WhatsApp no servidor.
+    whatsappInbox: deps.mode === "real" ? undefined : whatsappInboxService(deps),
     // A caixa de saída simulada só existe nos modos dev e demo (RF-008).
     outbox: deps.mode === "real" ? undefined : outboxService(deps),
   }

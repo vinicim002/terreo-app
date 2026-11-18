@@ -1,5 +1,6 @@
 "use client"
 
+import { DateField } from "@/components/comm/DateField"
 import { Plus, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -19,6 +20,7 @@ export function PollForm() {
   const [options, setOptions] = useState(["", ""])
   const [date, setDate] = useState(() => dayKeyBrasilia(new Date(Date.now() + 7 * 86_400_000)))
   const [time, setTime] = useState("22:00")
+  const [today] = useState(() => dayKeyBrasilia(new Date()))
   const [official, setOfficial] = useState(false)
   const [showPartial, setShowPartial] = useState(true)
   const create = useServiceMutation(() =>
@@ -76,10 +78,8 @@ export function PollForm() {
           </button>
         )}
       </fieldset>
-      <div className="grid grid-cols-2 gap-2">
-        <DateTimeField label={t("closesAt")} type="date" value={date} onChange={setDate} />
-        <DateTimeField label={tf("time")} type="time" value={time} onChange={setTime} />
-      </div>
+      <DateField label={t("closesAt")} value={date} onChange={setDate} min={today} />
+      <DateTimeField label={tf("time")} type="time" value={time} onChange={setTime} />
       <Toggle
         label={t("official")}
         hint={t("officialHint")}

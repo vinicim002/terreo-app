@@ -1,4 +1,4 @@
-import { ApiStatus, OutboxPanel, SeedTools } from "@/dev/DevTools"
+import { ApiStatus, InboxSimulator, OutboxPanel, SeedTools } from "@/dev/DevTools"
 import { Markdown } from "@/dev/Markdown"
 import { readDoc } from "@/dev/repo"
 
@@ -10,7 +10,10 @@ export default async function DevOverview() {
         <ApiStatus />
         <SeedTools />
       </div>
-      <OutboxPanel />
+      <div className="grid gap-4 md:grid-cols-2">
+        <InboxSimulator />
+        <OutboxPanel />
+      </div>
       <Markdown text={await readDoc("README.md")} />
     </div>
   )

@@ -90,3 +90,10 @@ Fluxo: `/speckit-specify` → `/speckit-clarify` (opcional) → `/speckit-plan` 
   `feat: adiciona cadastro de entregas` ou `fix: corrige horário do plantão`.
 - O autor do commit é a pessoa que fez o trabalho. Não adicionar coautores de ferramentas de IA.
 - Nunca versionar `.env`, senhas, chaves, credenciais ou dados reais de moradores.
+
+## Créditos
+
+- Bandeiras dos países (no Windows, que não desenha bandeiras com emoji): fonte "Twemoji Country Flags" do pacote
+  [`country-flag-emoji-polyfill`](https://github.com/talkjs/country-flag-emoji-polyfill) (código MIT); arte do
+  [Twemoji](https://github.com/twitter/twemoji), © Twitter, sob a licença
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).

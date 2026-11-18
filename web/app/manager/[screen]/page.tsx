@@ -11,6 +11,9 @@ const OWN_PAGES = [
   "calendar",
   "meetings",
   "notifications",
+  "memos",
+  "on-duty",
+  "lost-and-found",
 ]
 
 export const dynamicParams = false

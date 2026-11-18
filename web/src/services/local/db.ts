@@ -1,4 +1,4 @@
-// Banco IndexedDB do aparelho (research R5 da 001; versão 2 na spec 002; versão 3 na spec 003).
+// Banco IndexedDB do aparelho (research R5 da 001; versão 2 na spec 002; 3 na spec 003; 4 na spec 004).
 // Os dados de exemplo são criados uma única vez por SEED_VERSION, numa só transação, para que duas abas não
 // dupliquem nada. Sessões, códigos e mensagens simuladas também são apagados ao recriar.
 import { openDB, type IDBPDatabase } from "idb"
@@ -6,7 +6,7 @@ import { INDEXES, STORES, type StoreMap, type StoreName } from "../base"
 import { SEED_VERSION, buildSeed } from "./seed"
 
 export const DB_NAME = "terreo"
-const DB_VERSION = 3
+const DB_VERSION = 4
 
 // O esquema do idb é tipado de forma solta aqui: as lojas e índices vêm de INDEXES (base.ts).
 export type TerreoDB = IDBPDatabase<unknown>
@@ -52,8 +52,14 @@ export function seedRows(now: Date = new Date()): { [S in StoreName]: StoreMap[S
     pollSuggestions: seed.pollSuggestions,
     meetings: seed.meetings,
     agendaEvents: seed.agendaEvents,
-    notifications: seed.notifications,
+    notifications: [...seed.notifications, ...seed.frontDeskNotifications],
     notificationPrefs: [],
+    deliveries: seed.deliveries,
+    visitors: seed.visitors,
+    travelModes: seed.travelModes,
+    memos: seed.memos,
+    lostItems: seed.lostItems,
+    inboundMessages: seed.inboundMessages,
   }
 }
 

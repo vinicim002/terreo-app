@@ -1,8 +1,9 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
-import { useDataCounts, useResetSeed } from "@/hooks/data"
+import { useDataCounts, useInboundMessages, useResetSeed } from "@/hooks/data"
+import { EXAMPLE_ACCOUNTS } from "@/services/local/seed"
 import { getServices } from "@/services"
 import { formatPhone } from "@/phone/phone"
 
@@ -18,6 +19,21 @@ const LABELS: Record<string, string> = {
   pets: "Animais",
   emergencyContacts: "Contatos de emergência",
   rules: "Regras",
+  notices: "Avisos",
+  noticeReads: "Leituras de avisos",
+  polls: "Enquetes",
+  pollVotes: "Votos",
+  pollSuggestions: "Sugestões de voto",
+  meetings: "Reuniões",
+  agendaEvents: "Eventos da agenda",
+  notifications: "Notificações",
+  notificationPrefs: "Preferências de notificação",
+  deliveries: "Entregas",
+  visitors: "Visitantes",
+  travelModes: "Modo viagem",
+  memos: "Recados da portaria",
+  lostItems: "Achados e perdidos",
+  inboundMessages: "Mensagens recebidas",
 }
 
 /** Situação da API (GET /api/health) — RF-002, RF-032. */
@@ -131,6 +147,72 @@ export function OutboxPanel() {
             {new Date(m.createdAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}
             <br />
             {m.body}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/**
+ * Simula uma mensagem recebida no WhatsApp do condomínio (spec 004, RF-002): na Etapa 3, o webhook do WhatsApp
+ * chama a mesma função no servidor.
+ */
+export function InboxSimulator() {
+  const [phone, setPhone] = useState(EXAMPLE_ACCOUNTS[3]?.phone ?? "")
+  const [text, setText] = useState("iFood 4821")
+  const [result, setResult] = useState<string | null>(null)
+  const client = useQueryClient()
+  const { data } = useInboundMessages()
+  if (!getServices().whatsappInbox) return null
+  return (
+    <div className="rounded-xl border border-border bg-card p-4" data-testid="inbox-simulator">
+      <h2 className="font-semibold">Simular mensagem recebida no WhatsApp</h2>
+      <form
+        className="mt-2 flex flex-col gap-2"
+        onSubmit={async (e) => {
+          e.preventDefault()
+          const r = await getServices().whatsappInbox!.receive(phone, text)
+          setResult(`${r.result}: ${r.reply}`)
+          await client.invalidateQueries()
+        }}
+      >
+        <label className="flex flex-col gap-1 text-sm font-semibold">
+          Celular de quem manda
+          <select
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="min-h-11 rounded-lg border border-input bg-card px-2 font-normal"
+          >
+            {EXAMPLE_ACCOUNTS.map((a) => (
+              <option key={a.key} value={a.phone}>
+                {a.name} ({a.key})
+              </option>
+            ))}
+            <option value="+5500999999999">Número desconhecido</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-sm font-semibold">
+          Mensagem
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            className="min-h-11 rounded-lg border border-input bg-card px-2 font-normal"
+          />
+        </label>
+        <button type="submit" className="btn-primary self-start">
+          Receber mensagem
+        </button>
+      </form>
+      {result && (
+        <p role="status" className="mt-2 text-sm">
+          {result}
+        </p>
+      )}
+      <ul className="mt-2 flex flex-col gap-1 text-sm">
+        {data?.slice(0, 5).map((m) => (
+          <li key={m.id} className="rounded-lg bg-muted p-2">
+            {m.text} → <strong>{m.result}</strong>
           </li>
         ))}
       </ul>

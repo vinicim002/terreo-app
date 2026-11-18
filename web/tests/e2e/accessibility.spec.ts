@@ -140,3 +140,58 @@ for (const aparencia of APARENCIAS) {
     }
   })
 }
+
+// Spec 004: telas da portaria (T061).
+const TELAS_004: { conta: AccountKey; papel?: "manager"; url: string }[] = [
+  { conta: "responsible", url: "/resident/deliveries/" },
+  { conta: "responsible", url: "/resident/delivery/new/" },
+  { conta: "responsible", url: "/resident/visitors/" },
+  { conta: "responsible", url: "/resident/visitor/new/" },
+  { conta: "responsible", url: "/resident/travel-mode/" },
+  { conta: "responsible", url: "/resident/on-duty/" },
+  { conta: "responsible", url: "/resident/lost-and-found/" },
+  { conta: "front-desk", url: "/front-desk/" },
+  { conta: "front-desk", url: "/front-desk/deliveries/" },
+  { conta: "front-desk", url: "/front-desk/apartment/?n=804" },
+  { conta: "front-desk", url: "/front-desk/receive-delivery/" },
+  { conta: "front-desk", url: "/front-desk/visitors/" },
+  { conta: "front-desk", url: "/front-desk/dictate/" },
+  { conta: "front-desk", url: "/front-desk/lost-and-found/" },
+  { conta: "manager", papel: "manager", url: "/manager/memos/" },
+]
+
+for (const aparencia of APARENCIAS) {
+  test.describe(`acessibilidade (spec 004) — ${aparencia.nome}`, () => {
+    test.skip(({ browserName }) => browserName !== "chromium", "auditoria só no Chromium")
+    for (const tela of TELAS_004) {
+      test(`${tela.conta} ${tela.url}`, async ({ page }) => {
+        await withPrefs(page, aparencia.prefs)
+        await signInAs(page, tela.conta, tela.papel)
+        await page.goto(tela.url)
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible()
+        await page.waitForLoadState("networkidle")
+        const tags = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]
+        if (aparencia.prefs.highContrast) tags.push("wcag2aaa")
+        const result = await new AxeBuilder({ page }).withTags(tags).exclude("[vw]").analyze()
+        const graves = result.violations.filter(
+          (v) => v.impact === "serious" || v.impact === "critical",
+        )
+        expect(
+          graves.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
+        ).toEqual([])
+      })
+    }
+  })
+}
+
+test("botões da portaria têm pelo menos 56 px (RF-025)", async ({ page, browserName }) => {
+  test.skip(browserName !== "chromium")
+  await signInAs(page, "front-desk")
+  await page.goto("/front-desk/apartment/?n=804")
+  await expect(page.getByRole("button", { name: "Chegou" }).first()).toBeVisible()
+  for (const name of ["Chegou", "Receber encomenda", "Correspondência"]) {
+    const el = page.getByRole(name === "Receber encomenda" ? "link" : "button", { name }).first()
+    const box = await el.boundingBox()
+    expect(box!.height, name).toBeGreaterThanOrEqual(56)
+  }
+})

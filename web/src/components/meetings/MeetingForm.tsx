@@ -1,5 +1,6 @@
 "use client"
 
+import { DateField } from "@/components/comm/DateField"
 import { Plus, X } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -45,10 +46,8 @@ function MeetingFormFields({ id, existing }: { id: string | null; existing?: Mee
         save.mutate(undefined, { onSuccess: (m) => router.replace(`/manager/meeting/?id=${m.id}`) })
       }}
     >
-      <div className="grid grid-cols-2 gap-2">
-        <DateTimeField label={t("date")} type="date" value={date} onChange={setDate} />
-        <DateTimeField label={t("time")} type="time" value={time} onChange={setTime} />
-      </div>
+      <DateField label={t("date")} value={date} onChange={setDate} />
+      <DateTimeField label={t("time")} type="time" value={time} onChange={setTime} />
       <TextField label={t("place")} value={place} onChange={setPlace} maxLength={120} />
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-1 text-sm font-semibold">{t("agenda")}</legend>

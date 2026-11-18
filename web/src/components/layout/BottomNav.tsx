@@ -32,7 +32,10 @@ export function BottomNav({ profile }: { profile: Profile }) {
       aria-label={t("nav.main")}
       className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-nav pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="mx-auto grid max-w-xl grid-cols-4">
+      <ul
+        className="mx-auto grid max-w-xl"
+        style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}
+      >
         {items.map(({ slug, screen, href }) => {
           const Icon = screen.icon
           const isActive = active?.href === href

@@ -227,3 +227,89 @@ export function useNotificationPrefs() {
     queryFn: () => getServices().notifications.getPrefs(ctx()),
   })
 }
+
+// ---------- Spec 004: portaria ----------
+
+export function useMyDeliveries() {
+  return useQuery({
+    queryKey: ["deliveries", "mine"],
+    queryFn: () => getServices().deliveries.mine(ctx()),
+  })
+}
+
+export function useDeskOverview() {
+  return useQuery({
+    queryKey: ["desk", "overview"],
+    queryFn: () => getServices().desk.overview(ctx()),
+    refetchInterval: 60_000,
+  })
+}
+
+export function useDeskApartment(number: string | null) {
+  return useQuery({
+    queryKey: ["desk", "apartment", number],
+    queryFn: () => getServices().desk.apartment(ctx(), number!),
+    enabled: !!number,
+    retry: false,
+  })
+}
+
+export function useMyVisitors() {
+  return useQuery({
+    queryKey: ["visitors", "mine"],
+    queryFn: () => getServices().visitors.mine(ctx()),
+  })
+}
+
+export function useTodayVisitors() {
+  return useQuery({
+    queryKey: ["visitors", "today"],
+    queryFn: () => getServices().visitors.today(ctx()),
+    refetchInterval: 60_000,
+  })
+}
+
+export function useMyTravel() {
+  return useQuery({ queryKey: ["travel", "mine"], queryFn: () => getServices().travel.mine(ctx()) })
+}
+
+export function useActiveTravel() {
+  return useQuery({
+    queryKey: ["travel", "active"],
+    queryFn: () => getServices().travel.active(ctx()),
+  })
+}
+
+/** Equipe de plantão: recalcula a cada minuto (RF-020). */
+export function useStaffBoard() {
+  return useQuery({
+    queryKey: ["staff", "board"],
+    queryFn: () => getServices().staff.board(ctx(), new Date()),
+    refetchInterval: 60_000,
+  })
+}
+
+export function useMemos() {
+  return useQuery({ queryKey: ["memos"], queryFn: () => getServices().memos.list(ctx()) })
+}
+
+export function useMemoById(id: string | null) {
+  return useQuery({
+    queryKey: ["memo", id],
+    queryFn: () => getServices().memos.get(ctx(), id!),
+    enabled: !!id,
+    retry: false,
+  })
+}
+
+export function useLostFound() {
+  return useQuery({ queryKey: ["lost-found"], queryFn: () => getServices().lostFound.list(ctx()) })
+}
+
+export function useInboundMessages() {
+  return useQuery({
+    queryKey: ["dev", "inbound"],
+    queryFn: () => getServices().whatsappInbox?.list() ?? Promise.resolve([]),
+    refetchInterval: 3_000,
+  })
+}

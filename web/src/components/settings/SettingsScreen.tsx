@@ -8,7 +8,11 @@ import { Header } from "@/components/layout/Header"
 import { AccountSection } from "@/components/settings/AccountSection"
 import { roleHome, useSession } from "@/auth/session"
 import { usePreferences } from "@/preferences/store"
-import { FONT_SCALES, LOCALES, THEMES, type FontScale } from "@/preferences/types"
+import { FONT_SCALES, LOCALES, THEMES, type FontScale, type Locale } from "@/preferences/types"
+import { Flag } from "@/phone/Flag"
+
+/** Bandeira de cada idioma do app. */
+const LOCALE_FLAG: Record<Locale, string> = { pt: "BR", en: "US", es: "ES" }
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -27,12 +31,14 @@ function Choice<T extends string | number>({
   value,
   onChange,
   label,
+  icon,
 }: {
   legend: string
   options: readonly T[]
   value: T
   onChange: (value: T) => void
   label: (value: T) => string
+  icon?: (value: T) => ReactNode
 }) {
   const name = useId()
   return (
@@ -56,6 +62,7 @@ function Choice<T extends string | number>({
               checked={checked}
               onChange={() => onChange(option)}
             />
+            {icon?.(option)}
             <span className="flex-1 font-medium">{label(option)}</span>
             {checked && <Check aria-hidden className="size-5 text-link" />}
           </label>
@@ -83,6 +90,7 @@ export function SettingsScreen() {
             value={prefs.locale}
             onChange={(locale) => update({ locale })}
             label={(l) => t(`languages.${l}`)}
+            icon={(l) => <Flag code={LOCALE_FLAG[l]} className="text-2xl" />}
           />
         </Section>
 
@@ -137,6 +145,7 @@ export function SettingsScreen() {
         </Section>
 
         <AccountSection />
+        <p className="text-xs text-muted-foreground">{t("credits")}</p>
       </main>
     </>
   )

@@ -13,7 +13,7 @@ import { getServices } from "@/services"
 import { Avatar } from "./Avatar"
 
 /** Editar o próprio nome e foto (RF-020, RF-021, RF-025). O celular não muda por aqui. */
-export function EditProfileScreen() {
+export function EditProfileScreen({ backHref = "/resident/profile/" }: { backHref?: string }) {
   const t = useTranslations("profile")
   const th = useTranslations("household")
   const me = useMe()
@@ -24,7 +24,7 @@ export function EditProfileScreen() {
   const save = useServiceMutation((patch: { name?: string; photo?: string | null }) =>
     getServices().people.updateOwnProfile(serviceContext(), patch),
   )
-  if (!me.person) return <Header title={t("editTitle")} showBack backHref="/resident/profile/" />
+  if (!me.person) return <Header title={t("editTitle")} showBack backHref={backHref} />
 
   const currentName = name ?? me.person.name
   const currentPhoto = photo === undefined ? me.person.photo : photo
@@ -41,7 +41,7 @@ export function EditProfileScreen() {
 
   return (
     <>
-      <Header title={t("editTitle")} showBack backHref="/resident/profile/" />
+      <Header title={t("editTitle")} showBack backHref={backHref} />
       <main className="mx-auto flex max-w-xl flex-col gap-4 px-4 py-4">
         <form onSubmit={submit} className="flex flex-col gap-4">
           <div className="flex items-center gap-4">

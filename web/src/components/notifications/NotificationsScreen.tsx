@@ -2,6 +2,9 @@
 
 import {
   CheckCheck,
+  Mail,
+  MessageSquareText,
+  Search,
   CheckCircle2,
   Clock,
   Megaphone,
@@ -42,15 +45,32 @@ const ICON: Record<NotificationType, LucideIcon> = {
   poll: Vote,
   "poll-closed": Vote,
   delivery: Package,
+  "delivery-reminder": Package,
+  mail: Mail,
   visitor: UserPlus,
+  "lost-found": Search,
+  memo: MessageSquareText,
   emergency: Siren,
 }
 
 function targetHref(base: string, n: NotificationView) {
   if (!n.target) return null
-  if (n.target.kind === "notice") return `${base}/notice/?id=${n.target.id}`
-  if (n.target.kind === "meeting") return `${base}/meeting/?id=${n.target.id}`
-  return `${base}/polls/`
+  switch (n.target.kind) {
+    case "notice":
+      return `${base}/notice/?id=${n.target.id}`
+    case "meeting":
+      return `${base}/meeting/?id=${n.target.id}`
+    case "poll":
+      return `${base}/polls/`
+    case "delivery":
+      return `${base}/deliveries/`
+    case "visitor":
+      return `${base}/visitors/`
+    case "lost-item":
+      return `${base}/lost-and-found/`
+    case "memo":
+      return `${base}/memos/`
+  }
 }
 
 function Center({ profile }: { profile: Profile }) {
@@ -170,7 +190,6 @@ function Prefs({ profile }: { profile: Profile }) {
             />
           </section>
         ))}
-      {profile === "resident" && <p className="text-sm text-muted-foreground">{t("laterHint")}</p>}
       <section className="flex flex-col gap-2 rounded-xl border-2 border-destructive p-3">
         <h2 className="flex items-center gap-2 text-lg">
           <Siren aria-hidden className="size-5 text-destructive" />

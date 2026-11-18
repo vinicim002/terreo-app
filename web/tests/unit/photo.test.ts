@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest"
-import { MAX_PHOTO_SIZE, resizePhoto, targetSize } from "@/photo/resize"
+import { MAX_PHOTO_SIZE, PROOF_PHOTO, resizePhoto, targetSize } from "@/photo/resize"
 
 // RF-025: foto reduzida no aparelho para no máximo 512 × 512 px.
 describe("foto", () => {
@@ -23,5 +23,21 @@ describe("foto", () => {
     })
     expect(desenhado).toEqual([512, 384])
     expect(result).toMatch(/^data:image\/jpeg/)
+  })
+
+  it("comprovantes de encomendas e achados vão até 1024 px, qualidade 0,7 (spec 004)", async () => {
+    const desenhado: number[] = []
+    await resizePhoto(
+      new Blob(["x"]),
+      {
+        decode: async () => ({ width: 4000, height: 3000 }),
+        draw: (_img, width, height, _type, quality) => {
+          desenhado.push(width, height, quality)
+          return "data:image/jpeg;base64,AAAA"
+        },
+      },
+      PROOF_PHOTO,
+    )
+    expect(desenhado).toEqual([1024, 768, 0.7])
   })
 })

@@ -17,9 +17,9 @@ const byNumber = (n: string) => seed.apartments.find((a) => a.number === n)!
 const residentsOf = (n: string) => seed.residencies.filter((r) => r.apartmentId === byNumber(n).id)
 const person = (id: string) => seed.people.find((p) => p.id === id)!
 
-describe("dados de exemplo v3 — base da spec 002", () => {
-  it("está na versão 3 e passa nos esquemas", () => {
-    expect(SEED_VERSION).toBe(3)
+describe("dados de exemplo v4 — base da spec 002", () => {
+  it("está na versão 4 e passa nos esquemas", () => {
+    expect(SEED_VERSION).toBe(4)
     seed.apartments.forEach((a) => ApartmentSchema.parse(a))
     seed.people.forEach((p) => PersonSchema.parse(p))
     seed.residencies.forEach((r) => ResidencySchema.parse(r))
@@ -109,7 +109,7 @@ describe("dados de exemplo v3 — base da spec 002", () => {
   })
 })
 
-describe("dados de exemplo v3 — comunicação (spec 003, RF-030)", () => {
+describe("dados de exemplo v4 — comunicação (spec 003, RF-030)", () => {
   const agora = new Date("2026-11-16T12:00:00Z")
   const s = buildSeed(agora)
 
@@ -181,5 +181,52 @@ describe("dados de exemplo v3 — comunicação (spec 003, RF-030)", () => {
     const daPortaria = s.notifications.filter((n) => n.personId === portaria.id)
     expect(daPortaria.length).toBeGreaterThan(0)
     expect(daPortaria.every((n) => n.type.startsWith("notice"))).toBe(true)
+  })
+})
+
+describe("dados de exemplo v4 — portaria (spec 004, RF-026)", () => {
+  const agora = new Date("2026-11-16T12:00:00Z")
+  const s = buildSeed(agora)
+  const numero = (apartmentId: string) => s.apartments.find((a) => a.id === apartmentId)!.number
+
+  it("passa nos esquemas", async () => {
+    const schemas = await import("@/services/schemas")
+    s.deliveries.forEach((x) => schemas.DeliverySchema.parse(x))
+    s.visitors.forEach((x) => schemas.VisitorSchema.parse(x))
+    s.travelModes.forEach((x) => schemas.TravelModeSchema.parse(x))
+    s.memos.forEach((x) => schemas.FrontDeskMemoSchema.parse(x))
+    s.lostItems.forEach((x) => schemas.LostItemSchema.parse(x))
+    s.frontDeskNotifications.forEach((x) => schemas.NotificationSchema.parse(x))
+  })
+
+  it("tem códigos no 804 de duas pessoas e encomenda com foto (US1, US2)", () => {
+    const do804 = s.deliveries.filter((d) => numero(d.apartmentId) === "804")
+    const codigos = do804.filter((d) => d.status === "awaiting")
+    expect(codigos.map((d) => d.code).sort()).toEqual(["4821", "MLB-73"])
+    expect(new Set(codigos.map((d) => d.createdById)).size).toBe(2)
+    expect(
+      do804.some((d) => d.status === "at-desk" && d.photo?.startsWith("data:image/jpeg")),
+    ).toBe(true)
+    expect(do804.some((d) => d.status === "picked-up" && d.pickedUpById)).toBe(true)
+    expect(s.deliveries.filter((d) => d.status === "awaiting")).toHaveLength(7)
+    expect(s.deliveries.some((d) => d.origin === "mail")).toBe(true)
+    expect(s.deliveries.every((d) => new Date(d.createdAt) <= agora)).toBe(true)
+  })
+
+  it("tem visitantes de hoje, de ontem e um que não veio (US3)", () => {
+    expect(
+      s.visitors.filter((v) => v.status === "expected" && v.day === "2026-11-16"),
+    ).toHaveLength(2)
+    expect(s.visitors.some((v) => v.kind === "provider")).toBe(true)
+    expect(s.visitors.some((v) => v.status === "arrived" && v.releasedById)).toBe(true)
+    expect(s.visitors.some((v) => v.status === "no-show")).toBe(true)
+  })
+
+  it("tem recado, viagem e achados e perdidos (US4, US5, US6)", () => {
+    expect(s.memos).toHaveLength(1)
+    expect(numero(s.travelModes[0].apartmentId)).toBe("1003")
+    expect(s.lostItems.filter((i) => i.kind === "found")).toHaveLength(3)
+    expect(s.lostItems.some((i) => i.status === "claimed")).toBe(true)
+    expect(s.lostItems.filter((i) => i.kind === "lost")).toHaveLength(1)
   })
 })

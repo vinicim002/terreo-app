@@ -23,6 +23,7 @@ O piloto será lançado com **todas as funcionalidades do minimundo**, exceto "I
 - [ ] Validar em celulares reais: instalação no Android e no iPhone, VLibras, "seguir o celular" no iPhone.
 - [ ] Validar em celulares reais as telas da spec 002: foto do perfil pela câmera e textos em inglês e espanhol.
 - [ ] Validar em celulares reais as telas da spec 003: campos de data e hora, calendário e o sino.
+- [ ] Validar em celulares reais as telas da spec 004: câmera da encomenda, ditar (Android e iPhone) e botões da portaria.
 - [ ] Conferir a licença do desenho do mascote (sabiá) antes do lançamento, como avisa o kit da marca.
 
 ## Etapa 2 — Telas com dados locais (Proposta)
@@ -34,10 +35,12 @@ Ordem sugerida, uma spec por grupo:
 - [x] Comunicação (spec 003): avisos (agendar, importante, confirmação, véspera, editar, resolvido), agenda do mês,
   reuniões com pauta e resumo, enquetes (oficiais com voto do responsável e sugestões), central de notificações e
   "Como receber", com WhatsApp simulado (grupo para assuntos gerais, privado só para pessoais).
-- [ ] Portaria: entregas e códigos, correspondência, visitantes, modo viagem, plantão, voz, achados e perdidos.
+- [x] Portaria (spec 004): códigos de entrega pelo app e pelo WhatsApp (simulado), encomenda com foto, correspondência,
+  retirada, lembrete de encomenda parada, visitantes e prestadores, modo viagem, equipe de plantão, ditar e recados ao
+  síndico, achados e perdidos.
 - [ ] Segurança: botão de emergência, alerta geral, contatos.
 - [ ] Participação: sugestões, melhorias, avisar problema, barulho, prestadores, comércio, pesquisa de satisfação.
-- [ ] Administração: mudanças e obras, controle ou chave, advertências, prestação de contas, resumo do mês, lembretes,
+- [ ] Administração: mudanças e obras, edição da escala e rodízio de folgas (depende do síndico), controle ou chave, advertências, prestação de contas, resumo do mês, lembretes,
   perguntas frequentes, apartamento disponível.
 - [ ] Acessibilidade: tamanho de letra, contraste, leitura em voz alta, legendas, VLibras.
 
@@ -49,6 +52,8 @@ Ordem sugerida, uma spec por grupo:
 - [ ] Comunicação no servidor (spec 003): `runDue` como tarefa agendada do ARQ, `notify` como entrada da fila, testes
   pytest das regras (permissões, um voto por apartamento, canais, isolamento entre condomínios) e confirmar leitura
   respondendo à mensagem no WhatsApp.
+- [ ] Portaria no servidor (spec 004): webhook do WhatsApp para códigos de entrega (`parseDeliveryMessage`), foto no
+  privado e no R2, pytest das regras (permissões, quem é avisado, lembretes, isolamento entre condomínios).
 
 ## Etapa 4 — Piloto (Proposta)
 

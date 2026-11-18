@@ -35,7 +35,7 @@ interface ImprovementService {
 interface IssueView {
   id; place; kind; description; photos: string[]; public: boolean; urgent: boolean
   status: "open" | "in-progress" | "resolved"; isNew: boolean
-  reporter: string                                        // "Apto 804" ou "Portaria"
+  reporter: string          // síndico e a própria casa: "Apto 804" ou "Portaria"; vizinhos: "Morador" ou "Portaria"
   supports: number; supportedByMe: boolean; canSupport: boolean
   updates: { status; message: string | null; at: string }[]; createdAt: string; mine: boolean
 }

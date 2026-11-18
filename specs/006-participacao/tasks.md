@@ -61,7 +61,7 @@ e quem gostou é avisado.
 
 ### Testes
 
-- [ ] T011 [P] [US1] Escrever `web/tests/unit/suggestions.test.ts`: `create` valida campos e grava "received"; sugestão sem apartamento mostra `apartment: null` e `authorName: null` aos vizinhos e o apartamento e o nome ao síndico (esclarecimento 4); `vote` um por pessoa, mesmo valor tira, outro troca; `agreePercent`; abas `top` (mais "up"), `recent`, `mine`; `update`/`remove` só autor e só "received"; `setStatus` só síndico, avisa quem sugeriu (`suggestion-status`); `approved` cria `Improvement` "planned" com `suggestionId`, grava `improvementId`, avisa os "up" (`suggestion-approved`) e é idempotente; portaria `forbidden`
+- [ ] T011 [P] [US1] Escrever `web/tests/unit/suggestions.test.ts`: `create` valida campos e grava "received"; sugestão sem apartamento mostra `apartment: null` e `authorName: null` aos vizinhos e o apartamento e o nome ao síndico (esclarecimento 4); `vote` um por pessoa, mesmo valor tira, outro troca; `agreePercent`; abas `top` (mais "up"), `recent`, `mine`; `update`/`remove` só autor e só "received"; sugestão de pessoa removida mostra "Ex-morador" e mantém os votos; `setStatus` só síndico, avisa quem sugeriu (`suggestion-status`); `approved` cria `Improvement` "planned" com `suggestionId`, grava `improvementId`, avisa os "up" (`suggestion-approved`) e é idempotente; portaria `forbidden`
 - [ ] T012 [P] [US1] Escrever `web/tests/e2e/suggestions.spec.ts`: 804 publica "Bicicletário na garagem" sem mostrar o apto → familiar vê "Morador" e dá "gostei" → síndico vê "Apto 804", aprova com resposta → Melhorias mostra "Bicicletário na garagem" planejada com a origem → familiar tem a notificação
 
 ### Implementação
@@ -85,8 +85,8 @@ avisados.
 
 ### Testes
 
-- [ ] T018 [P] [US2] Escrever `web/tests/unit/issues.test.ts`: `report` valida (descrição 5–500, até 3 fotos), avisa o síndico (`issue-new`); portaria avisa com `public` sempre falso e "Portaria" como origem; visibilidade (público para todos os moradores; privado só autor, casa e síndico; portaria vê os próprios e os públicos); `support` um por pessoa, desfazível, só em público e não pelo próprio autor; `similar` devolve os públicos abertos do lugar; `all` do síndico com urgentes primeiro e `isNew` até abrir; `update` grava histórico e avisa autor e apoiadores (`issue-update`); só síndico atualiza e marca urgente
-- [ ] T019 [P] [US2] Escrever `web/tests/e2e/issues.spec.ts`: 804 → Avisar problema → elevador, quebrado, descrição, foto (`fixtures/caixa.jpg`), mostrar para todos → enviar; escolher "Barulho" mostra o atalho para o aviso anônimo; familiar apoia; síndico → Problemas → "Novo" → em andamento com mensagem e urgente → 804 vê a mensagem no histórico
+- [ ] T018 [P] [US2] Escrever `web/tests/unit/issues.test.ts`: `report` valida (descrição 5–500, até 3 fotos), avisa o síndico (`issue-new`); portaria avisa com `public` sempre falso e "Portaria" como origem; visibilidade (público para todos os moradores; privado só autor, casa e síndico; portaria vê os próprios e os públicos); `reporter` é "Morador" para os vizinhos e "Apto N" para o síndico e a própria casa; `support` um por pessoa, desfazível, só em público e não pelo próprio autor; `similar` devolve os públicos abertos do lugar; `all` do síndico com urgentes primeiro e `isNew` até abrir; `update` grava histórico e avisa autor e apoiadores (`issue-update`); só síndico atualiza e marca urgente
+- [ ] T019 [P] [US2] Escrever `web/tests/e2e/issues.spec.ts`: 804 → Avisar problema → elevador, quebrado, descrição, foto (`fixtures/caixa.jpg`), mostrar para todos → enviar, contando no máximo 4 toques além da descrição (CS-003); familiar vê "Morador" e o síndico vê "Apto 804"; escolher "Barulho" mostra o atalho para o aviso anônimo; familiar apoia; síndico → Problemas → "Novo" → em andamento com mensagem e urgente → 804 vê a mensagem no histórico
 
 ### Implementação
 
@@ -127,7 +127,7 @@ avisados.
 
 ### Testes
 
-- [ ] T031 [P] [US4] Escrever `web/tests/unit/listings.test.ts`: `recommendNew` valida (nome 2–60, telefone por `normalizeDialable`, nota obrigatória em prestador e nula em comércio, observação e comentário); telefone repetido → `conflict` com o id existente e `findByPhone`; `recommend` uma por pessoa (atualiza a própria); portaria e síndico indicam com rótulo "Portaria"/"Síndico" (esclarecimento 2); média com uma casa; ordem por indicações; busca sem acento e filtro; `unrecommend` da última some o item; `remove` só síndico e avisa quem indicou (`listing-removed`)
+- [ ] T031 [P] [US4] Escrever `web/tests/unit/listings.test.ts`: `recommendNew` valida (nome 2–60, telefone por `normalizeDialable`, nota obrigatória em prestador e nula em comércio, observação e comentário); telefone repetido → `conflict` com o id existente e `findByPhone`; `recommend` uma por pessoa (atualiza a própria); portaria e síndico indicam com rótulo "Portaria"/"Síndico" (esclarecimento 2); média com uma casa; ordem por indicações; busca sem acento e filtro; `unrecommend` da última some o item (caso-limite da spec); `remove` só síndico e avisa quem indicou (`listing-removed`)
 - [ ] T032 [P] [US4] Escrever `web/tests/e2e/listings.spec.ts`: 804 indica "Zé da Luz", elétrica, (21) 98888-1111, nota 5 → familiar "Também indico" 4 → "2 indicam · 4,5"; busca "luz"; WhatsApp `https://wa.me/5521988881111`; portaria indica um comércio "Padaria Central" que entrega; síndico remove um prestador
 
 ### Implementação
@@ -147,7 +147,7 @@ avisados.
 
 ### Testes
 
-- [ ] T037 [P] [US5] Escrever `web/tests/unit/survey.test.ts` com relógio: `current` devolve o trimestre e o fim; `answer` uma por pessoa por período (responder de novo atualiza), notas 1–5, comentário até 500; só moradores; no trimestre seguinte, nova resposta; `results` só síndico, médias com uma casa, diferença para o anterior e comentários sem identificação
+- [ ] T037 [P] [US5] Escrever `web/tests/unit/survey.test.ts` com relógio: `current` devolve o trimestre, o fim e o início do próximo (aviso no último dia); `answer` uma por pessoa por período (responder de novo atualiza), notas 1–5, comentário até 500; só moradores; no trimestre seguinte, nova resposta; `results` só síndico, médias com uma casa, diferença para o anterior e comentários sem identificação
 - [ ] T038 [P] [US5] Escrever `web/tests/e2e/survey.spec.ts`: início do 804 mostra o lembrete → responde 5, 4, 5 com comentário → lembrete some → síndico vê o trimestre atual com 1 resposta e o comentário, e o anterior com as respostas do seed
 
 ### Implementação

@@ -86,8 +86,9 @@ síndico marca "Em andamento" com mensagem; os dois recebem o aviso; depois "Res
 1. **Dado** um morador, **quando** envia um problema com onde, o que houve, descrição (5–500) e de 0 a 3 fotos,
    **então** o síndico recebe uma notificação e o problema fica "Aberto" e "Novo".
 2. **Dado** "mostrar para todos" ligado, **então** os outros moradores veem o problema e podem "Apoiar" (uma vez por
-   pessoa, desfazível); o número de apoios aparece para todos e para o síndico. Desligado, só quem reportou, as pessoas
-   do apartamento e o síndico veem.
+   pessoa, desfazível; quem reportou não apoia o próprio); o número de apoios aparece para todos e para o síndico. Os
+   vizinhos veem "Morador" como origem; só o síndico (e a própria casa) vê o apartamento. Desligado, só quem reportou,
+   as pessoas do apartamento e o síndico veem.
 3. **Dado** o síndico, **quando** muda a situação (aberto, em andamento, resolvido) com uma mensagem opcional (até
    300), **então** quem reportou e quem apoiou são avisados e o histórico das atualizações fica no problema.
 4. **Dado** o síndico, **quando** marca "urgente", **então** o problema sobe para o topo e aparece com a marca
@@ -212,7 +213,9 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
   controle de 30 minutos no próprio aparelho do morador.
 - Fotos grandes: reduzidas no aparelho, como na portaria (spec 004).
 - Prestador com telefone fixo: sem WhatsApp.
-- Sem período de pesquisa aberto: a tela mostra quando abre o próximo.
+- Pesquisa no fim do trimestre: sempre há um período aberto; no último dia, a tela avisa que o próximo começa em
+  DD/MM.
+- Prestador ou comércio cuja última indicação foi retirada: sai da lista.
 
 ## Requisitos *(obrigatório)*
 
@@ -236,8 +239,9 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
 - **RF-007**: Moradores e portaria DEVEM poder avisar problemas com onde, o que houve (quebrado, sujo, vazamento,
   lâmpada, barulho de equipamento, outro), descrição (5–500), até 3 fotos e "mostrar para todos" (só moradores). Ao
   escolher "barulho", o app explica que barulho de vizinho vai no aviso anônimo e oferece o atalho.
-- **RF-008**: Problemas públicos DEVEM poder ser apoiados pelos outros moradores, uma vez por pessoa; antes de enviar,
-  o app mostra os abertos do mesmo lugar.
+- **RF-008**: Problemas públicos DEVEM poder ser apoiados pelos outros moradores, uma vez por pessoa (não pelo próprio
+  autor); antes de enviar, o app mostra os abertos do mesmo lugar. Os vizinhos veem "Morador" como origem; o
+  apartamento só aparece para o síndico e para a própria casa.
 - **RF-009**: O síndico DEVE ver os problemas por situação (aberto, em andamento, resolvido), marcar urgente e atualizar
   com mensagem (até 300); quem reportou e quem apoiou são avisados a cada atualização; o histórico fica no problema.
 
@@ -303,9 +307,11 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
 
 ### Resultados mensuráveis
 
-- **CS-001**: O morador publica uma sugestão em menos de 1 minuto e vota com 1 toque.
+- **CS-001**: O morador vota com 1 toque; publicar uma sugestão leva menos de 1 minuto (meta de uso, conferida no
+  celular de verdade).
 - **CS-002**: 100% das sugestões aprovadas aparecem como melhoria e avisam quem gostou, conferido por teste.
-- **CS-003**: O morador avisa um problema com foto em até 4 toques depois de abrir a tela.
+- **CS-003**: O morador avisa um problema com foto em até 4 toques depois de abrir a tela (onde, o que houve, foto,
+  enviar; a descrição é digitada ou ditada), conferido por teste.
 - **CS-004**: 0 telas, notificações ou dados entregues ao síndico permitem identificar quem enviou um aviso de barulho,
   conferido por teste.
 - **CS-005**: A pesquisa de satisfação é respondida em menos de 30 segundos.

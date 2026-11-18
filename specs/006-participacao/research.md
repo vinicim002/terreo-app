@@ -30,7 +30,8 @@ permissões, `notify`, fotos reduzidas no aparelho, `DictateButton`, `dialable.t
 
 ## R4. Problemas: visibilidade e histórico
 
-- `Issue` com `public` (só morador escolhe); privado é visível ao autor, às pessoas do apartamento e ao síndico; a
+- `Issue` com `public` (só morador escolhe); em público, a origem aparece como "Morador" para os vizinhos e com o
+  apartamento só para o síndico e a própria casa (como nas sugestões, princípio III); privado é visível ao autor, às pessoas do apartamento e ao síndico; a
   portaria vê os que ela mesma avisou e os públicos. `updates: {status, message, at}[]` dentro do registro (no máximo
   algumas dezenas por problema).
 - "Antes de enviar, mostrar abertos do mesmo lugar": `issues.similar(ctx, place)` devolve os públicos abertos daquele

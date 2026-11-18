@@ -50,7 +50,7 @@ test.describe("entrada com celular e código", () => {
 
   test("H1-4/H1-6: código errado e reenvio bloqueado por 1 minuto", async ({ page }) => {
     await page.goto("/login/")
-    await page.getByRole("button", { name: /Familiar do 804/ }).click()
+    await entrarComo(page, /Familiar do 804/)
     await expect(page).toHaveURL(/\/login\/code\/$/)
     await page.getByLabel("Código de 6 dígitos").fill("000000")
     await page.getByRole("button", { name: "Entrar", exact: true }).click()
@@ -60,7 +60,7 @@ test.describe("entrada com celular e código", () => {
 
   test("H1-9: sair pede confirmação e volta para a entrada", async ({ page }) => {
     await page.goto("/login/")
-    await page.getByRole("button", { name: /Responsável do 804/ }).click()
+    await entrarComo(page, /Responsável do 804/)
     await page.getByLabel("Código de 6 dígitos").fill(await codigoSimulado(page))
     await page.getByRole("button", { name: "Entrar", exact: true }).click()
     await expect(page.getByRole("heading", { level: 1, name: "Início" })).toBeVisible()
@@ -74,7 +74,7 @@ test.describe("entrada com celular e código", () => {
 
   test("CS-009: a síndica escolhe o papel e troca em até 3 toques", async ({ page }) => {
     await page.goto("/login/")
-    await page.getByRole("button", { name: /Síndica/ }).click()
+    await entrarComo(page, /Síndica/)
     await page.getByLabel("Código de 6 dígitos").fill(await codigoSimulado(page))
     await page.getByRole("button", { name: "Entrar", exact: true }).click()
     await expect(
@@ -109,3 +109,10 @@ test("o país do celular é escolhido no painel do app, com busca", async ({ pag
   await expect(page.getByPlaceholder("Buscar país")).toBeHidden()
   await expect(page.locator("select")).toHaveCount(0)
 })
+
+/** Contas de exemplo: abre o seletor, escolhe a conta e entra (a tela mostra uma conta por vez). */
+async function entrarComo(page: Page, conta: RegExp) {
+  await page.getByRole("button", { name: /Trocar conta de exemplo/ }).click()
+  await page.locator("#example-list").getByRole("button", { name: conta }).click()
+  await page.getByRole("button", { name: "Entrar com esta conta" }).click()
+}

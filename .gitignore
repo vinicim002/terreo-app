@@ -57,3 +57,6 @@ web/out-real/
 # Produção (VPS): segredos e cópias do banco nunca vão para o git.
 infra/.env
 infra/backups/
+
+# Referências visuais temporárias (não versionar).
+apagardepois/

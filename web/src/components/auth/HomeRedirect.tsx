@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect } from "react"
+import { Preloader } from "@/components/brand/Preloader"
 import { Notice } from "@/components/layout/Notice"
 import { HAS_PROFILE_PICKER } from "@/config/app-mode"
 import { roleHome, useSession } from "@/auth/session"
@@ -22,5 +23,5 @@ export function HomeRedirect() {
   }, [state, router])
 
   if (!HAS_PROFILE_PICKER) return <Notice title={t("entrySoonTitle")} text={t("entrySoon")} />
-  return null
+  return <Preloader />
 }

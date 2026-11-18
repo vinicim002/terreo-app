@@ -1,5 +1,6 @@
 "use client"
 
+import { Preloader } from "@/components/brand/Preloader"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -57,7 +58,7 @@ export function AccessGuard({ profile, children }: { profile: Profile; children:
   if (!HAS_PROFILE_PICKER) {
     return <Notice title={t("errors.entrySoonTitle")} text={t("errors.entrySoon")} />
   }
-  if (!hydrated || state.status === "loading" || redirect) return null
+  if (!hydrated || state.status === "loading" || redirect) return <Preloader />
   const active = session!.activeRole!
   if (ROLE_PROFILE[active.kind] !== profile) {
     return (

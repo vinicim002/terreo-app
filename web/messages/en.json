@@ -190,7 +190,9 @@
     "confirmSignOut": "Yes, sign out",
     "cancel": "Cancel",
     "switchRole": "Switch role",
-    "account": "Account"
+    "account": "Account",
+    "switchAccount": "Switch example account",
+    "enterAs": "Sign in with this account"
   },
   "onboarding": {
     "welcomeTitle": "Welcome to {building}!",

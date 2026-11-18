@@ -26,10 +26,13 @@ export function AppProviders({ children }: { children: ReactNode }) {
       : "ninguém"
   const previous = useRef(who)
   useEffect(() => {
-    // Só quando muda de fato: limpar na primeira montagem apagaria consultas que acabaram de começar.
+    // Só quando muda de fato. Não usar clear(): ele apagaria as consultas que as telas acabaram de começar (na
+    // versão compilada a sessão fica pronta depois de as telas montarem) e elas ficariam sem resposta. O reset tira os
+    // dados da pessoa anterior e busca de novo os das telas abertas; as consultas paradas são removidas.
     if (previous.current === who) return
     previous.current = who
-    queryClient.clear()
+    queryClient.removeQueries({ type: "inactive" })
+    void queryClient.resetQueries()
   }, [who, queryClient])
 
   return (

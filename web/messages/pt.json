@@ -190,7 +190,9 @@
     "confirmSignOut": "Sim, sair",
     "cancel": "Cancelar",
     "switchRole": "Trocar papel",
-    "account": "Conta"
+    "account": "Conta",
+    "switchAccount": "Trocar conta de exemplo",
+    "enterAs": "Entrar com esta conta"
   },
   "onboarding": {
     "welcomeTitle": "Bem-vindo ao {building}!",

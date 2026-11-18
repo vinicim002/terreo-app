@@ -190,7 +190,9 @@
     "confirmSignOut": "Sí, cerrar sesión",
     "cancel": "Cancelar",
     "switchRole": "Cambiar de rol",
-    "account": "Cuenta"
+    "account": "Cuenta",
+    "switchAccount": "Cambiar cuenta de ejemplo",
+    "enterAs": "Entrar con esta cuenta"
   },
   "onboarding": {
     "welcomeTitle": "¡Bienvenido a {building}!",

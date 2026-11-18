@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
-import { AuthLayout } from "@/components/auth/AuthLayout"
+import { Preloader } from "@/components/brand/Preloader"
 import { useResidency } from "@/hooks/data"
 import { getServiceContext, getServices } from "@/services"
 import { refreshSession, roleHome, useSession } from "@/auth/session"
@@ -38,7 +38,7 @@ export function Welcome({ review = false }: { review?: boolean }) {
     if (state.status === "ready" && !session) router.replace("/login/")
   }, [state.status, session, router])
 
-  if (!session || !role) return null
+  if (!session || !role) return <Preloader />
 
   async function done() {
     if (review) return router.push(roleHome(role!))
@@ -49,73 +49,108 @@ export function Welcome({ review = false }: { review?: boolean }) {
   }
 
   const number = role.kind === "resident" ? session.apartmentNumbers[role.apartmentId] : ""
+  const title =
+    step === 1
+      ? t("welcomeTitle", { building: "Edifício Taquaretinga" })
+      : step === 2
+        ? t("featuresTitle")
+        : t("rulesStepTitle")
+
   return (
-    <AuthLayout title={t("welcomeTitle", { building: "Edifício Taquaretinga" })}>
-      <p className="text-center text-sm font-semibold text-muted-foreground" aria-live="polite">
-        {t("step", { current: step, total })}
-      </p>
-      {step === 1 && (
-        // Mascote colorido sobre o creme, como pede o kit da marca para telas grandes.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src="/mascote-colorido.svg"
-          alt=""
-          width={200}
-          height={160}
-          className="mx-auto h-40 w-auto rounded-2xl bg-secondary p-4"
-        />
-      )}
-      {step === 1 && (
-        <p className="text-center text-lg">
-          {t("welcomeText", { kind: residency.data ? tk(residency.data.kind) : "", number })}
-        </p>
-      )}
-      {step === 2 && (
-        <section aria-labelledby="features" className="flex flex-col gap-3">
-          <h2 id="features" className="text-xl">
-            {t("featuresTitle")}
-          </h2>
-          <ul className="flex flex-col gap-3">
-            {FEATURES.map(({ key, icon: Icon }) => (
-              <li
+    // Dicas do primeiro acesso no estilo "ilustração em cima, cartão arredondado embaixo" (pedido do usuário).
+    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-brand">
+      <span aria-hidden className="absolute -right-20 -top-16 size-64 rounded-full bg-white/10" />
+      <span aria-hidden className="absolute -left-24 top-28 size-56 rounded-full bg-white/10" />
+      <div className="relative flex h-[40dvh] min-h-56 items-center justify-center pt-[env(safe-area-inset-top)]">
+        {step === 1 && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src="/mascote-branco.png"
+            alt=""
+            width={180}
+            height={202}
+            className="h-44 w-auto drop-shadow-xl"
+          />
+        )}
+        {step === 2 && (
+          <div aria-hidden className="grid grid-cols-3 gap-3">
+            {FEATURES.map(({ key, icon: Icon }, i) => (
+              <span
                 key={key}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-card-foreground"
+                className={`inline-flex size-16 items-center justify-center rounded-2xl bg-secondary text-primary shadow-xl ${
+                  i === 3 ? "col-start-1 translate-x-1/2" : i === 4 ? "translate-x-1/2" : ""
+                }`}
               >
-                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-foreground">
+                <Icon className="size-8" />
+              </span>
+            ))}
+          </div>
+        )}
+        {step === 3 && (
+          <span
+            aria-hidden
+            className="inline-flex size-36 items-center justify-center rounded-[2rem] bg-secondary text-primary shadow-2xl"
+          >
+            <BookOpen className="size-20" />
+          </span>
+        )}
+      </div>
+
+      <main className="relative mx-auto flex w-full max-w-md flex-1 flex-col gap-4 rounded-t-[2rem] bg-background px-6 pb-8 pt-6 shadow-[0_-12px_40px_rgba(0,0,0,0.18)]">
+        <div className="flex items-center gap-3" aria-live="polite">
+          <span aria-hidden className="flex gap-1.5">
+            {Array.from({ length: total }, (_, i) => (
+              <span
+                key={i}
+                className={`h-2 rounded-full transition-all ${i + 1 === step ? "w-7 bg-primary" : "w-2 bg-border"}`}
+              />
+            ))}
+          </span>
+          <span className="text-xs font-semibold text-muted-foreground">
+            {t("step", { current: step, total })}
+          </span>
+        </div>
+
+        <h1 className="text-2xl leading-tight font-extrabold">{title}</h1>
+
+        {step === 1 && (
+          <p className="text-muted-foreground">
+            {t("welcomeText", { kind: residency.data ? tk(residency.data.kind) : "", number })}
+          </p>
+        )}
+        {step === 2 && (
+          <ul className="flex flex-col gap-2">
+            {FEATURES.map(({ key, icon: Icon }) => (
+              <li key={key} className="flex items-center gap-3">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
                   <Icon aria-hidden className="size-5" />
                 </span>
-                {t(`features.${key}`)}
+                <span>{t(`features.${key}`)}</span>
               </li>
             ))}
           </ul>
-        </section>
-      )}
-      {step === 3 && (
-        <section className="flex flex-col gap-2 text-center">
-          <h2 className="text-xl">{t("rulesStepTitle")}</h2>
-          <p>{t("rulesStepText")}</p>
-        </section>
-      )}
-      <div className="flex flex-col gap-2">
-        {step < total ? (
+        )}
+        {step === 3 && <p className="text-muted-foreground">{t("rulesStepText")}</p>}
+
+        <div className="mt-auto flex flex-col items-center gap-3 pt-4">
           <button
             type="button"
-            className="btn-primary min-h-14 text-lg"
-            onClick={() => setStep(step + 1)}
+            className="btn-primary min-h-14 w-full max-w-xs rounded-full text-lg"
+            onClick={() => (step < total ? setStep(step + 1) : done())}
           >
-            {t("next")}
+            {step < total ? t("next") : review ? t("finish") : t("start")}
           </button>
-        ) : (
-          <button type="button" className="btn-primary min-h-14 text-lg" onClick={done}>
-            {review ? t("finish") : t("start")}
-          </button>
-        )}
-        {step < total && (
-          <button type="button" className="btn-outline" onClick={done}>
-            {t("skip")}
-          </button>
-        )}
-      </div>
-    </AuthLayout>
+          {step < total && (
+            <button
+              type="button"
+              onClick={done}
+              className="min-h-11 px-4 font-semibold text-link underline-offset-4 hover:underline"
+            >
+              {t("skip")}
+            </button>
+          )}
+        </div>
+      </main>
+    </div>
   )
 }

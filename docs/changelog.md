@@ -75,6 +75,17 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
   - Bandeiras também na troca de idioma (🇧🇷 🇺🇸 🇪🇸). No Windows, que não desenha bandeiras com emoji, o app carrega
     uma fonte só de bandeiras (Twemoji, CC BY 4.0, crédito nos Ajustes e no README), guardada no próprio app.
   - Sem barras de rolagem aparentes em todo o app (a rolagem continua com o dedo, a roda e o teclado).
+  - Telas de entrada (login, código, escolha de papel) com o topo laranja e o sabiá branco, e o formulário num cartão
+    de cantos arredondados; contas de demonstração mostram uma conta por vez, com seletor das outras.
+  - Abertura (preloader) com o sabiá branco enquanto o app carrega, no lugar da tela em branco.
+  - Dicas do primeiro acesso no estilo "ilustração em cima, cartão embaixo", com os pontinhos de página.
+  - O mascote colorido saiu do app (licença ainda a confirmar); fica só o sabiá branco, em PNG leve (12 KB).
+
+### Corrigido
+
+- Na versão compilada (demonstração publicada), as listas apareciam vazias: o cache de dados era limpo no instante em
+  que as telas começavam a buscar os dados. Agora as consultas são reiniciadas, sem misturar dados entre contas; novo
+  teste de build confere telas com dados.
 - O familiar de exemplo do 804 pode votar em enquetes (para sugerir nas oficiais).
 - Banco do aparelho na versão 3 (os dados de exemplo são recriados).
 - O atalho de testes troca de conta sem esperar o intervalo entre códigos (só em desenvolvimento e demonstração).

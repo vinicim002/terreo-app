@@ -18,6 +18,21 @@ mockups 10_sugestoes, 11_nova_sugestao, 18_reportar, 20_prestadores, 24_melhoria
 `specs/002-acesso-e-cadastro/` (pessoa, apartamento, permissões), `specs/003-comunicacao/` (notificações e canais),
 `specs/004-portaria/` (fotos reduzidas no aparelho, ditar), `.specify/memory/constitution.md` (1.2.0).
 
+## Esclarecimentos
+
+### Sessão 2026-11-18
+
+- P: "Barulho" como tipo de problema e o aviso de barulho anônimo — como convivem? → R: Os dois ficam, separados.
+  "Barulho" em Avisar problema é de equipamento ou estrutura (bomba, portão rangendo, exaustor), com identificação;
+  barulho causado por vizinhos vai no aviso anônimo. A tela de problema explica a diferença e oferece o atalho para o
+  aviso anônimo.
+- P: Quem vê e quem indica prestadores e comércios? → R: Todos os perfis veem e todos indicam (moradores, portaria e
+  síndico), com nota e comentário; a indicação mostra o nome e o apartamento ou "Portaria"/"Síndico".
+- P: Na pesquisa de satisfação, quem do apartamento responde? → R: Cada morador ativo, uma vez por trimestre; as
+  médias do síndico são por pessoa.
+- P: Sugestão publicada "sem mostrar meu apto": o síndico vê quem foi? → R: Sim. Os outros moradores veem só
+  "Morador"; o síndico vê o apartamento e o nome, para responder e acompanhar.
+
 ## Cenários de uso e testes *(obrigatório)*
 
 ### História 1: Sugestões que viram melhorias (Prioridade: P1)
@@ -77,6 +92,8 @@ síndico marca "Em andamento" com mensagem; os dois recebem o aviso; depois "Res
    300), **então** quem reportou e quem apoiou são avisados e o histórico das atualizações fica no problema.
 4. **Dado** o síndico, **quando** marca "urgente", **então** o problema sobe para o topo e aparece com a marca
    "Urgente".
+4a. **Dado** o tipo "Barulho" escolhido em Avisar problema, **então** a tela explica "Barulho de equipamento ou do
+   prédio. Barulho de vizinho? Avise de forma anônima" com o atalho para o aviso de barulho.
 5. **Dado** a portaria, **quando** também vê um problema, **então** pode avisar do mesmo jeito (sem "apoiar"); o
    síndico vê "Portaria" como origem.
 
@@ -120,10 +137,10 @@ indico" com nota 4; a lista mostra "2 vizinhos indicam · 4,5"; busca "luz" enco
 
 **Cenários de aceite**:
 
-1. **Dado** um morador, **quando** indica um prestador com nome (2–60), serviço (elétrica, hidráulica, pintura, limpeza,
+1. **Dado** qualquer perfil (morador, portaria ou síndico), **quando** indica um prestador com nome (2–60), serviço (elétrica, hidráulica, pintura, limpeza,
    reformas, outro), telefone válido, observação (até 120), nota (1–5) e comentário (até 300), **então** ele aparece na
    lista com "1 vizinho indica".
-2. **Dado** um prestador na lista, **quando** outro morador toca "Também indico" com nota e comentário, **então** o
+2. **Dado** um prestador na lista, **quando** outra pessoa (de qualquer perfil) toca "Também indico" com nota e comentário, **então** o
    número de indicações e a nota média se atualizam; cada pessoa indica uma vez e pode mudar ou retirar.
 3. **Dado** a lista, **então** há busca sem acento por nome, serviço e observação, filtro por serviço e ordem por
    número de indicações.
@@ -204,7 +221,8 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
 **Sugestões**
 
 - **RF-001**: Moradores ativos DEVEM poder publicar sugestões com título (5–80), descrição (10–1.000), categoria
-  (melhoria, segurança, lazer, economia, outro), até 1 foto e a opção de não mostrar o apartamento.
+  (melhoria, segurança, lazer, economia, outro), até 1 foto e a opção de não mostrar o apartamento aos vizinhos (o
+  síndico sempre vê o apartamento e o nome).
 - **RF-002**: Moradores DEVEM poder marcar "gostei" ou "não gostei", um voto por pessoa, desfazível e trocável; a
   sugestão mostra as contagens e o percentual de quem concorda.
 - **RF-003**: A lista DEVE ter as abas Mais votadas, Recentes e Minhas, com a situação de cada sugestão.
@@ -215,8 +233,9 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
 
 **Problemas**
 
-- **RF-007**: Moradores e portaria DEVEM poder avisar problemas com onde, o que houve, descrição (5–500), até 3 fotos e
-  "mostrar para todos" (só moradores).
+- **RF-007**: Moradores e portaria DEVEM poder avisar problemas com onde, o que houve (quebrado, sujo, vazamento,
+  lâmpada, barulho de equipamento, outro), descrição (5–500), até 3 fotos e "mostrar para todos" (só moradores). Ao
+  escolher "barulho", o app explica que barulho de vizinho vai no aviso anônimo e oferece o atalho.
 - **RF-008**: Problemas públicos DEVEM poder ser apoiados pelos outros moradores, uma vez por pessoa; antes de enviar,
   o app mostra os abertos do mesmo lugar.
 - **RF-009**: O síndico DEVE ver os problemas por situação (aberto, em andamento, resolvido), marcar urgente e atualizar
@@ -232,7 +251,7 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
 
 **Prestadores e comércio**
 
-- **RF-013**: Moradores DEVEM poder indicar prestadores (nome 2–60, serviço, telefone válido, observação até 120, nota
+- **RF-013**: Todos os perfis (morador, portaria e síndico) DEVEM ver as listas e poder indicar prestadores (nome 2–60, serviço, telefone válido, observação até 120, nota
   1–5, comentário até 300) e comércios (nome, tipo, telefone, faz entrega, observação), uma indicação por pessoa por
   item, editável e removível.
 - **RF-014**: As listas DEVEM ter busca sem acento, filtro por serviço ou tipo, número de indicações, nota média
@@ -242,7 +261,8 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
 
 **Pesquisa de satisfação**
 
-- **RF-017**: A pesquisa DEVE abrir por trimestre do calendário; cada morador ativo responde uma vez por período (pode
+- **RF-017**: A pesquisa DEVE abrir por trimestre do calendário; cada morador ativo (não só o responsável) responde
+  uma vez por período (pode
   mudar até o fim), com notas de 1 a 5 para portaria, limpeza e aplicativo e comentário opcional (até 500).
 - **RF-018**: O síndico DEVE ver, por período, o número de respostas, as médias com uma casa decimal, a diferença para
   o período anterior e os comentários, sem identificação.
@@ -276,7 +296,7 @@ antes e depois, mês e R$ 4.800; o morador vê o cartão concluído.
   atualizações (situação, mensagem, data), apoios.
 - **Aviso de barulho**: tipo, onde, quando, criado em, visto em — sem autor.
 - **Prestador / Comércio**: nome, serviço ou tipo, telefone, observação, faz entrega (comércio), indicações (pessoa,
-  nota, comentário).
+  papel de quem indicou — apartamento, portaria ou síndico —, nota, comentário).
 - **Resposta da pesquisa**: período, pessoa, notas de portaria, limpeza e aplicativo, comentário.
 
 ## Critérios de sucesso *(obrigatório)*

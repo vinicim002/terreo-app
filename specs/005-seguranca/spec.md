@@ -19,6 +19,20 @@ importantes), mockups 12_emergencia, 13_emergencia_enviada, 15_contatos, 34_port
 emergência ignora preferências), `specs/004-portaria/` (equipe de plantão, ditar), `.specify/memory/constitution.md`
 (1.2.0).
 
+## Esclarecimentos
+
+### Sessão 2026-11-18
+
+- P: Além da portaria e do síndico, quem é avisado quando o morador aperta o botão de emergência? → R: As outras
+  pessoas ativas do apartamento (no app e no privado) e o contato de emergência do apartamento (spec 002), por uma
+  mensagem no WhatsApp dele, mesmo não sendo usuário do app.
+- P: O celular pessoal do síndico e do porteiro-chefe aparece para todos nos Contatos? → R: Só se a própria pessoa
+  autorizar ("Mostrar meu celular nos contatos", desligado por padrão). Sem autorização, aparece o nome e a função, sem
+  número; a portaria aparece sempre.
+- P: Dá para pedir ajuda pelo WhatsApp do condomínio, sem o app? → R: Sim. Mensagem com "SOS" ou "socorro", vinda de
+  um celular cadastrado, cria o mesmo alerta do botão (tipo "não informado") e responde que a portaria foi avisada.
+  Nesta etapa é simulado no painel `/dev`, como os códigos de entrega (spec 004).
+
 ## Cenários de uso e testes *(obrigatório)*
 
 ### História 1: O morador pede ajuda e a portaria vai até ele (Prioridade: P1)
@@ -43,7 +57,9 @@ porteiro e "a caminho".
    tipo escolhido (ou "não informado"), e o morador vê "Alerta enviado — a portaria foi avisada às HH:MM".
 3. **Dado** um alerta enviado, **então** todos os porteiros com plantão agora (spec 004) recebem na hora um alerta em
    tela cheia, por cima de qualquer tela da portaria, com som e vibração quando o aparelho permitir; os outros
-   porteiros e o síndico recebem a notificação de emergência.
+   porteiros e o síndico recebem a notificação de emergência. As outras pessoas do apartamento também são avisadas
+   (app e privado), e o contato de emergência do apartamento recebe uma mensagem no WhatsApp ("Ana Queiroz pediu ajuda
+   no apartamento 804 do Edifício Taquaretinga às 21:14. A portaria foi avisada.").
 4. **Dado** o alerta na portaria, **então** ele mostra o apartamento em letras grandes, o andar, o tipo, quem enviou,
    há quanto tempo e o contato de emergência do apartamento (nome, parentesco e celular), se houver.
 5. **Dado** o alerta na portaria, **quando** um porteiro toca "Estou indo", **então** o alerta fica atendido por ele, os
@@ -54,6 +70,9 @@ porteiro e "a caminho".
    alerta é encerrado e fica no histórico.
 8. **Dado** a tela de Emergência, **então** o morador também pode ligar direto para a portaria, para o SAMU (192), os
    Bombeiros (193) e a Polícia (190) com um toque.
+9a. **Dado** um morador sem o app, **quando** manda "SOS" ou "socorro" ao WhatsApp do condomínio do celular cadastrado,
+   **então** o mesmo alerta é criado (tipo "não informado") e ele recebe no privado "A portaria foi avisada. Se puder,
+   ligue para 192 (SAMU)"; mensagem de celular desconhecido não cria alerta.
 9. **Dado** um alerta em aberto do mesmo apartamento, **quando** alguém do apartamento tenta enviar outro, **então** o
    app mostra o alerta em andamento em vez de criar um novo.
 
@@ -118,6 +137,9 @@ acrescenta "Chaveiro 24h" e ele aparece para todos.
    todos.
 5. **Dado** os contatos do prédio, **então** portaria, síndico e porteiro-chefe vêm do cadastro (spec 002 e 001) e se
    atualizam sozinhos quando o cadastro muda.
+5a. **Dado** o síndico ou o porteiro-chefe, **quando** liga "Mostrar meu celular nos contatos" no próprio perfil,
+   **então** o celular dele aparece em Contatos com ligar e WhatsApp; desligado (o padrão), aparece só o nome e a
+   função, sem número.
 6. **Dado** um morador ou porteiro, **quando** abre Contatos, **então** só vê; editar é só do síndico.
 
 ---
@@ -146,7 +168,8 @@ os dois, com o tempo até o "Estou indo".
 - Sem nenhum porteiro de plantão na escala no momento: o alerta vai para todos os porteiros e para o síndico, e o
   morador vê "Sem porteiro de plantão agora — o síndico também foi avisado".
 - Ninguém toca "Estou indo" em 2 minutos: o alerta volta a tocar na portaria e o síndico recebe um segundo aviso.
-- Apartamento sem contato de emergência: a portaria vê "Sem contato de emergência cadastrado".
+- Apartamento sem contato de emergência: a portaria vê "Sem contato de emergência cadastrado" e nenhuma mensagem sai
+  para fora do prédio.
 - O morador perde a internet depois de segurar o botão: nesta etapa os dados estão no aparelho; quando houver
   servidor, o app avisa que não conseguiu enviar e oferece ligar para a portaria.
 - Dois porteiros tocam "Estou indo" quase juntos: vale o primeiro; o segundo vê quem já foi.
@@ -168,12 +191,18 @@ os dois, com o tempo até o "Estou indo".
 - **RF-003**: O alerta DEVE chegar na hora a todos os porteiros de plantão (escala da spec 004) como tela cheia por cima
   de qualquer tela da portaria; os demais porteiros e o síndico DEVEM receber a notificação de emergência (no app e no
   privado do WhatsApp, ignorando preferências).
+- **RF-003a**: O alerta de apartamento DEVE avisar também as outras pessoas ativas do apartamento (app e privado) e
+  mandar uma mensagem no WhatsApp ao contato de emergência do apartamento, se houver, com quem pediu ajuda, o
+  apartamento, o prédio e a hora; o cancelamento e a resolução DEVEM avisar as mesmas pessoas.
 - **RF-004**: A portaria DEVE ver no alerta: apartamento, andar, tipo, quem enviou, há quanto tempo e o contato de
   emergência do apartamento (spec 002).
 - **RF-005**: Um porteiro DEVE poder marcar "Estou indo" (o primeiro vale) e depois "Resolvido" com nota opcional; o
   morador DEVE ver quem atendeu e a situação.
 - **RF-006**: Quem enviou ou o responsável do apartamento DEVE poder cancelar o alerta em aberto, com confirmação.
 - **RF-007**: A tela de emergência DEVE ter ligação direta para a portaria, SAMU 192, Bombeiros 193 e Polícia 190.
+- **RF-007a**: O alerta DEVE poder ser pedido também por mensagem ao WhatsApp do condomínio com "SOS" ou "socorro"
+  (sem diferença de maiúsculas ou acento), vinda do celular de uma pessoa ativa de um apartamento; responde no privado
+  confirmando. Celular desconhecido não cria alerta. Nesta etapa, simulado no painel `/dev` (constituição V).
 - **RF-008**: Só pode haver um alerta em aberto por apartamento; um novo envio mostra o que está em andamento.
 - **RF-009**: Sem "Estou indo" em 2 minutos, o alerta DEVE ser repetido na portaria e o síndico avisado de novo.
 
@@ -194,6 +223,8 @@ os dois, com o tempo até o "Estou indo".
 - **RF-014**: Todos os perfis DEVEM ver os contatos em dois grupos ("Do prédio" e "Emergência e serviços"), com busca
   sem acento, botão de ligar e, para celulares, botão de WhatsApp.
 - **RF-015**: Os contatos do prédio (portaria, síndico, porteiro-chefe) DEVEM vir do cadastro e se atualizar sozinhos.
+  O celular pessoal do síndico e do porteiro-chefe só aparece se a própria pessoa ligar "Mostrar meu celular nos
+  contatos" no perfil (desligado por padrão); o número da portaria aparece sempre.
 - **RF-016**: O síndico DEVE poder acrescentar, editar (nome 2–60, descrição até 60, número válido), reordenar e
   remover os contatos de emergência e serviços; os demais só veem.
 - **RF-017**: A lista inicial DEVE trazer SAMU 192, Bombeiros 193, Polícia Militar 190, Defesa Civil 199 e as
@@ -223,6 +254,8 @@ os dois, com o tempo até o "Estou indo".
   mensagem de encerramento, quem encerrou e quando.
 - **Contato**: grupo (do prédio, emergência e serviços), nome, descrição, número, é celular, ordem, origem (cadastro ou
   manual).
+- **Preferência de exibição do celular**: pessoa (síndico ou porteiro-chefe), mostrar nos contatos (sim/não).
+- **Número da portaria**: telefone fixo ou celular da portaria do condomínio, mantido pelo síndico.
 
 ## Critérios de sucesso *(obrigatório)*
 
@@ -235,6 +268,8 @@ os dois, com o tempo até o "Estou indo".
   preferências desligadas, conferido por teste.
 - **CS-004**: O porteiro responde "Estou indo" com 1 toque a partir do alerta em tela cheia.
 - **CS-005**: O morador encontra e liga para um contato de emergência em no máximo 2 toques a partir do início.
+- **CS-006a**: "SOS", "sos", "Socorro!" e "SOCORRO" criam o alerta; mensagens sem essas palavras não criam,
+  conferido por teste.
 - **CS-006**: 100% das tentativas de enviar alerta geral, cancelar alerta de outro apartamento ou editar contatos sem
   permissão são recusadas pelos serviços, conferido por teste.
 

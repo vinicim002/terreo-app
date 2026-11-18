@@ -57,5 +57,8 @@ Ordem sugerida, uma spec por grupo:
 
 ## Etapa 4 — Piloto (Proposta)
 
+- [ ] Antes de abrir para os moradores: trocar todos os segredos (token do Cloudflare Tunnel `terreo-prod`, que ficou
+  exposto numa sessão local em 2026-11-17, senha do banco e qualquer chave criada até lá).
+
 - [ ] VPS com Docker Compose e Caddy, backups.
 - [ ] Cadastro do Edifício Taquaretinga, vídeo curto de instalação e lançamento.

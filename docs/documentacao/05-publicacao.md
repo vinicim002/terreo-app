@@ -1,20 +1,20 @@
 # Publicação
 
-Como o Térreo fica no ar. Hoje: a **demonstração** (dados fictícios no aparelho) no Cloudflare Pages e a **base da
-API** (FastAPI, worker, PostgreSQL e Redis) numa VPS, pronta para a Etapa 3.
+Como o Térreo fica no ar. Hoje: a **demonstração** (dados fictícios no aparelho) no Cloudflare Workers (com arquivos
+estáticos) e a **base da API** (FastAPI, worker, PostgreSQL e Redis) numa VPS, pronta para a Etapa 3.
 
 ```
-Navegador ──► terreo.v2n.tech (Cloudflare Pages: telas estáticas + função /api/*)
-                    │  /api/*  repassado pela função do Pages
+Navegador ──► terreo.v2n.tech (Cloudflare Worker "terreo": telas estáticas de web/out + repasse de /api/*)
+                    │  /api/*  repassado pelo Worker
                     ▼
               terreo-api.v2n.tech ──► Cloudflare Tunnel "terreo-prod" ──► cloudflared ──► api (:8100) ──► db / redis
                                                                      └────── rede interna do projeto terreo-prod ──────┘
 ```
 
-- **Frontend:** `web/` compilado como exportação estática (`npm run build:demo`). O arquivo `web/functions/api/[[path]].js`
-  é uma função do Pages que repassa `/api/*` para a API (variável `API_ORIGIN`), para o navegador falar sempre com o
-  mesmo domínio (cookie de sessão da Etapa 3, sem CORS). `web/public/_headers` define os cabeçalhos de segurança e
-  deixa o piloto fora dos buscadores.
+- **Frontend:** `web/` compilado como exportação estática (`npm run build:demo`) e publicado como Worker com arquivos
+  estáticos (`web/wrangler.jsonc`). O Worker (`web/worker/index.js`) só roda em `/api/*`, que ele repassa para a API
+  (`API_ORIGIN`), para o navegador falar sempre com o mesmo domínio (cookie de sessão da Etapa 3, sem CORS); o resto vem
+  direto dos arquivos. `web/public/_headers` define os cabeçalhos de segurança e deixa o piloto fora dos buscadores.
 - **API:** `infra/compose.prod.yaml` (projeto `terreo-prod`). **Nenhuma porta é publicada**: o público chega só pelo
   túnel do próprio Térreo. As migrações (Alembic) rodam antes de a API subir; a documentação `/docs` fica fechada fora
   do desenvolvimento.
@@ -69,13 +69,15 @@ crontab -e
 # 40 3 * * * /home/vinicius/terreo/infra/backup.sh >> /home/vinicius/terreo-backup.log 2>&1
 ```
 
-## 5. Cloudflare Pages: a demonstração
+## 5. Cloudflare Workers: a demonstração
 
-1. **Workers & Pages → Create → Pages → Connect to Git** → repositório `terreo-app`, branch `main`.
-2. Build: diretório raiz `web`, comando `npm run build:demo`, pasta de saída `out`.
-3. Variáveis: `NODE_VERSION=22`; `API_ORIGIN=https://terreo-api.v2n.tech`.
-4. **Custom domains** → `terreo.v2n.tech`.
-5. Conferir: `https://terreo.v2n.tech` (faixa "Demonstração") e `https://terreo.v2n.tech/api/health`.
+1. **Workers & Pages → Create → Import a repository** → conta do GitHub `vinicim002` (app da Cloudflare instalado só
+   no `terreo-app`) → `terreo-app`. **Não** usar "Clone a public repository" (criaria uma cópia em outra conta).
+2. Configuração: nome `terreo`; **Build command** `npm run build:demo`; **Deploy command** `npx wrangler deploy`;
+   **Root directory** (Advanced) `web`; variável de **build** `NODE_VERSION=22`. O resto (arquivos, `API_ORIGIN`) vem do
+   `web/wrangler.jsonc`.
+3. **Settings → Domains & Routes → Add → Custom domain** → `terreo.v2n.tech`.
+4. Conferir: `https://terreo.v2n.tech` (faixa "Demonstração") e `https://terreo.v2n.tech/api/health`.
 
 Cada push na `main` publica uma demonstração nova; o app instalado a recebe na abertura seguinte. A API só muda com
 `infra/deploy.sh` na VPS.

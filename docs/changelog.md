@@ -62,7 +62,8 @@ Registro diário do que foi adicionado, alterado e removido no projeto. A entrad
 - Publicação (capítulo `05-publicacao.md`): `infra/compose.prod.yaml` (projeto `terreo-prod` separado na VPS
   compartilhada, sem portas publicadas, com limites de memória), `infra/deploy.sh`, `infra/backup.sh` e
   `infra/prod.env.example`; Cloudflare Tunnel próprio para a API (`terreo-api.v2n.tech`); demonstração no
-  Cloudflare Pages (`terreo.v2n.tech`) com a função que repassa `/api/*` para a API e cabeçalhos de segurança.
+  Cloudflare Workers com arquivos estáticos (`terreo.v2n.tech`, `web/wrangler.jsonc`), com o Worker que repassa
+  `/api/*` para a API e cabeçalhos de segurança. API no ar em `terreo-api.v2n.tech`.
 - Ajustes depois da revisão das telas:
   - Calendário do Térreo no lugar do seletor de data do navegador, em todos os formulários (avisos, enquetes,
     reuniões, eventos, visitantes e modo viagem), com mês, dias em botões grandes, "Hoje" e "Limpar".

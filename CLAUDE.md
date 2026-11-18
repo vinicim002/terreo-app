@@ -48,8 +48,8 @@ leia antes de especificar, planejar ou implementar.
 
 ## Publicação
 
-Demonstração no Cloudflare Pages (`terreo.v2n.tech`, raiz `web`, `npm run build:demo`, saída `out`, função
-`web/functions/api/[[path]].js` repassa `/api/*` para `API_ORIGIN`) e API numa VPS compartilhada, em `~/terreo`
+Demonstração no Cloudflare Workers com arquivos estáticos (`terreo.v2n.tech`, raiz `web`, `npm run build:demo` +
+`npx wrangler deploy`, `web/wrangler.jsonc`; `web/worker/index.js` repassa `/api/*` para `API_ORIGIN`) e API numa VPS compartilhada, em `~/terreo`
 (projeto Compose `terreo-prod`, `infra/compose.prod.yaml`, sem portas publicadas, Cloudflare Tunnel próprio
 `terreo-api.v2n.tech`). Nunca mexer em nada fora de `~/terreo` na VPS. Passo a passo: `docs/documentacao/05-publicacao.md`.
 
